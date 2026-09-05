@@ -113,7 +113,9 @@ def align_heading_profile(
     # road, and reporting a confident answer from one would be a lie.
     turn = float(np.abs(psi_imu - psi_imu[0]).max())
     if turn < cfg.min_turn_rad:
-        return CsaFix(s0_prior, np.inf, 1.0, np.inf, False, f"straight ({np.degrees(turn):.1f} deg)")
+        return CsaFix(
+            s0_prior, np.inf, 1.0, np.inf, False, f"straight ({np.degrees(turn):.1f} deg)"
+        )
 
     # Decimate before matching: the cost grid is evaluated for every offset and
     # scale, so window length multiplies straight into runtime, and a 200 Hz

@@ -30,6 +30,7 @@ from dataclasses import dataclass, field
 import numpy as np
 from scipy.ndimage import gaussian_filter1d
 
+from ..core.random_fields import smooth_field
 from .vehicle import VehicleModel
 
 __all__ = ["VibrationModel", "ROAD_SMOOTH", "ROAD_NORMAL", "ROAD_ROUGH", "synthesize_vibration"]
@@ -101,7 +102,7 @@ def synthesize_vibration(
 
     # Slow amplitude modulation: surface texture changes every few tens of
     # metres, so a constant-amplitude tone would be unrealistically easy to find.
-    am = 1.0 + 0.35 * gaussian_filter1d(rng.normal(size=n), sigma=max(0.6 / dt, 1.0))
+    am = 1.0 + smooth_field(rng, n, max(0.6 / dt, 1.0), amplitude=0.35)
     am = np.clip(am, 0.25, 2.5)
 
     signal = np.zeros(n)

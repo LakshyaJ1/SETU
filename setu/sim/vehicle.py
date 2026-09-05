@@ -20,6 +20,7 @@ import numpy as np
 from scipy.ndimage import gaussian_filter1d
 
 from ..core.constants import G0
+from ..core.random_fields import smooth_field
 from ..mapping.road import RoadPath
 
 __all__ = ["VehicleModel", "CAR", "MOTORCYCLE", "SCOOTER", "BUS", "VEHICLES", "speed_profile"]
@@ -165,8 +166,7 @@ def speed_profile(
     # the free-flow speed wanders slowly by about +-10 % with a ~15 s
     # correlation time.
     n_guess = int(6.0 * path.length / max(v_cruise, 1.0) / dt) + 4000
-    wander = gaussian_filter1d(rng.normal(size=n_guess), sigma=max(8.0 / dt, 1.0), mode="nearest")
-    wander = wander / (np.std(wander) + 1e-12) * 0.10
+    wander = smooth_field(rng, n_guess, max(8.0 / dt, 1.0), amplitude=0.10)
 
     lookahead = np.arange(0.0, lookahead_m + 1.0, 2.0)
     v_hist: list[float] = []

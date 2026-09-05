@@ -19,10 +19,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
-from scipy.ndimage import gaussian_filter1d
 from scipy.signal import decimate
 
 from ..core import so3
+from ..core.random_fields import smooth_field
 from ..mapping.road import RoadPath
 from ..mapping.routes import build_route
 from ..sensors.types import BaroStream, GnssStream, GroundTruth, ImuStream, MagStream, SensorLog
@@ -241,13 +241,10 @@ def _magnetic_anomaly(path: RoadPath, seed: int) -> np.ndarray:
     match against it (``docs/03-approach.md`` 3.8).
     """
     rng = np.random.default_rng(seed)
-    n = len(path.s)
-    raw = rng.normal(size=(n, 3))
     # Structures that produce anomalies -- rebar, rails, lighting, gantries --
     # have metre-to-decametre scale, so the field is smooth but not flat.
-    smooth = gaussian_filter1d(raw, sigma=max(6.0 / path.ds, 1.0), axis=0, mode="nearest")
-    smooth /= np.std(smooth, axis=0, keepdims=True) + 1e-12
-    return smooth * np.array([7.0, 7.0, 11.0])  # uT, stronger vertically
+    field = smooth_field(rng, len(path.s), max(6.0 / path.ds, 1.0), channels=3)
+    return field * np.array([7.0, 7.0, 11.0])  # uT, stronger vertically
 
 
 def simulate_drive(

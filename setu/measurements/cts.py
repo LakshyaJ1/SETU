@@ -61,7 +61,17 @@ class CtsConfig:
     # Attitude error leaks gravity into the lateral channel at g * tilt, so a
     # 0.3 deg tilt error is already 0.05 m/s^2.
     sigma_tilt_rad: float = 0.005
-    smooth_s: float = 1.0  # averaging window
+    # Averaging window. One second was the original figure, taken from the noise
+    # analysis, and it is wrong for a reason worth recording: the lean form
+    # recovers phi through an arccos, so smoothing *before* that nonlinearity
+    # mixes a leaning sample into a straight one and manufactures a lean that
+    # never happened. Measured on a roundabout route, the two-wheeler p90 error
+    # went from 0.14 % at 0.3 s to 24.9 % at 1.0 s while the median stayed at
+    # zero -- a pure tail failure, invisible to any median-based check.
+    #
+    # 0.25 s still averages 50 samples at 200 Hz, so most of the white-noise
+    # benefit survives; what it no longer does is span a corner entry.
+    smooth_s: float = 0.25
     max_speed_mps: float = 60.0
 
 

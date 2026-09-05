@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check setu tests
+
+      - name: Test
+        run: pytest tests/ -q --durations=10
+
+  # The gate that keeps the project honest. docs/08-evaluation.md 8.3 makes
+  # these blocking, and 6.7 notes why: accuracy work has a strong tendency to
+  # improve the median while ruining the tail, and the tail is what a driver
+  # notices. A drift regression is therefore a build failure, not a comment on
+  # a pull request.
+  acceptance-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Gates G-1 and G-2 across the scenario matrix
+        run: |
+          python - <<'PY'
+          import sys
+          import numpy as np
+          from setu.eval.experiment import BASELINES, run_outage
+          from setu.sim import PHONE_MID, simulate_drive
+
+          START, DUR = 150.0, 60.0
+          failures = []
+          for route in ("curvy_a_road", "straight_motorway", "urban_canyon",
+                        "roundabout_route", "gentle_motorway"):
+              drive = simulate_drive(route, route_length_m=5000.0, device=PHONE_MID,
+                                     outages=((START, START + DUR),), seed=11)
+              the_map = drive.path.perturbed(1.5, np.random.default_rng(0))
+              tr = run_outage(drive, the_map, BASELINES["SETU"],
+                              start_s=START, end_s=START + DUR, label="SETU")
+              m = tr.metrics
+              status = "ok"
+              if m.drift_ratio >= 0.10:          # G-1
+                  failures.append(f"{route}: drift {m.drift_ratio:.3%} >= 10%")
+                  status = "FAIL G-1"
+              if m.fpe_m >= 100.0:               # G-2
+                  failures.append(f"{route}: final error {m.fpe_m:.1f} m >= 100 m")
+                  status = "FAIL G-2"
+              print(f"{route:20s} tier {m.tier}  {m.distance_m:6.0f} m  "
+                    f"final {m.fpe_m:8.2f} m  drift {m.drift_ratio*100:6.3f}%  "
+                    f"anchors {m.n_anchors:3d}  {status}")
+
+          if failures:
+              print("\nACCEPTANCE GATES FAILED:")
+              for f in failures:
+                  print("  " + f)
+              sys.exit(1)
+          print("\nall acceptance gates passed")
+          PY
+
+      - name: Determinism (REQ-N8) - the same log must replay identically
+        run: |
+          python - <<'PY'
+          import numpy as np
+          from setu.pipeline import run_pipeline
+          from setu.sim import simulate_drive
+
+          drive = simulate_drive("curvy_a_road", route_length_m=2000.0, seed=7)
+          a = run_pipeline(drive.log, path=drive.path)
+          b = run_pipeline(drive.log, path=drive.path)
+          assert np.array_equal(a.pos_enu, b.pos_enu), "replay is not deterministic"
+          assert np.array_equal(a.k_svo, b.k_svo)
+          print("replay is bit-identical over", len(a), "epochs")
+          PY

@@ -116,6 +116,8 @@ def harmonic_sum(
     n_orders: int = 8,
     order_weight: float = 0.85,
     log_compress: bool = True,
+    subharmonic_penalty: float = 1.6,
+    whiten_bins: int = 81,
 ) -> np.ndarray:
     """Score every candidate fundamental by the energy at all of its harmonics.
 
@@ -127,10 +129,24 @@ def harmonic_sum(
     orders*, which is the property that distinguishes a real harmonic family
     from a loud isolated tone.
     """
+    from scipy.ndimage import uniform_filter1d
+
     f0_grid = np.asarray(f0_grid, dtype=float)
     p = spec.power
     if log_compress:
         p = np.log1p(p / (np.median(p) + 1e-30))
+
+    # Whiten along frequency before scoring.
+    #
+    # Road excitation is *red*: there is more energy at 2 Hz than at 10 Hz simply
+    # because that is how a surface shakes a chassis. So a subharmonic candidate
+    # is not merely tolerated by the tilt, it is rewarded by it -- its low orders
+    # land where the floor is highest. On a rough road that was enough to make
+    # f/4 outscore the true fundamental in 80 % of frames, at a speed four times
+    # too low. Subtracting a wide running mean removes the tilt and leaves the
+    # lines to be judged against their own neighbourhood.
+    if whiten_bins > 1 and p.shape[0] > whiten_bins:
+        p = p - uniform_filter1d(p, size=int(whiten_bins), axis=0, mode="nearest")
 
     orders = np.arange(1, n_orders + 1)
     weights = order_weight ** (orders - 1)
@@ -146,9 +162,27 @@ def harmonic_sum(
 
     # (G, K, T) would be large; accumulate over orders instead.
     out = np.zeros((len(f0_grid), p.shape[1]))
+    fundamental = None
     for k in range(len(orders)):
         interp = (1.0 - frac[:, k, None]) * p[lo_c[:, k]] + frac[:, k, None] * p[lo_c[:, k] + 1]
+        if k == 0:
+            fundamental = interp
         out += weights[k] * np.where(valid[:, k, None], interp, 0.0)
+
+    # Subharmonic rejection: the fundamental itself must carry energy.
+    #
+    # A subharmonic scores well because its harmonic set *contains* the true
+    # family -- the harmonics of f/4 include f, 2f and 3f. With a quiet road that
+    # costs it the empty bins at k=1,2,3, but on a rough surface the broadband
+    # floor fills them in and f/4 can win outright. Measured on the simulator,
+    # 80 % of frames locked to exactly f/4, at a speed four times too low.
+    #
+    # So candidates whose own bin sits at or below the frame's typical power are
+    # penalised: whatever they are, they are not a fundamental.
+    if fundamental is not None and subharmonic_penalty > 0.0:
+        floor = np.median(p, axis=0, keepdims=True)
+        deficit = np.clip(floor - fundamental, 0.0, None)
+        out -= subharmonic_penalty * deficit
     return out
 
 

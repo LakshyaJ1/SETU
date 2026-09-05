@@ -154,6 +154,16 @@ class SpectralOdometer:
         sigma = np.sqrt(
             (self.k_svo * track.sigma_f0) ** 2 + (cfg.scale_sigma_rel * v) ** 2
         )
+        # An earlier version scaled sigma by (1 - confidence) to guard against a
+        # confidently-wrong octave slip. It was removed, and the reason is worth
+        # keeping: the prominence-based confidence typically sits around 0.08 for
+        # a perfectly good lock, so "1 - confidence" inflated *every* estimate by
+        # more than six times. SVO then lost every weighting contest against CTS,
+        # and end-to-end drift went from 0.32 % to 0.89 % -- worse than the
+        # classical baseline. The subharmonic failure that patch was guarding
+        # against is fixed at its source by whitening in harmonic_sum, so the
+        # guard is not needed; a metric whose scale is not calibrated must not be
+        # used as if it were.
 
         valid = (
             (track.confidence >= cfg.min_confidence)

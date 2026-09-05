@@ -16,7 +16,7 @@ from setu.core import so3
 from setu.estimation import InvariantEkf
 from setu.measurements.alignment import estimate_mount
 from setu.measurements.csa import CsaConfig, align_heading_profile
-from setu.sim import MountModel, PHONE_FLAGSHIP, PHONE_MID, simulate_drive
+from setu.sim import PHONE_MID, MountModel, simulate_drive
 
 
 @pytest.fixture(scope="module")
@@ -28,7 +28,8 @@ def run_open_loop(d, ideal: bool, R0=None):
     gt, imu = d.truth, d.log.imu
     accel = gt.accel_ideal if ideal else imu.accel
     gyro = gt.gyro_ideal if ideal else imu.gyro
-    ekf = InvariantEkf.initialise(gt.pos_enu[0], gt.vel_enu[0], R0 if R0 is not None else gt.R_nb[0])
+    R_init = R0 if R0 is not None else gt.R_nb[0]
+    ekf = InvariantEkf.initialise(gt.pos_enu[0], gt.vel_enu[0], R_init)
     dt = 1.0 / imu.rate_hz
     for i in range(1, len(gt)):
         ekf.propagate(accel[i], gyro[i], dt)
@@ -91,7 +92,8 @@ class TestPropagation:
 
 
 class TestUpdates:
-    def _fresh(self, d, pos_offset=np.zeros(3)):
+    def _fresh(self, d, pos_offset=None):
+        pos_offset = np.zeros(3) if pos_offset is None else pos_offset
         gt = d.truth
         return InvariantEkf.initialise(gt.pos_enu[0] + pos_offset, gt.vel_enu[0], gt.R_nb[0])
 
@@ -116,10 +118,17 @@ class TestUpdates:
         assert np.linalg.norm(ekf.s.velocity - gt.vel_enu[0]) < 0.3 * before
 
     def test_forward_speed_update(self, drive):
+        # A 1 m/s offset is inside the gate. Scaling the initial velocity by a
+        # factor made the offset proportional to the drive's speed, so the test
+        # silently became an outlier-rejection test when the speed profile
+        # changed.
         gt = drive.truth
-        ekf = InvariantEkf.initialise(gt.pos_enu[0], gt.vel_enu[0] * 1.3, gt.R_nb[0])
-        ekf.update_forward_speed(float(np.linalg.norm(gt.vel_enu[0])), 0.1)
-        assert abs(ekf.s.body_speed - np.linalg.norm(gt.vel_enu[0])) < 0.6
+        target = float(np.linalg.norm(gt.vel_enu[0]))
+        direction = gt.vel_enu[0] / target
+        ekf = InvariantEkf.initialise(gt.pos_enu[0], gt.vel_enu[0] + direction, gt.R_nb[0])
+        r = ekf.update_forward_speed(target, 0.1)
+        assert r.accepted
+        assert abs(ekf.s.body_speed - target) < 0.5
 
     def test_nhc_removes_side_slip(self, drive):
         gt = drive.truth

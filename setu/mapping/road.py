@@ -230,13 +230,11 @@ class RoadPath:
         averaged away by CSA and would flatter the method, so the perturbation is
         a Gaussian-smoothed random field applied along the local normal.
         """
-        from scipy.ndimage import gaussian_filter1d
+        from ..core.random_fields import smooth_field
 
-        n = len(self.s)
-        raw = rng.normal(size=n)
-        smoothed = gaussian_filter1d(raw, sigma=max(correlation_m / self.ds, 1.0), mode="nearest")
-        std = float(np.std(smoothed))
-        offset = smoothed / std * sigma_m if std > 0 else np.zeros(n)
+        offset = smooth_field(
+            rng, len(self.s), max(correlation_m / self.ds, 1.0), amplitude=sigma_m
+        )
 
         normal = np.column_stack([-np.sin(self.psi), np.cos(self.psi)])
         return RoadPath.from_polyline(
