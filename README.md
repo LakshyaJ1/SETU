@@ -65,7 +65,8 @@ frequent zero-velocity updates. That is the aliasing limitation described below,
 showing up exactly where it should, and the fix is multi-hypothesis estimation
 rather than tuning.
 
-The SIH gate is 10% drift and a 100 m final error, so this sits 15–30× inside it.
+The SIH gate is 10% drift and a 100 m final error. The worst route here sits
+4.5× inside the drift gate and 5× inside the error gate; the rest are 20–30× in.
 
 **The falsification test passed.** 64% of the error accumulated between landmarks
 is given back at them: the sawtooth predicted in
