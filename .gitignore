@@ -24,3 +24,8 @@ ui/dist/
 
 # Local verification artefacts (screenshots, logs)
 .shots/
+
+# Presentation deliverables. Kept locally, deliberately not published:
+# the decks are the team's submission artefacts, not part of the codebase.
+*.pptx
+*.pdf

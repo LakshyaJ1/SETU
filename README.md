@@ -19,7 +19,7 @@ that with measurements whose error does not accumulate with time.
 | [`docs/`](docs/) | The full design: problem brief, landscape, approach, architecture, system design, tech stack, models, evaluation protocol, roadmap, 66 references |
 | [`setu/`](setu/) | The reference implementation of the estimation core |
 | [`tests/`](tests/) | 169 tests, run against closed-form physics rather than snapshots |
-| [`assets/`](assets/) | Deck figures and the presentation builders |
+| [`assets/`](assets/) | Deck figures and the presentation builders. The generated `.pptx`/`.pdf` decks are deliberately not tracked; run the builders to reproduce them |
 | [`PRODUCT.md`](PRODUCT.md) · [`DESIGN.md`](DESIGN.md) | Product truth and the visual system for the report surface |
 
 This is the **Python twin** called for in
