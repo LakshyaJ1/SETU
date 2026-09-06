@@ -22,6 +22,23 @@ from .theme import CSS_VARIABLES, SERIES
 __all__ = ["render_report", "write_report"]
 
 # Split across lines only so the source stays readable; the URL is one string.
+SWEEP_SCRIPT = """<script>
+/* Adds the sweep when the chart is reached. Purely additive: the page is
+   complete and readable if this never runs. Inline and dependency-free, so the
+   report still opens from a file with no network. */
+(function () {
+  var el = document.querySelector('.reveal-rect');
+  if (!el || !('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { el.classList.add('sweeping'); io.disconnect(); }
+    });
+  }, { threshold: 0.2 });
+  io.observe(el.ownerSVGElement || el);
+})();
+</script>"""
+
+
 FONT_HREF = (
     "https://fonts.googleapis.com/css2"
     "?family=IBM+Plex+Mono:wght@400;500"
@@ -164,6 +181,11 @@ h2 {
   font-family: var(--font-mono);
 }
 @media (max-width: 780px) { .chart-hint { display: block; } }
+@media (max-width: 700px) { .table-hint { display: block; } }
+.table-hint {
+  display: none; margin: 12px 2px 0; font-size: 12px; color: var(--ink-muted);
+  font-family: var(--font-mono);
+}
 
 /* SVG text roles */
 .tick, .annot-muted, .row-label, .axis-title, .series-label, .row-value {
@@ -232,13 +254,16 @@ footer {
 }
 
 /* -- the one authored motion: the plot draws in ------------------------- */
+/* The default state is fully drawn. The sweep is added, never subtracted.
+   Animating from scaleX(0) meant that if the trigger did not fire -- no
+   IntersectionObserver, no JS, a screenshot taken without scrolling -- the clip
+   stayed closed and the hero chart rendered completely empty. A motion moment
+   decorates a visible page; it must never gate one. */
 @keyframes sweep { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-.reveal-rect {
-  transform-origin: left center;
-  animation: sweep 1500ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
+.reveal-rect { transform-origin: left center; transform: scaleX(1); }
+.reveal-rect.sweeping { animation: sweep 1500ms cubic-bezier(0.16, 1, 0.3, 1) both; }
 @media (prefers-reduced-motion: reduce) {
-  .reveal-rect { animation: none; transform: scaleX(1); }
+  .reveal-rect.sweeping { animation: none; transform: scaleX(1); }
 }
 
 @media (max-width: 640px) {
@@ -266,8 +291,12 @@ def _icon(kind: str) -> str:
 
 
 def _legend(traces) -> str:
+    # Fixed series order, not the order the traces happen to arrive in. Left as
+    # given, the page's own subject rendered last and orphaned onto a second
+    # row, against theme.SERIES and DESIGN.md's "assigned in fixed order".
+    order = list(SERIES)
     items = []
-    for tr in traces:
+    for tr in sorted(traces, key=lambda t: order.index(t.label) if t.label in order else 99):
         spec = SERIES.get(tr.label)
         if not spec:
             continue
@@ -411,8 +440,10 @@ def render_report(
     <h2>Which channel could speak, and when</h2>
     <p class="lede">The design rule is that no two channels share a blind spot. The gaps
       are the content: where one falls silent another has to be carrying the estimate, and
-      if they ever go quiet together the claim fails right here.</p>
-    <div class="panel"><div class="chart-scroll">{coverage_strip(chans)}</div></div>
+      if they ever go quiet together the claim fails right here. These percentages cover the
+      blackout window only, so they differ from the whole-session figures noted above.</p>
+    <div class="panel"><div class="chart-scroll">{coverage_strip(chans)}</div>
+      <p class="chart-hint">Drag sideways for the rest of the window.</p></div>
   </section>"""
 
     body = f"""
@@ -465,7 +496,8 @@ def render_report(
       non-holonomic constraint and zero-velocity updates. Any system that beats only pure
       inertial has proved nothing. This table is also the accessible view of the chart
       above.</p>
-    <div class="panel">{_table(result.traces)}</div>
+    <div class="panel">{_table(result.traces)}
+      <p class="table-hint">Drag the table sideways for the remaining columns.</p></div>
   </section>
   {cover_html}
   {traj_html}
@@ -500,6 +532,7 @@ def render_report(
 <div class="wrap">
 {body}
 </div>
+{SWEEP_SCRIPT}
 </body>
 </html>
 """

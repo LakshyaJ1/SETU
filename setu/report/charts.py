@@ -68,6 +68,18 @@ def _fmt(v: float, unit: str = "") -> str:
     return f"{out}{unit}"
 
 
+def _tick_label(v: float) -> str:
+    """Axis ticks print at the precision the value needs, and no more.
+
+    Routing decade ticks through the general formatter produced a column
+    reading 30.0 / 10.0 / 3.00 / 1.00 -- three precisions stacked in one
+    tabular column, on a page whose whole type commitment is aligned figures.
+    """
+    if v >= 1.0:
+        return f"{v:,.0f}"
+    return f"{v:g}"
+
+
 def _log_ticks(lo: float, hi: float) -> list[float]:
     """Decade and half-decade ticks spanning the range."""
     candidates = []
@@ -132,7 +144,7 @@ def error_vs_distance(
         )
         out.append(
             f'<text x="{f.x0 - 12:.1f}" y="{y + 4:.1f}" text-anchor="end" '
-            f'class="tick">{_fmt(v)}</text>'
+            f'class="tick">{_tick_label(v)}</text>'
         )
     # Round tick values, not fractions of the maximum: "222 m" is an artefact of
     # the axis, "200 m" is a distance a reader can hold on to.
@@ -156,17 +168,31 @@ def error_vs_distance(
         )
 
     # -- the SIH ceiling: 10 % of distance --------------------------------
-    ceiling = [(sx(d), sy(max(gate_ratio * d, lo))) for d in np.linspace(1.0, d_max, 60)]
-    pts = " ".join(f"{x:.1f},{y:.1f}" for x, y in ceiling)
-    out.append(
-        f'<polyline points="{pts}" fill="none" stroke="{TOKENS["ink_faint"]}" '
-        f'stroke-width="1.5" stroke-dasharray="3 5"/>'
-    )
-    cx, cy = ceiling[-1]
-    out.append(
-        f'<text x="{cx - 6:.1f}" y="{cy - 10:.1f}" text-anchor="end" class="annot-muted">'
-        f'SIH ceiling · 10% of distance</text>'
-    )
+    # The gate is 10 % of distance, which at 887 m is 89 m -- well above an axis
+    # whose top is set by the worst trace. Drawn unclipped it left the frame and
+    # took its label to y = -3.9, off-canvas: a fourth, most-prominent curve with
+    # no identity at all, on a page whose rule is that identity never rests on
+    # colour alone. Clip it, and label the last point that is actually visible.
+    ceiling = [
+        (sx(d), sy(max(gate_ratio * d, lo)))
+        for d in np.linspace(1.0, d_max, 160)
+        if sy(max(gate_ratio * d, lo)) >= f.y1
+    ]
+    if ceiling:
+        pts = " ".join(f"{x:.1f},{y:.1f}" for x, y in ceiling)
+        out.append(
+            f'<polyline points="{pts}" fill="none" stroke="{TOKENS["ink_faint"]}" '
+            f'stroke-width="1.5" stroke-dasharray="3 5"/>'
+        )
+        cx, cy = ceiling[-1]
+        # If the line exits through the top, label it below and to the left of
+        # its exit; if it stays inside, label it at the right-hand end.
+        exits_top = cy <= f.y1 + 1.0
+        out.append(
+            f'<text x="{cx - 8:.1f}" y="{cy + (16 if exits_top else -10):.1f}" '
+            f'text-anchor="end" class="annot-muted">'
+            f'SIH ceiling · 10% of distance</text>'
+        )
 
     # -- anchors, drawn under the traces ----------------------------------
     setu = next((t for t in traces if t.label == "SETU"), None)
@@ -191,12 +217,21 @@ def error_vs_distance(
                 f'stroke-width="1.5"/>'
             )
         out.append(
-            f'<text x="{f.x0 + 8:.1f}" y="{f.y1 + 12:.1f}" class="annot-accent">'
+            f'<text x="{f.x0 + 8:.1f}" y="{f.y0 - 10:.1f}" class="annot-accent">'
             f'{len(setu.anchor_distance_m)} curvature registrations, each one a reset'
             f'</text>'
         )
 
     # -- traces, SETU drawn last so it sits on top ------------------------
+    # Wrapped in the sweep clip. The CSS for this lived in the stylesheet from
+    # the start but nothing ever emitted the element, so the page shipped with
+    # dead keyframes and no motion at all.
+    out.append(
+        f'<clipPath id="hero-sweep"><rect class="reveal-rect" x="{f.x0 - 4:.1f}" '
+        f'y="{f.y1 - 24:.1f}" width="{f.width - f.x0 + 4:.1f}" '
+        f'height="{f.y0 - f.y1 + 48:.1f}"/></clipPath>'
+    )
+    out.append('<g clip-path="url(#hero-sweep)">')
     ordered = sorted(traces, key=lambda t: t.label == "SETU")
     for tr in ordered:
         spec = SERIES.get(tr.label, SERIES["SETU"])
@@ -220,6 +255,8 @@ def error_vs_distance(
             f'fill="{spec["color"]}">{_esc(spec["label"].split(" · ")[0])} '
             f'<tspan class="series-value">{_fmt(float(e[-1]))} m</tspan></text>'
         )
+
+    out.append("</g>")  # close the sweep clip
 
     # -- axis titles ------------------------------------------------------
     out.append(
@@ -346,7 +383,7 @@ def coverage_strip(channels: list[tuple[str, np.ndarray, np.ndarray]], *, width:
     if not channels:
         return ""
     row_h, gap, label_w, value_w = 26.0, 12.0, 248.0, 56.0
-    height = len(channels) * (row_h + gap) + 34.0
+    height = len(channels) * (row_h + gap) + 46.0
     # The percentage gets its own gutter. Printed inside the track it collided
     # with the bars and clipped at the frame edge.
     x0, x1 = label_w, width - value_w - 12.0
@@ -380,17 +417,44 @@ def coverage_strip(channels: list[tuple[str, np.ndarray, np.ndarray]], *, width:
                 f'rx="3" fill="{TOKENS["accent"]}" opacity="0.85"/>'
             )
         pct = float(valid.mean()) * 100.0
+        # An empty rounded rect reads as a render bug. A channel that is blind
+        # has to say so, in words -- that is the whole posture of the section.
+        if pct == 0.0:
+            out.append(
+                f'<text x="{x0 + 12:.1f}" y="{y + row_h / 2 + 4:.1f}" '
+                f'class="annot-muted">withheld for the whole window, by protocol 8.1</text>'
+            )
+        # Source strings stay ASCII (a mid-dot once corrupted this file through a
+        # mis-encoded write); the typographic connector is applied at draw time.
+        label = str(name).replace(" - ", " · ")
         out.append(
             f'<text x="{x0 - 14:.1f}" y="{y + row_h / 2 + 4:.1f}" text-anchor="end" '
-            f'class="row-label">{_esc(name)}</text>'
+            f'class="row-label">{_esc(label)}</text>'
         )
         out.append(
             f'<text x="{width - 12:.1f}" y="{y + row_h / 2 + 4:.1f}" text-anchor="end" '
             f'class="row-value">{pct:.0f}%</text>'
         )
+    # A strip whose lede says "the gaps are the content" has to say *when*.
+    t_all = np.asarray(channels[0][1], dtype=float)
+    span_s = max(float(t_all[-1] - t_all[0]), 1e-9)
+    y_axis = 8.0 + len(channels) * (row_h + gap) - gap + 7.0
+    step = 20.0 if span_s > 45 else 10.0
+    tick = 0.0
+    while tick <= span_s + 1e-6:
+        tx = x0 + (tick / span_s) * (x1 - x0)
+        out.append(
+            f'<line x1="{tx:.1f}" y1="{y_axis:.1f}" x2="{tx:.1f}" y2="{y_axis + 4:.1f}" '
+            f'stroke="{TOKENS["rule_strong"]}" stroke-width="1"/>'
+        )
+        out.append(
+            f'<text x="{tx:.1f}" y="{y_axis + 17:.1f}" text-anchor="middle" '
+            f'class="tick">{tick:.0f}</text>'
+        )
+        tick += step
     out.append(
-        f'<text x="{x0:.1f}" y="{height - 6:.1f}" class="annot-muted">'
-        f'time through the blackout →</text>'
+        f'<text x="{x0 - 14:.1f}" y="{y_axis + 17:.1f}" text-anchor="end" '
+        f'class="annot-muted">seconds into the blackout</text>'
     )
     out.append("</svg>")
     return "\n".join(out)

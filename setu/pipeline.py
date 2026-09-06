@@ -225,7 +225,7 @@ def run_pipeline(
             resampled = svo.speed.resampled_to(imu.t)
             speed_sources.append(resampled)
             channels["SVO - spectral odometer"] = (imu.t, resampled.valid)
-            notes.append(f"SVO active, coverage {svo.speed.coverage:.0%}")
+            notes.append(f"SVO active, {svo.speed.coverage:.0%} of the whole session")
         else:
             notes.append(f"SVO unavailable: {svo.reason}")
 
@@ -238,7 +238,7 @@ def run_pipeline(
         cts = levelled_speed(imu.t, imu.accel, imu.gyro, R_track, heading, config=cfg.cts)
         speed_sources.append(cts)
         channels["CTS - coordinated turn"] = (imu.t, cts.valid)
-        notes.append(f"CTS coverage {cts.coverage:.0%}")
+        notes.append(f"CTS valid for {cts.coverage:.0%} of the whole session")
 
     fused_speed = (
         merge_inverse_variance([m.resampled_to(imu.t) for m in speed_sources])
