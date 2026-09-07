@@ -74,6 +74,7 @@ fun TripsScreen(model: SetuViewModel, onImport: () -> Unit) {
 @Composable
 fun TripDetailScreen(model: SetuViewModel, trip: Trip, onExport: (Trip) -> Unit) {
     var confirmDelete by remember { mutableStateOf(false) }
+    val hasEstimates = trip.points.any { it.filterRadius95Meters != null }
     val dark = MaterialTheme.colorScheme.background.red < 0.3f
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding()) {
         PageHeader("Drive details", onBack = { model.overlay = null }, action = {
@@ -85,20 +86,21 @@ fun TripDetailScreen(model: SetuViewModel, trip: Trip, onExport: (Trip) -> Unit)
                 Modifier.padding(top = 8.dp, bottom = 20.dp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             if (trip.points.size >= 2) Surface(shape = RoundedCornerShape(20.dp), modifier = Modifier.height(240.dp).fillMaxWidth()) {
                 val maps by model.activeMap.collectAsStateWithLifecycle()
-                NavigationMap(DriveRoute(trip.points.map { it.point }, trip.distanceMeters, emptyList()), trip.points.last(), 0, dark, Modifier.fillMaxSize(), maps = maps)
+                NavigationMap(DriveRoute(trip.points.map { it.point }, trip.distanceMeters, emptyList()), trip.points.last(), 0, dark, Modifier.fillMaxSize(), maps = maps,
+                    recordedPath = trip.points)
             } else Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surfaceContainer) {
                 Column(Modifier.fillMaxWidth().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(Icons.Outlined.LocationOff, null, Modifier.size(36.dp))
-                    Text("No GPS path to draw", Modifier.padding(top = 12.dp), style = MaterialTheme.typography.titleMedium)
+                    Text("No position path to draw", Modifier.padding(top = 12.dp), style = MaterialTheme.typography.titleMedium)
                     Text("The raw sensor recording is still available to export.", Modifier.padding(top = 8.dp), style = MaterialTheme.typography.bodyMedium)
                 }
             }
             Row(Modifier.padding(top = 24.dp, bottom = 8.dp), horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                 Metric("Duration", durationLabel(trip.durationMs), Modifier.weight(1f))
-                Metric("GPS distance", distanceLabel(trip.distanceMeters), Modifier.weight(1f))
+                Metric(if (hasEstimates) "Estimated distance" else "GPS distance", distanceLabel(trip.distanceMeters), Modifier.weight(1f))
             }
             ReadingRow("Timestamped records", "%,d".format(trip.sampleCount), Icons.Outlined.GraphicEq)
-            ReadingRow("GPS positions", "%,d".format(trip.points.size), Icons.Outlined.GpsFixed)
+            ReadingRow(if (hasEstimates) "GPS + sensor positions" else "GPS positions", "%,d".format(trip.points.size), Icons.Outlined.GpsFixed)
             ReadingRow("Data source", if (trip.synthetic) "Synthetic sample" else "Recorded sensors", Icons.Outlined.FolderOpen)
             if (trip.recovered) InformationNote("Recovered after an interrupted recording. Only complete records can be replayed or exported.")
             Button(onClick = { model.playTrip(trip) }, enabled = trip.points.size >= 2,
@@ -108,7 +110,7 @@ fun TripDetailScreen(model: SetuViewModel, trip: Trip, onExport: (Trip) -> Unit)
             OutlinedButton(onClick = { onExport(trip) }, modifier = Modifier.fillMaxWidth().padding(top = 10.dp).heightIn(min = 52.dp).testTag("export-trip"), shape = RoundedCornerShape(16.dp)) {
                 Icon(Icons.Outlined.IosShare, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)); Text("Export original recording")
             }
-            InformationNote("Export includes raw sensor values and precise GPS positions. Share only with someone you trust. GPS distance is not a validated odometer reading.")
+            InformationNote("Export includes raw sensors, precise GPS observations and any sensor-estimated trajectory. Share only with someone you trust. Gaps are not interpolated; path distance is not a validated odometer reading.")
             Spacer(Modifier.height(16.dp))
         }
     }

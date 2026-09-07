@@ -15,9 +15,12 @@ does not close the remaining physical-validation or full-estimator requirements.
 The September 7, 2026 Delhi update adds an included city-wide street extract and
 verifies actual non-mock GPS over its local streets on the USB-connected phone.
 Coverage and main-road-only preview routing are bounded in `docs/15-delhi-offline-map.md`;
-APK-linked checks are in `docs/verification/android/delhi/README.md`. The phone's
-missing heading accuracy still prevents native alignment. This map update does
-not close whole-India coverage or GPS-denied field validation.
+APK-linked checks are in `docs/verification/android/delhi/README.md`. The subsequent
+sensor-fallback update adds checked-compass initialization for missing numerical
+heading accuracy, midpoint propagation, callback-skew handling and preserved
+sensor-estimated trajectories. Its contract is `docs/16-sensor-fallback.md` and its
+separate checks are in `docs/verification/android/sensor-fallback/README.md`.
+Neither update closes whole-India coverage or GPS-denied field accuracy validation.
 
 ## Completion ledger
 

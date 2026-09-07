@@ -31,6 +31,24 @@ class NativeEngineTest {
     }
 
     @Test
+    fun measuredStopWithoutCourseUsesItsSpeedUncertainty() {
+        fun radiusAfterGap(course: Double?): Double = NativeEngine(directory).use { engine ->
+            engine.attitude(start, rotation, 0.15)
+            engine.imu(start, acceleration, gyro)
+            engine.gnss(fix(start).copy(speedMps = 0.0, bearing = course,
+                bearingAccuracyDegrees = course?.let { 1.0 }, speedAccuracyMps = 0.2))
+            repeat(600) { index ->
+                val timestamp = start + (index + 1) * 10_000_000L
+                engine.imu(timestamp, acceleration, gyro)
+                if (index == 99 || index == 199) engine.gnss(fix(timestamp).copy(speedMps = 0.0,
+                    bearing = course, bearingAccuracyDegrees = course?.let { 1.0 }, speedAccuracyMps = 0.2))
+            }
+            engine.snapshot()[7]
+        }
+        assertEquals(radiusAfterGap(0.0), radiusAfterGap(null), 1e-8)
+    }
+
+    @Test
     fun delayedCorrectionsMatchOnTimePropagationAndGeographicDisplacement() {
         NativeEngine(directory).use { timely -> NativeEngine(directory).use { delayed ->
             seed(timely)

@@ -1,0 +1,20 @@
+{
+  "scenario": "Replay of captured physical sensors with an artificial eight-second GPS omission; not a live outage or surveyed accuracy",
+  "pairedSamples": 12041,
+  "nativeSamples": 284,
+  "inertialSamples": 75,
+  "gpsObservationsWithheld": 8,
+  "firstAlignmentSeconds": 2.601598875,
+  "statuses": {
+    "Checking compass alignment": 13,
+    "GPS + IMU estimate": 209,
+    "Inertial estimate": 75,
+    "Estimate withheld": 5
+  },
+  "details": {
+    "Get a GPS fix first; keep the phone still briefly to check its compass.": 2,
+    "Checking compass stability. Keep the phone still for two seconds.": 11,
+    "Compass-aligned sensor prediction with estimated uncertainty. No road matching or field-accuracy guarantee. GPS outages are bounded to 10 seconds or a 150 m filter radius.": 284,
+    "More than 10 s without an accepted fix, or a 95% radius above 150 m. GPS remains the fallback.": 5
+  }
+}

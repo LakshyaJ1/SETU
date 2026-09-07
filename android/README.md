@@ -5,10 +5,13 @@ Android Studio. The Python scientific reference remains at the repository root.
 
 ## Presentation MVP
 
-Delhi is now included alongside Bengaluru Central. Select it in **Settings →
-Offline area → Delhi → Use this map**. The street map covers the Delhi-wide
-envelope; route previews use main roads. See `../docs/15-delhi-offline-map.md`
-for provenance, the offline distribution pack and the India-wide boundary.
+Delhi & NCR is included alongside Bengaluru Central. Select it in **Settings →
+Offline area → Delhi & NCR → Use this map**. The expanded regional map includes
+public local streets and a Shahdara-area-to-MAIT preview. Planned routes are blue;
+dashed access links do not assert a drivable entrance. See `../docs/17-delhi-ncr-demo.md`
+for coverage, calibration requirements and the portable offline pack. The crash-fix
+build loads local vector tiles and corrects renderer lifecycle/readiness handling;
+see `../docs/verification/android/map-stability/README.md` for measured checks.
 
 Start with **Track my position** for a live recorded session, or
 **Demo GPS loss & recovery** for the clearly labelled native-engine simulation.
@@ -53,8 +56,14 @@ settings and theme switching. Separate device tests cover the road graph and
 recording import, export, deletion and recovery. They save unaltered captures in
 the app's external `files/verification/` directory. Tests do not validate road
 safety, positioning accuracy or physical-device sensor rates.
-The later USB-phone rehearsal observes real GPS and approximately 200 Hz IMU,
-but identifies a missing heading-accuracy input that blocks live native alignment.
+The USB-phone rehearsal observes real GPS and approximately 200 Hz IMU. The newer
+sensor-fallback build adds checked-compass initialization when numerical heading
+accuracy is absent, timestamp-skew handling and saved sensor-estimated trajectories.
+It still requires a starting fix and usable heading alignment. The NCR update adds
+experimental GPS-motion alignment when the compass is disturbed; this requires
+measured acceleration/braking and turns, not just waiting or constant-speed travel.
+GPS-off prediction is bounded, not indefinite. Setup: `../docs/16-sensor-fallback.md`.
+Current map/crash checks: `../docs/verification/android/map-stability/README.md`.
 See `../docs/verification/android/delhi/README.md` for the Delhi build's APK-linked
 phone checks, and `../docs/verification/android/demo-mvp/README.md` for the earlier
 controlled native demo and physical GPS tracking evidence.

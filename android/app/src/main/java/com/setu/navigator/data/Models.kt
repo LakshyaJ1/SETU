@@ -33,7 +33,11 @@ data class GeoPoint(val latitude: Double, val longitude: Double) {
 
 data class Place(val id: String, val name: String, val detail: String, val point: GeoPoint)
 data class Maneuver(val index: Int, val text: String, val direction: String, val distanceFromStart: Double)
-data class DriveRoute(val points: List<GeoPoint>, val distanceMeters: Double, val maneuvers: List<Maneuver>)
+data class DriveRoute(val points: List<GeoPoint>, val distanceMeters: Double, val maneuvers: List<Maneuver>,
+                      val requestedStart: GeoPoint? = null, val requestedDestination: GeoPoint? = null) {
+    val startOffsetMeters get() = requestedStart?.let { points.firstOrNull()?.distanceTo(it) } ?: 0.0
+    val destinationOffsetMeters get() = requestedDestination?.let { points.lastOrNull()?.distanceTo(it) } ?: 0.0
+}
 data class Pose(
     val point: GeoPoint,
     val speedMps: Double? = null,

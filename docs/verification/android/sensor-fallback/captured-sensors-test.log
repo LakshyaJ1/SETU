@@ -1,0 +1,83 @@
+INSTRUMENTATION_STATUS: class=com.setu.navigator.SensorFallbackTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=
+com.setu.navigator.SensorFallbackTest:
+INSTRUMENTATION_STATUS: test=missingHardwareHeadingAccuracyStillUsesRealSensorPipelineThroughTurns
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.SensorFallbackTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=missingHardwareHeadingAccuracyStillUsesRealSensorPipelineThroughTurns
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.SensorFallbackTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=capturedPhysicalSensorsCanBeReplayedWithoutLeakingCoordinates
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.SensorFallbackTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Captured compass and GPS must initialize: {Get a GPS fix first; keep the phone still briefly to check its compass.=2, Checking compass stability. Keep the phone still for two seconds.=14, Waiting for fresh accelerometer, gyroscope and calibrated magnetometer samples.=271, Keep the phone still for two seconds to check compass alignment.=10, Magnetic interference detected. Move away from metal or magnetic mounts.=5}
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.setu.navigator.SensorFallbackTest.capturedPhysicalSensorsCanBeReplayedWithoutLeakingCoordinates(SensorFallbackTest.kt:179)
+
+INSTRUMENTATION_STATUS: stream=
+Error in capturedPhysicalSensorsCanBeReplayedWithoutLeakingCoordinates(com.setu.navigator.SensorFallbackTest):
+java.lang.AssertionError: Captured compass and GPS must initialize: {Get a GPS fix first; keep the phone still briefly to check its compass.=2, Checking compass stability. Keep the phone still for two seconds.=14, Waiting for fresh accelerometer, gyroscope and calibrated magnetometer samples.=271, Keep the phone still for two seconds to check compass alignment.=10, Magnetic interference detected. Move away from metal or magnetic mounts.=5}
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.setu.navigator.SensorFallbackTest.capturedPhysicalSensorsCanBeReplayedWithoutLeakingCoordinates(SensorFallbackTest.kt:179)
+
+INSTRUMENTATION_STATUS: test=capturedPhysicalSensorsCanBeReplayedWithoutLeakingCoordinates
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.setu.navigator.SensorFallbackTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=coldStartWithoutGpsNeverInventsAnAbsolutePosition
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.SensorFallbackTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=coldStartWithoutGpsNeverInventsAnAbsolutePosition
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.SensorFallbackTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=disturbedMagnetometerDoesNotBypassHeadingChecks
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.SensorFallbackTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=disturbedMagnetometerDoesNotBypassHeadingChecks
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 2.027
+There was 1 failure:
+1) capturedPhysicalSensorsCanBeReplayedWithoutLeakingCoordinates(com.setu.navigator.SensorFallbackTest)
+java.lang.AssertionError: Captured compass and GPS must initialize: {Get a GPS fix first; keep the phone still briefly to check its compass.=2, Checking compass stability. Keep the phone still for two seconds.=14, Waiting for fresh accelerometer, gyroscope and calibrated magnetometer samples.=271, Keep the phone still for two seconds to check compass alignment.=10, Magnetic interference detected. Move away from metal or magnetic mounts.=5}
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.setu.navigator.SensorFallbackTest.capturedPhysicalSensorsCanBeReplayedWithoutLeakingCoordinates(SensorFallbackTest.kt:179)
+
+FAILURES!!!
+Tests run: 4,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1

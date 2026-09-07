@@ -149,3 +149,59 @@ def test_simplification_preserves_endpoints_bends_and_pinned_junctions():
     assert simplify_indices(COORDINATES) == [0, 2]
     assert simplify_indices(COORDINATES, pinned=[1]) == [0, 1, 2]
     assert simplify_indices([[77.21, 28.63], [77.22, 28.63], [77.22, 28.64]]) == [0, 1, 2]
+
+
+def test_ncr_configuration_includes_satellite_cities_and_local_routing():
+    configuration = Path(__file__).resolve().parents[1] / "tools/map-regions/delhi-ncr.json"
+    manifest = json.loads(configuration.read_text(encoding="utf-8"))
+    for point in (
+        [77.03, 28.46],
+        [77.39, 28.54],
+        [77.45, 28.67],
+        [76.99, 29.69],
+        [76.63, 27.55],
+        [77.49, 27.22],
+    ):
+        assert inside(point, manifest["bounds"])
+    assert not inside([77.60, 12.97], manifest["bounds"])
+    assert {"residential", "service", "living_street"} <= set(manifest["routingClasses"])
+    assert manifest["indexedNodes"]
+    assert manifest["routingToleranceMeters"] == 5.0
+    assert manifest["drawingToleranceMeters"] == 3.0
+    assert manifest["demoDestination"] == "mait-rohini"
+
+
+def test_full_routing_keeps_local_streets_and_chunks_large_draw_groups():
+    feature, road = way_data(
+        42, [101, 102, 103], COORDINATES, {"highway": "residential"}, BOUNDS, {0}
+    )
+    features, roads = compact_region([feature] * 600, [road], {"residential"})
+    assert len(features) == 3
+    assert sum(len(feature["geometry"]["coordinates"]) for feature in features) == 600
+    assert len(roads) == 1
+
+
+def test_multiple_extracts_deduplicate_roads_and_emit_indexed_topology(tmp_path):
+    osmium = pytest.importorskip("osmium")
+    source = tmp_path / "source.osm.pbf"
+    header = osmium.io.Header()
+    header.set("osmosis_replication_timestamp", "2026-09-06T20:21:35Z")
+    with osmium.SimpleWriter(str(source), header=header) as writer:
+        for identifier, point in zip([101, 102, 103], COORDINATES, strict=True):
+            writer.add_node(osmium.osm.mutable.Node(id=identifier, location=tuple(point)))
+        writer.add_way(
+            osmium.osm.mutable.Way(id=42, nodes=[101, 102, 103], tags={"highway": "residential"})
+        )
+    glyphs = tmp_path / "glyphs"
+    glyphs.mkdir()
+    (glyphs / "0-255.pbf").touch()
+    configuration = Path(__file__).resolve().parents[1] / "tools/map-regions/delhi-ncr.json"
+    output = tmp_path / "region"
+    summary = convert(source, configuration, output, glyphs, [source])
+    graph = json.loads((output / "roads.json").read_text(encoding="utf-8"))
+    assert summary["routableWays"] == 1
+    assert len(summary["sources"]) == 2
+    assert graph["nodeCount"] == 2
+    assert graph["edgeCount"] == 2
+    assert graph["roads"][0]["nodes"] == [1, 2]
+    assert graph["roads"][0]["coordinates"] == [COORDINATES[0], COORDINATES[-1]]

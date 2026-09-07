@@ -177,6 +177,7 @@ fun DiagnosticsScreen(model: SetuViewModel) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp, bottom = 12.dp))
             if (native.pose?.mock == true) Text("Test-provider inputs · not a road drive", style = MaterialTheme.typography.labelMedium)
             ReadingRow("Paired IMU samples", native.pairedSamples.toString(), Icons.Outlined.Sensors)
+            ReadingRow("Heading alignment", native.headingSource ?: "Not initialized", Icons.Outlined.Explore)
             ReadingRow("GPS accepted / gated", "${native.accepted} / ${native.gated}", Icons.Outlined.GpsFixed)
             ReadingRow("Delayed fixes replayed", native.delayedCorrections.toString(), Icons.Outlined.History)
             ReadingRow("Last GPS aid", native.gpsAgeSeconds?.takeIf { currentNative != null }?.let { "%.1f s ago".format(it) } ?: "Unavailable", Icons.Outlined.Schedule)

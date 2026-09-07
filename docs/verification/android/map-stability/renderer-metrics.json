@@ -1,0 +1,37 @@
+{
+  "scenario": "Real offline NCR vector tiles, six location\/zoom\/theme\/disposal cycles; no sensor accuracy claim",
+  "coldLoadMs": 1383,
+  "cycles": [
+    {
+      "cycle": 0,
+      "pssKiB": 247228,
+      "nativeBytes": 20068184
+    },
+    {
+      "cycle": 1,
+      "pssKiB": 246950,
+      "nativeBytes": 22142752
+    },
+    {
+      "cycle": 2,
+      "pssKiB": 247143,
+      "nativeBytes": 22911488
+    },
+    {
+      "cycle": 3,
+      "pssKiB": 246860,
+      "nativeBytes": 22173688
+    },
+    {
+      "cycle": 4,
+      "pssKiB": 246872,
+      "nativeBytes": 21371336
+    },
+    {
+      "cycle": 5,
+      "pssKiB": 245827,
+      "nativeBytes": 21249968
+    }
+  ],
+  "finalizerObservationMs": 12000
+}

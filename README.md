@@ -43,7 +43,7 @@ The experiment writes a self-contained HTML report to `out/` and opens it.
 
 The native Kotlin/Compose workspace is in `android/`. Open that directory in
 Android Studio, or follow `android/README.md` to build the debug APK. It includes
-bundled Bengaluru and Delhi maps, local map-pack exploration, regional destination search, GPS capture,
+bundled Bengaluru and Delhi/NCR maps, local map-pack exploration, regional destination search, GPS capture,
 foreground sensor recording, trip replay, export/import and an AI/ML handoff
 contract. This is a development application, not a production navigation release.
 Map import, direct checksum-verified download, region selection and removal are
@@ -52,8 +52,12 @@ documented in `docs/13-offline-map-packs.md`; no hosted map catalogue is supplie
 For the presentation MVP, start with live position tracking or the explicitly
 simulated native-engine GPS-loss demonstration. The rehearsal sequence and
 precise boundaries are in `docs/14-demo-mvp.md`.
-Delhi coverage, the portable local archive and phone verification are documented
-in `docs/15-delhi-offline-map.md`; whole-India offline coverage is not yet included.
+The expanded Delhi/NCR map, blue route line and GPS-motion calibration changes
+are documented in `docs/17-delhi-ncr-demo.md`; whole-India coverage is not included.
+The earlier Delhi-only build remains documented in `docs/15-delhi-offline-map.md`.
+GPS-off initialization, checked-compass fallback and the bounded sensor-prediction
+window are explained in `docs/16-sensor-fallback.md`. Internet-off is not the same
+as starting without a GPS fix.
 
 Implementation and verification are tracked in `docs/11-android-delivery.md`.
 Actual emulator captures live under `docs/verification/android/`; screenshots

@@ -130,7 +130,8 @@ int setu_filter_propagate(SetuFilter* filter, const double acceleration[3], cons
     const Matrix3 rotation = filter->rotation;
     const Vector3 velocity = filter->velocity;
     const Vector3 position = filter->position;
-    const Vector3 acceleration_nav = rotation * (accel_mid - filter->accel_bias) + gravity;
+    const Matrix3 rotation_mid = rotation * exponential((gyro_mid - filter->gyro_bias) * (0.5 * seconds));
+    const Vector3 acceleration_nav = rotation_mid * (accel_mid - filter->accel_bias) + gravity;
     SetuFilter propagated = *filter;
     propagated.rotation = normalize(rotation * exponential((gyro_mid - filter->gyro_bias) * seconds));
     propagated.velocity += acceleration_nav * seconds;

@@ -46,6 +46,7 @@ fun NavigationMap(
     route: DriveRoute?, pose: Pose?, bottomInset: Int, dark: Boolean,
     modifier: Modifier = Modifier, maps: OfflineMap, reserveControls: Boolean = false, originLabel: String = "Start", onReady: (MapLibreMap) -> Unit = {},
     trail: List<Pose> = emptyList(), comparisonPose: Pose? = null,
+    recordedPath: List<Pose>? = null,
     followPosition: Boolean = false, onFollowInterrupted: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -72,45 +73,47 @@ fun NavigationMap(
     }
 
     DisposableEffect(mapView, lifecycle) {
+        var started = false
+        var resumed = false
+        fun synchronize(state: Lifecycle.State) {
+            if (resumed && !state.isAtLeast(Lifecycle.State.RESUMED)) { mapView.onPause(); resumed = false }
+            if (started && !state.isAtLeast(Lifecycle.State.STARTED)) { mapView.onStop(); started = false }
+            if (!started && state.isAtLeast(Lifecycle.State.STARTED)) { mapView.onStart(); started = true }
+            if (!resumed && state.isAtLeast(Lifecycle.State.RESUMED)) { mapView.onResume(); resumed = true }
+        }
         val memoryCallbacks = object : ComponentCallbacks2 {
             override fun onConfigurationChanged(configuration: Configuration) = Unit
             override fun onLowMemory() = mapView.onLowMemory()
             override fun onTrimMemory(level: Int) {
-                if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) mapView.onLowMemory()
+                if (level == ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW || level == ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL) mapView.onLowMemory()
             }
         }
         context.applicationContext.registerComponentCallbacks(memoryCallbacks)
-        mapView.onStart()
-        mapView.onResume()
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_START -> mapView.onStart()
-                Lifecycle.Event.ON_RESUME -> mapView.onResume()
-                Lifecycle.Event.ON_PAUSE -> mapView.onPause()
-                Lifecycle.Event.ON_STOP -> mapView.onStop()
-                else -> Unit
-            }
-        }
+        val observer = LifecycleEventObserver { _, event -> synchronize(event.targetState) }
         lifecycle.addObserver(observer)
+        synchronize(lifecycle.currentState)
         onDispose {
             lifecycle.removeObserver(observer)
             context.applicationContext.unregisterComponentCallbacks(memoryCallbacks)
-            mapView.onLowMemory()
-            mapView.onPause()
-            mapView.onStop()
+            synchronize(Lifecycle.State.CREATED)
             mapView.onDestroy()
         }
     }
 
     DisposableEffect(mapView, nativeMap) {
-        val listener = MapView.OnDidFinishRenderingFrameListener { _, _, _ ->
-            if (styleReady && !mapRendered) {
-                val bounds = RectF(0f, 0f, mapView.width.toFloat(), mapView.height.toFloat())
-                if (nativeMap?.queryRenderedFeatures(bounds, "roads", "parks", "water", "buildings", "journey-line", "vehicle-marker", "position-without-heading")?.isNotEmpty() == true) mapRendered = true
-            }
+        val listener = MapView.OnDidFinishRenderingFrameListener { fully, _, _ ->
+            if (fully && styleReady && mapError == null) mapRendered = true
         }
         mapView.addOnDidFinishRenderingFrameListener(listener)
-        onDispose { mapView.removeOnDidFinishRenderingFrameListener(listener) }
+        val failure = MapView.OnDidFailLoadingMapListener { _ ->
+            mapError = "The offline map could not load. Try again or select another offline area."
+            mapRendered = false
+        }
+        mapView.addOnDidFailLoadingMapListener(failure)
+        onDispose {
+            mapView.removeOnDidFinishRenderingFrameListener(listener)
+            mapView.removeOnDidFailLoadingMapListener(failure)
+        }
     }
 
     DisposableEffect(nativeMap) {
@@ -155,25 +158,47 @@ fun NavigationMap(
         mapRendered = false
         mapError = null
         val city = try {
-            withContext(Dispatchers.IO) { maps.cityJson() }
-        } catch (error: java.io.IOException) {
+            withContext(Dispatchers.IO) { maps.citySource() }
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
+        } catch (error: Exception) {
             mapError = "The active map could not be opened. Try again or select another offline area."
             return@LaunchedEffect
         }
         withContext(Dispatchers.Main.immediate) {
           map.cameraPosition = CameraPosition.Builder().target(LatLng(maps.center.latitude, maps.center.longitude)).zoom(14.4).build()
-          map.setStyle(Style.Builder().fromJson(json)) { style ->
+          val document = JSONObject(json)
+          document.getJSONObject("sources").put("city", city)
+          if (city.getString("type") == "vector") {
+              val layers = document.getJSONArray("layers")
+              for (index in 0 until layers.length()) {
+                  val layer = layers.getJSONObject(index)
+                  if (layer.optString("source") == "city") layer.put("source-layer", "city")
+              }
+          }
+          map.setStyle(Style.Builder().fromJson(document.toString())) { style ->
             if (generation != styleGeneration) return@setStyle
-            style.getSourceAs<GeoJsonSource>("city")?.setGeoJson(city)
             style.addSource(GeoJsonSource("journey", emptyFeatures()))
             style.addSource(GeoJsonSource("uncertainty", emptyFeatures()))
             style.addSource(GeoJsonSource("vehicle", emptyFeatures()))
             style.addSource(GeoJsonSource("endpoints", emptyFeatures()))
+            style.addSource(GeoJsonSource("route-access", emptyFeatures()))
+            style.addSource(GeoJsonSource("map-places", JSONObject().put("type", "FeatureCollection").put("features", JSONArray().apply {
+                maps.places.forEach { place ->
+                    put(JSONObject().put("type", "Feature").put("properties", JSONObject().put("label", place.name))
+                        .put("geometry", JSONObject().put("type", "Point").put("coordinates", JSONArray().put(place.point.longitude).put(place.point.latitude))))
+                }
+            }).toString()))
+            style.addLayer(SymbolLayer("area-labels", "map-places").withProperties(textField("{label}"), textFont(arrayOf("Noto Sans Regular")),
+                textSize(12f), textColor(if (dark) "#C2CAB7" else "#67715E"), textHaloColor(if (dark) "#15231C" else "#FCFDF9"),
+                textHaloWidth(1.5f), textPadding(12f)).apply { minZoom = 7f; maxZoom = 14f })
             style.addSource(GeoJsonSource("tracked-path", emptyFeatures()))
             style.addSource(GeoJsonSource("gps-reference", emptyFeatures()))
             style.addLayer(FillLayer("uncertainty-area", "uncertainty").withProperties(fillColor("#67A879"), fillOpacity(0.18f)))
-            style.addLayer(LineLayer("journey-outline", "journey").withProperties(lineColor("#FCFDF9"), lineWidth(9f), lineCap(Property.LINE_CAP_ROUND), lineJoin(Property.LINE_JOIN_ROUND)))
-            style.addLayer(LineLayer("journey-line", "journey").withProperties(lineColor("#24764D"), lineWidth(5f), lineCap(Property.LINE_CAP_ROUND), lineJoin(Property.LINE_JOIN_ROUND)))
+            style.addLayer(LineLayer("route-access-line", "route-access").withProperties(lineColor(if (dark) "#C2CAB7" else "#67715E"),
+                lineWidth(2f), lineDasharray(arrayOf(2f, 2f))))
+            style.addLayer(LineLayer("journey-outline", "journey").withProperties(lineColor("#FCFDF9"), lineWidth(11f), lineCap(Property.LINE_CAP_ROUND), lineJoin(Property.LINE_JOIN_ROUND)))
+            style.addLayer(LineLayer("journey-line", "journey").withProperties(lineColor(if (dark) "#79B4FF" else "#1769E0"), lineWidth(7f), lineCap(Property.LINE_CAP_ROUND), lineJoin(Property.LINE_JOIN_ROUND)))
             style.addLayer(LineLayer("tracked-line", "tracked-path").withProperties(lineColor(if (dark) "#80CAEF" else "#176C96"),
                 lineWidth(4f), lineCap(Property.LINE_CAP_ROUND), lineJoin(Property.LINE_JOIN_ROUND)))
             style.addLayer(CircleLayer("last-gps-marker", "gps-reference").withProperties(circleColor("#A96617"),
@@ -191,7 +216,7 @@ fun NavigationMap(
                 iconAllowOverlap(true), iconIgnorePlacement(true), iconRotationAlignment(Property.ICON_ROTATION_ALIGNMENT_MAP),
                 iconRotate(Expression.get("bearing"))).withFilter(Expression.has("bearing")))
             styleReady = true
-            if (maps.region.key != "bundled" && mapView.width > 0 && mapView.height > 0) {
+            if (!maps.region.bundled && mapView.width > 0 && mapView.height > 0) {
                 val area = maps.region.bounds
                 val bounds = LatLngBounds.from(area[2], area[3], area[0], area[1])
                 map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, (16 * density).roundToInt()))
@@ -199,11 +224,12 @@ fun NavigationMap(
           }
         }
     }
-    LaunchedEffect(route, nativeMap, styleReady, bottomInset, originLabel, maps) {
+    LaunchedEffect(route, recordedPath, nativeMap, styleReady, bottomInset, originLabel, maps) {
         val map = nativeMap ?: return@LaunchedEffect
         if (!styleReady) return@LaunchedEffect
-        map.style?.getSourceAs<GeoJsonSource>("journey")?.setGeoJson(route?.let { lineFeature(it.points) } ?: emptyFeatures())
+        map.style?.getSourceAs<GeoJsonSource>("journey")?.setGeoJson(recordedPath?.let(::recordedFeatures) ?: route?.takeIf { it.points.size > 1 }?.let { lineFeature(it.points) } ?: emptyFeatures())
         map.style?.getSourceAs<GeoJsonSource>("endpoints")?.setGeoJson(route?.let { endpointFeatures(it, originLabel) } ?: emptyFeatures())
+        map.style?.getSourceAs<GeoJsonSource>("route-access")?.setGeoJson(route?.let(::accessFeatures) ?: emptyFeatures())
         if (route != null && route.points.size > 1 && !followPosition) {
             val bounds = LatLngBounds.Builder().includes(route.points.map { LatLng(it.latitude, it.longitude) }).build()
             map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,
@@ -239,10 +265,21 @@ fun NavigationMap(
 }
 
 private fun emptyFeatures() = "{\"type\":\"FeatureCollection\",\"features\":[]}"
+
+private fun accessFeatures(route: DriveRoute): String {
+    val features = JSONArray()
+    if (route.startOffsetMeters > 5) features.put(JSONObject(lineFeature(listOf(requireNotNull(route.requestedStart), route.points.first()))))
+    if (route.destinationOffsetMeters > 5) features.put(JSONObject(lineFeature(listOf(route.points.last(), requireNotNull(route.requestedDestination)))))
+    return JSONObject().put("type", "FeatureCollection").put("features", features).toString()
+}
+
+private fun recordedFeatures(history: List<Pose>): String = JSONObject().put("type", "FeatureCollection")
+    .put("features", JSONArray().apply { positionSegments(history).forEach { put(JSONObject(lineFeature(it))) } }).toString()
 private fun endpointFeatures(route: DriveRoute, originLabel: String): String {
     if (route.points.isEmpty()) return emptyFeatures()
     val features = JSONArray()
-    listOf(route.points.first() to originLabel, route.points.last() to "Destination").forEach { (point, label) ->
+    listOf((route.requestedStart ?: route.points.first()) to originLabel,
+        (route.requestedDestination ?: route.points.last()) to "Destination").forEach { (point, label) ->
         val visibleLabel = if (label.length <= 32) label else label.take(29) + "…"
         features.put(JSONObject().put("type", "Feature").put("properties", JSONObject().put("label", visibleLabel))
             .put("geometry", JSONObject().put("type", "Point").put("coordinates", JSONArray().put(point.longitude).put(point.latitude))))

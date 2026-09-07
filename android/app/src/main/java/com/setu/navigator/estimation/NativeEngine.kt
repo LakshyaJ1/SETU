@@ -44,6 +44,12 @@ class NativeEngine(directory: File) : AutoCloseable {
     }
 
     @Synchronized
+    fun magneticField(year: Double, point: GeoPoint, altitude: Double): DoubleArray? {
+        check(handle != 0L) { "Engine is closed" }
+        return nativeMagneticField(handle, year, point.latitude, point.longitude, altitude)
+    }
+
+    @Synchronized
     override fun close() {
         if (handle != 0L) nativeDestroy(handle)
         handle = 0
@@ -56,6 +62,7 @@ class NativeEngine(directory: File) : AutoCloseable {
     private external fun nativeGnss(handle: Long, timestampNs: Long, values: DoubleArray): Int
     private external fun nativePoll(handle: Long): DoubleArray?
     private external fun nativeDeclination(handle: Long, year: Double, latitude: Double, longitude: Double, altitude: Double): Double
+    private external fun nativeMagneticField(handle: Long, year: Double, latitude: Double, longitude: Double, altitude: Double): DoubleArray?
 
     companion object {
         init { System.loadLibrary("setu_jni") }

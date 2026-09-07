@@ -1,0 +1,69 @@
+<testsuites>
+  <testsuite name="com.setu.navigator.CompassAlignmentTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-09-07T22:42:16.243Z" hostname="LAPTOP-02I5BMKR" time="0.047">
+    <properties />
+    <testcase name="staleSamplesAndSensorGapsRestartTheStabilityCheck" classname="com.setu.navigator.CompassAlignmentTest" time="0.024" />
+    <testcase name="callbackOrderDoesNotDiscardFreshSamplesJustNewerThanRotation" classname="com.setu.navigator.CompassAlignmentTest" time="0.004" />
+    <testcase name="missingAccuracyRequiresAFixAndTwoSecondsOfCheckedSensors" classname="com.setu.navigator.CompassAlignmentTest" time="0.009" />
+    <testcase name="interferenceUnreliableMagnetometerAndMotionCannotInitialize" classname="com.setu.navigator.CompassAlignmentTest" time="0.001" />
+    <testcase name="hardwareUncertaintyIsNotReplacedWhenItIsPoor" classname="com.setu.navigator.CompassAlignmentTest" time="0.0" />
+    <system-out><![CDATA[]]></system-out>
+    <system-err><![CDATA[]]></system-err>
+  </testsuite>
+  <testsuite name="com.setu.navigator.GeoPointTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-09-07T22:42:16.293Z" hostname="LAPTOP-02I5BMKR" time="0.006">
+    <properties />
+    <testcase name="bearingAndInterpolationPreserveEndpoints" classname="com.setu.navigator.GeoPointTest" time="0.001" />
+    <testcase name="distanceIsSymmetricAndMeasuredInMeters" classname="com.setu.navigator.GeoPointTest" time="0.001" />
+    <testcase name="longDurationsDoNotWrapAtAnHour" classname="com.setu.navigator.GeoPointTest" time="0.003" />
+    <testcase name="nonFiniteCoordinatesAreRejected" classname="com.setu.navigator.GeoPointTest" time="0.001" />
+    <system-out><![CDATA[]]></system-out>
+    <system-err><![CDATA[]]></system-err>
+  </testsuite>
+  <testsuite name="com.setu.navigator.ImuSynchronizerTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-07T22:42:16.302Z" hostname="LAPTOP-02I5BMKR" time="0.015">
+    <properties />
+    <testcase name="missingHeadingAccuracyExplainsFallbackWithoutInventingAPose" classname="com.setu.navigator.ImuSynchronizerTest" time="0.002" />
+    <testcase name="headingAvailabilityDoesNotOverrideActiveOrWithheldNativeStates" classname="com.setu.navigator.ImuSynchronizerTest" time="0.0" />
+    <testcase name="missingCounterpartIsBoundedAndRecovers" classname="com.setu.navigator.ImuSynchronizerTest" time="0.005" />
+    <testcase name="nativeSelectionRequiresOptInAndAFreshPublishedState" classname="com.setu.navigator.ImuSynchronizerTest" time="0.001" />
+    <testcase name="declinationRotatesMagneticNorthTowardTrueEast" classname="com.setu.navigator.ImuSynchronizerTest" time="0.004" />
+    <testcase name="interpolationUsesTimestampsAndNeverInventsAcrossGaps" classname="com.setu.navigator.ImuSynchronizerTest" time="0.003" />
+    <system-out><![CDATA[]]></system-out>
+    <system-err><![CDATA[]]></system-err>
+  </testsuite>
+  <testsuite name="com.setu.navigator.MotionAlignmentTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-09-07T22:42:16.319Z" hostname="LAPTOP-02I5BMKR" time="0.02">
+    <properties />
+    <testcase name="constantSpeedCannotInventAnAbsoluteHeading" classname="com.setu.navigator.MotionAlignmentTest" time="0.006" />
+    <testcase name="noGpsCannotCalibrateAnAbsoluteHeading" classname="com.setu.navigator.MotionAlignmentTest" time="0.002" />
+    <testcase name="delayedGpsUsesTheMatchingSensorInterval" classname="com.setu.navigator.MotionAlignmentTest" time="0.008" />
+    <testcase name="gpsAndChangingMotionAlignTheRelativeFrameWithoutAnyMagnetometer" classname="com.setu.navigator.MotionAlignmentTest" time="0.004" />
+    <system-out><![CDATA[]]></system-out>
+    <system-err><![CDATA[]]></system-err>
+  </testsuite>
+  <testsuite name="com.setu.navigator.PoseTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-09-07T22:42:16.341Z" hostname="LAPTOP-02I5BMKR" time="0.0">
+    <properties />
+    <testcase name="freshnessRejectsFutureUnsetAndStaleTimestamps" classname="com.setu.navigator.PoseTest" time="0.0" />
+    <system-out><![CDATA[]]></system-out>
+    <system-err><![CDATA[]]></system-err>
+  </testsuite>
+  <testsuite name="com.setu.navigator.PositionTrackingTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-09-07T22:42:16.344Z" hostname="LAPTOP-02I5BMKR" time="0.015">
+    <properties />
+    <testcase name="keepsTheDisplayHistoryBoundedWithoutChangingTheLatestFix" classname="com.setu.navigator.PositionTrackingTest" time="0.01" />
+    <testcase name="ignoresMissingStaleFutureAndPreSessionPositions" classname="com.setu.navigator.PositionTrackingTest" time="0.0" />
+    <testcase name="throttlesDuplicateUpdatesWithoutReorderingTheTrace" classname="com.setu.navigator.PositionTrackingTest" time="0.001" />
+    <testcase name="replayPreservesSensorProvenanceAndDoesNotInventAcrossGaps" classname="com.setu.navigator.PositionTrackingTest" time="0.002" />
+    <testcase name="neverDrawsAConnectionAcrossAnOutageOrSourceChange" classname="com.setu.navigator.PositionTrackingTest" time="0.001" />
+    <system-out><![CDATA[]]></system-out>
+    <system-err><![CDATA[]]></system-err>
+  </testsuite>
+  <testsuite name="com.setu.navigator.RoadGraphTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-09-07T22:42:16.362Z" hostname="LAPTOP-02I5BMKR" time="0.02">
+    <properties />
+    <testcase name="disconnectedRoadsDoNotGetJoinedWithAnInventedStraightLine" classname="com.setu.navigator.RoadGraphTest" time="0.007" />
+    <testcase name="reverseOnlyEdgesAndZeroLengthJourneysRemainValid" classname="com.setu.navigator.RoadGraphTest" time="0.002" />
+    <testcase name="conflictingCoordinatesAreRejected" classname="com.setu.navigator.RoadGraphTest" time="0.0" />
+    <testcase name="oneWayRouteUsesTheConnectedDetourInsteadOfDrivingBackwards" classname="com.setu.navigator.RoadGraphTest" time="0.005" />
+    <testcase name="aTurnIsNotSkippedHalfwayAlongTheApproachRoad" classname="com.setu.navigator.RoadGraphTest" time="0.001" />
+    <testcase name="graphGrowsAcrossItsInitialCapacityWithoutLosingConnections" classname="com.setu.navigator.RoadGraphTest" time="0.004" />
+    <testcase name="snapsToTheRoadSegmentRatherThanJumpingToADistantNode" classname="com.setu.navigator.RoadGraphTest" time="0.001" />
+    <system-out><![CDATA[]]></system-out>
+    <system-err><![CDATA[]]></system-err>
+  </testsuite>
+</testsuites>

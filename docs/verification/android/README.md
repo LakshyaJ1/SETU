@@ -1,6 +1,9 @@
 # Android runtime evidence
 
-The Delhi map build and its APK-linked phone checks are indexed in
+The map-crash fix and tiled-renderer checks are indexed in `map-stability/README.md`.
+The earlier expanded Delhi/NCR build is indexed in `delhi-ncr/README.md`.
+The earlier sensor-fallback build and its APK-linked phone checks are indexed in
+`sensor-fallback/README.md`. The earlier Delhi map build and its phone checks are in
 `delhi/README.md`. Earlier presentation-MVP builds and captures are indexed in
 `demo-mvp/README.md`. The earlier evidence below is retained with its original
 build hashes rather than silently being relabelled as the presentation build.
@@ -96,14 +99,14 @@ For the offline check, Wi-Fi and mobile data were disabled on the emulator while
 the thirty-three-device-test suite ran. They were restored afterwards. The local model
 server check is separate and requires network connectivity to `10.0.2.2:8765`.
 
-The latest checked build has nine passing JVM tests, thirty-three passing device tests,
+This earlier emulator build has nine passing JVM tests, thirty-three passing device tests,
 three passing Python packager tests, zero lint errors and 16 lint warnings. `validation/` contains the actual build,
 test and lint output plus `build-evidence.json`. Each automated capture also has
 a JSON sidecar containing the installed base-APK SHA-256. New manual captures
 include the same build hash, font scale and rotation setting. Older manual
 captures without sidecars belong to earlier development iterations.
 
-Current installed APK SHA-256:
+APK SHA-256 for that earlier emulator verification build:
 `8f9c49762b6278ef035342733ddd609b27f2a49c67346d8f584adaa7a31a4b26`.
 All twenty-four automated sidecars match it. The complete device run passes in
 286.787 seconds. JVM evidence is split between `validation/jvm-tests.xml` (four

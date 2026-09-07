@@ -2,6 +2,7 @@ package com.setu.navigator.data
 
 import android.content.Context
 import android.os.SystemClock
+import com.setu.navigator.estimation.navigationPose
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -83,6 +84,7 @@ class SetuRepository(private val context: Context) {
         writer = tripStore.logFile(recordingId).bufferedWriter()
         writer!!.appendLine(JSONObject().put("schema", "setu.log.v1").put("name", recordingName)
             .put("startedAtMs", recordingStartedMs).put("startedAtNs", recordingStartedNs).put("synthetic", false)
+            .put("trajectoryStream", "track_pose")
             .put("device", "${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}")
             .put("clock", "elapsedRealtimeNanos").put("units", "SI").toString())
         writer!!.flush()
@@ -97,9 +99,16 @@ class SetuRepository(private val context: Context) {
         try {
             output.appendLine(record.toString())
             records++
-            if (record.optString("type") == "pose") {
-                val pose = TripStore.decodePose(record)
-                if (recordedPoses.isEmpty() || pose.timestampNs > recordedPoses.last().timestampNs) recordedPoses.add(pose)
+            if (record.optString("type") in listOf("pose", "native_pose")) {
+                val now = SystemClock.elapsedRealtimeNanos()
+                val pose = navigationPose(hub.pose.value, hub.nativeEstimate.value, settings.value.nativePositioning, now)
+                    ?.takeIf { it.isFresh(now) && it.timestampNs >= recordingStartedNs }
+                val previous = recordedPoses.lastOrNull()
+                if (pose != null && (previous == null || pose.timestampNs > previous.timestampNs)) {
+                    output.appendLine(TripStore.encodePose(pose).put("type", "track_pose").toString())
+                    records++
+                    recordedPoses.add(pose)
+                }
             }
             val now = SystemClock.elapsedRealtimeNanos()
             if (now - lastFlushNs > 1_000_000_000L) {
@@ -128,7 +137,7 @@ class SetuRepository(private val context: Context) {
             writer?.flush()
             writer?.close()
             writer = null
-            val distance = recordedPoses.zipWithNext().sumOf { (previous, current) -> previous.point.distanceTo(current.point) }
+            val distance = trajectoryDistance(recordedPoses)
             val trip = Trip(recordingId, recordingName, recordingStartedMs,
                 (finishedAtNs - recordingStartedNs) / 1_000_000,
                 distance, records, recordedPoses.toList())

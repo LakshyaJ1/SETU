@@ -6,6 +6,7 @@ import android.hardware.SensorManager
 import android.os.SystemClock
 import com.setu.navigator.data.GeoPoint
 import com.setu.navigator.data.Pose
+import com.setu.navigator.data.TripStore
 import org.json.JSONObject
 import java.util.Calendar
 import java.util.TimeZone
@@ -25,6 +26,8 @@ data class NativeEstimate(
     val resets: Int = 0,
     val pairedSamples: Long = 0,
     val pairingDrops: Long = 0,
+    val headingSource: String? = null,
+    val calibrationHint: String? = null,
 ) {
     fun currentPose(nowNs: Long): Pose? = pose?.takeIf { nowNs >= it.timestampNs && nowNs - it.timestampNs <= 300_000_000L }
 }
@@ -37,39 +40,88 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
     private val engine = NativeEngine(NativeEngine.magneticData(context))
     private var declination = Double.NaN
     private var headingAccuracyAvailable: Boolean? = null
+    private val compass = CompassAlignment()
+    private val motion = MotionAlignment()
+    private var headingSource: String? = null
+    private var pendingHeadingSource: String? = null
+    private var hadPose = false
+    private var lastStateRecord = 0L
     private var pairedSamples = 0L
     private var lastPublish = 0L
     private val synchronizer: ImuSynchronizer = ImuSynchronizer { timestamp, acceleration, gyro ->
+        motion.imu(timestamp, acceleration, gyro)
+        applyMotionAlignment(timestamp)
         engine.imu(timestamp, acceleration, gyro)
         pairedSamples++
         if (timestamp - lastPublish >= 200_000_000L) {
             lastPublish = timestamp
-            val estimate = decodeNativeEstimate(engine.snapshot(), pairedSamples, synchronizerDrops(), headingAccuracyAvailable)
+            val snapshot = engine.snapshot()
+            var estimate = decodeNativeEstimate(snapshot, pairedSamples, synchronizerDrops(), headingAccuracyAvailable)
+            if (estimate.pose != null && !hadPose) headingSource = pendingHeadingSource
+            hadPose = estimate.pose != null
+            estimate = estimate.copy(headingSource = if (hadPose) headingSource else pendingHeadingSource)
+            if (snapshot[0].toInt() in 0..1) {
+                estimate = estimate.copy(status = "Calibrating sensors", detail = "${compass.detail} ${motion.detail}", calibrationHint = compass.detail)
+            }
+            if (estimate.pose != null && headingSource == "Checked compass · estimated uncertainty") {
+                estimate = estimate.copy(detail = "Compass-aligned sensor prediction with estimated uncertainty. No road matching or field-accuracy guarantee. GPS outages are bounded to 10 seconds or a 150 m filter radius.")
+            }
             publish(estimate)
+            if (timestamp - lastStateRecord >= 1_000_000_000L) {
+                lastStateRecord = timestamp
+                record(JSONObject().put("type", "native_state").put("tNs", timestamp)
+                    .put("status", estimate.status).put("detail", estimate.detail)
+                    .put("pairedSamples", pairedSamples).put("acceptedGps", estimate.accepted)
+                    .put("headingSource", estimate.headingSource ?: JSONObject.NULL)
+                    .put("hasEstimate", estimate.pose != null))
+            }
             estimate.pose?.let { pose ->
-                record(JSONObject().put("type", "native_pose").put("tNs", pose.timestampNs)
-                    .put("latitude", pose.point.latitude).put("longitude", pose.point.longitude)
-                    .put("speedMps", pose.speedMps).put("radius95Meters", estimate.radius95Meters)
+                record(TripStore.encodePose(pose).put("type", "native_pose")
+                    .put("radius95Meters", estimate.radius95Meters)
                     .put("gpsAgeSeconds", estimate.gpsAgeSeconds).put("status", estimate.status)
-                    .put("mock", pose.mock ?: JSONObject.NULL).put("experimental", true))
+                    .put("headingSource", headingSource ?: JSONObject.NULL).put("experimental", true))
             }
         }
     }
 
     private fun synchronizerDrops(): Long = synchronizer.rejected
 
+    private fun applyMotionAlignment(timestamp: Long): Boolean {
+        val alignment = motion.alignment(timestamp) ?: return false
+        if (engine.attitude(alignment.timestamp, alignment.rotation, alignment.sigmaRadians) != 1) return false
+        pendingHeadingSource = "GPS motion alignment · experimental"
+        return true
+    }
+
     fun sensor(type: Int, timestamp: Long, values: FloatArray, accuracy: Int) {
         if (timestamp <= 0 || timestamp > SystemClock.elapsedRealtimeNanos() || values.any { !it.isFinite() }) return
         when (type) {
-            Sensor.TYPE_ACCELEROMETER -> synchronizer.acceleration(timestamp, values.take(3).map(Float::toDouble).toDoubleArray())
-            Sensor.TYPE_GYROSCOPE -> synchronizer.gyroscope(timestamp, values.take(3).map(Float::toDouble).toDoubleArray())
-            Sensor.TYPE_ROTATION_VECTOR -> {
-                headingAccuracyAvailable = values.size >= 5 && values[4] >= 0
-                if (!declination.isFinite() || headingAccuracyAvailable != true || accuracy < SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM) return
+            Sensor.TYPE_ACCELEROMETER -> {
+                val sample = values.take(3).map(Float::toDouble).toDoubleArray()
+                compass.acceleration(timestamp, sample)
+                synchronizer.acceleration(timestamp, sample)
+            }
+            Sensor.TYPE_GYROSCOPE -> {
+                val sample = values.take(3).map(Float::toDouble).toDoubleArray()
+                compass.gyroscope(timestamp, sample)
+                synchronizer.gyroscope(timestamp, sample)
+            }
+            Sensor.TYPE_MAGNETIC_FIELD -> compass.magnetometer(timestamp, values.take(3).map(Float::toDouble).toDoubleArray(), accuracy)
+            Sensor.TYPE_GAME_ROTATION_VECTOR -> {
+                if (values.size < 3) return
                 val matrix = FloatArray(9)
                 SensorManager.getRotationMatrixFromVector(matrix, values)
-                engine.attitude(timestamp, trueNorthRotation(DoubleArray(9) { matrix[it].toDouble() }, declination),
-                    maxOf(0.15, values[4].toDouble()))
+                motion.rotation(timestamp, DoubleArray(9) { matrix[it].toDouble() })
+                applyMotionAlignment(timestamp)
+            }
+            Sensor.TYPE_ROTATION_VECTOR -> {
+                headingAccuracyAvailable = values.size >= 5 && values[4] >= 0
+                if (!declination.isFinite() || values.size < 3) return
+                val matrix = FloatArray(9)
+                SensorManager.getRotationMatrixFromVector(matrix, values)
+                val trueRotation = trueNorthRotation(DoubleArray(9) { matrix[it].toDouble() }, declination)
+                val alignment = compass.evaluate(timestamp, trueRotation, values.getOrNull(4)?.toDouble(), accuracy) ?: return
+                if (!applyMotionAlignment(timestamp) && engine.attitude(timestamp, trueRotation, alignment.sigmaRadians) == 1) pendingHeadingSource = alignment.source
             }
         }
     }
@@ -78,6 +130,9 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
         val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply { timeInMillis = wallTimeMs }
         val year = calendar.get(Calendar.YEAR) + (calendar.get(Calendar.DAY_OF_YEAR) - 1).toDouble() / calendar.getActualMaximum(Calendar.DAY_OF_YEAR)
         declination = engine.declination(year, pose.point, pose.altitudeMeters ?: 0.0)
+        engine.magneticField(year, pose.point, pose.altitudeMeters ?: 0.0)?.let(compass::reference)
+        motion.gnss(pose)
+        applyMotionAlignment(pose.timestampNs)
         engine.gnss(pose)
     }
 

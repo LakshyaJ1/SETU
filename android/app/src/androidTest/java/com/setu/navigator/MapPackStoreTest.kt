@@ -85,6 +85,7 @@ class MapPackStoreTest {
         }
         malformed { it.getValue("manifest.json").put("schema", "setu.map.v999") }
         malformed { it.getValue("manifest.json").put("revision", 1.5) }
+        malformed { it.getValue("manifest.json").put("bounds", org.json.JSONArray(listOf(10, 77, 15, 78))) }
         malformed { it.getValue("manifest.json").put("sourceUrl", "https://user:password@example.invalid") }
         malformed { it.getValue("city.geojson").getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0).put(1, 91) }
         malformed { it.getValue("city.geojson").getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0).put(1, "12.97") }
@@ -155,24 +156,57 @@ class MapPackStoreTest {
     }
 
     @Test
-    fun includedDelhiCoversOuterCityAndRestoresWithoutReplacingBengaluru() {
+    fun includedNcrCoversCitiesAndRoutesShahdaraToMait() {
         val delhi = store.regions.value.single { it.id == "delhi" }
         assertTrue(delhi.bundled)
+        assertEquals("Delhi & NCR", delhi.name)
+        assertEquals(2, delhi.revision)
         listOf(com.setu.navigator.data.GeoPoint(28.60, 76.84), com.setu.navigator.data.GeoPoint(28.89, 77.10),
             com.setu.navigator.data.GeoPoint(28.62, 77.33), com.setu.navigator.data.GeoPoint(28.40, 77.20)).forEach {
             assertTrue(delhi.contains(it))
         }
         assertFalse(delhi.contains(com.setu.navigator.data.GeoPoint(12.97, 77.60)))
+        listOf(com.setu.navigator.data.GeoPoint(28.46, 77.03), com.setu.navigator.data.GeoPoint(28.54, 77.39),
+            com.setu.navigator.data.GeoPoint(28.41, 77.32), com.setu.navigator.data.GeoPoint(28.67, 77.45),
+            com.setu.navigator.data.GeoPoint(28.99, 77.71), com.setu.navigator.data.GeoPoint(29.69, 76.99),
+            com.setu.navigator.data.GeoPoint(27.55, 76.63), com.setu.navigator.data.GeoPoint(27.22, 77.49)).forEach {
+            assertTrue("NCR city missing from the map envelope", delhi.contains(it))
+        }
         assertThrows(IllegalArgumentException::class.java) { store.remove(delhi.key) }
         store.activate(delhi.key)
         val route = store.activeMap.value.route(delhi.previewStart, delhi.places.single { it.id == delhi.demoDestination }.point)
-        assertTrue(route.distanceMeters in 1000.0..15000.0)
+        assertTrue("Shahdara to MAIT distance: ${route.distanceMeters}", route.distanceMeters in 20000.0..60000.0)
         assertTrue(route.points.size > 2)
+        assertTrue(route.startOffsetMeters < 75.0)
+        assertTrue(route.destinationOffsetMeters <= 250.0)
+        listOf("Noida", "Ghaziabad", "Meerut").forEach { name ->
+            val place = delhi.places.firstOrNull { it.name.equals(name, ignoreCase = true) }
+            assertNotNull("Eastern NCR locality data missing: $name", place)
+            val easternRoute = store.activeMap.value.route(delhi.previewStart, requireNotNull(place).point)
+            assertTrue("No connected driving graph for $name", easternRoute.points.size > 2)
+            assertTrue(easternRoute.destinationOffsetMeters <= 250.0)
+        }
         val restored = MapPackStore(context).apply { restore() }
         assertEquals(delhi.key, restored.activeMap.value.region.key)
         assertEquals(setOf("delhi", "bengaluru-central"), restored.regions.value.map { it.id }.toSet())
         restored.activate("bundled")
         assertEquals("bengaluru-central", restored.activeMap.value.region.id)
+    }
+
+    @Test
+    fun includedNcrUsesBoundedLocalVectorTiles() {
+        val delhi = store.regions.value.single { it.id == "delhi" }
+        store.activate(delhi.key)
+        val source = store.activeMap.value.citySource()
+        assertEquals("vector", source.getString("type"))
+        val template = source.getJSONArray("tiles").getString(0)
+        assertTrue(template.startsWith("file:///"))
+        assertEquals(13, source.getInt("maxzoom"))
+        val directory = File(java.net.URI(template.substringBefore("/{z}")))
+        val tiles = directory.walkTopDown().filter { it.extension == "pbf" }.toList()
+        assertTrue(tiles.size > 1000)
+        assertTrue(tiles.all { it.length() in 1..500000 })
+        assertEquals(template, store.activeMap.value.citySource().getJSONArray("tiles").getString(0))
     }
 
     private fun reject(bytes: ByteArray) {

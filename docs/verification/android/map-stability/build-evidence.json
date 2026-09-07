@@ -1,0 +1,79 @@
+{
+  "branch": "demo-mvp/position-tracking",
+  "baseCommit": "d566585",
+  "workingTreeIncludesUncommittedChanges": true,
+  "apk": {
+    "path": "dist/android/SETU-demo-mvp.apk",
+    "sha256": "91c7840a99ad4ade9cf63700fd0627a0670e9d1638ce5fbd94032553cc480e84",
+    "bytes": 155155673,
+    "installedHashMatches": true,
+    "signatureVerified": true,
+    "zipalign16KiBPassed": true,
+    "releaseType": "debug/testing"
+  },
+  "testApkSha256": "012dfe2abfa1104e953b3532fab4a02954a51fc347f6995055bf5d0fc81d7620",
+  "phone": {
+    "model": "CPH2467",
+    "androidVersion": "15",
+    "sdk": 35,
+    "abi": "arm64-v8a",
+    "connection": "authorized USB ADB",
+    "userDataCleared": false,
+    "originalRawRecordingsVerifiedUnchanged": 15,
+    "recordingsStartedOrStoppedByChecks": 0,
+    "radiosDeliberatelyDisabledForFinalRun": false,
+    "newCrashExitAfterFinalInstall": false,
+    "deviceClockIsAuthoritativeBuildDate": false
+  },
+  "map": {
+    "name": "Delhi & NCR",
+    "revision": 2,
+    "boundsSouthWestNorthEast": [26.5, 75.25, 30.2, 78.75],
+    "wholeIndiaIncluded": false,
+    "drawing": "local vector tiles; bundled glyphs",
+    "metadata": "tiles.json",
+    "tileCount": 11159,
+    "maximumTileBytes": 477004,
+    "archiveBytes": 48486133,
+    "archiveSha256": "055f5c927afaf70dc96c65f874e3f6d8c38bdc51053d9af43280018dd3e88231",
+    "uncompressedTileBytes": 92329258,
+    "routingGraphChangedByCrashFix": false,
+    "initialView": "street level"
+  },
+  "verification": {
+    "debugAppAndTestApkBuildPassed": true,
+    "jvmTests": { "passed": 32, "failures": 0, "errors": 0 },
+    "pythonTests": { "passed": 49, "seconds": 39.27, "log": "python-tests.log" },
+    "phoneTests": {
+      "reportedCount": 34,
+      "passed": 33,
+      "assumptionSkipped": 1,
+      "failures": 0,
+      "seconds": 47.426,
+      "log": "phone-regression-tests.log",
+      "classes": ["MapRenderingTest", "SensorFallbackTest", "NativeEngineTest", "NativeFilterTest", "TripStoreTest", "PositioningDemoTest", "MapPackStoreTest"],
+      "excludedMethod": "MapPackStoreTest.includedNcrCoversCitiesAndRoutesShahdaraToMait",
+      "skippedMethod": "SensorFallbackTest.capturedPhysicalSensorsCanBeReplayedWithoutLeakingCoordinates"
+    },
+    "lint": { "errors": 0, "warnings": 16 },
+    "renderer": {
+      "metrics": "renderer-metrics.json",
+      "cycles": 6,
+      "firstRenderMs": 1383,
+      "tileCacheWasPrepared": true,
+      "minimumPostDisposalPssKiB": 245827,
+      "maximumPostDisposalPssKiB": 247228,
+      "peakMemoryMeasured": false,
+      "fullRoutingGraphLoaded": false,
+      "finalizerObservationMs": 12000
+    },
+    "finalApkStreetMapVisuallyVerified": true,
+    "finalApkManualSampleRouteRepeated": false
+  },
+  "knownLimitations": [
+    "First-time full NCR route preparation can still take minutes.",
+    "A separate preliminary Bengaluru OfflineMapTest.includedDestinationsHaveDrivableRoutes test failed with disconnected roads; unresolved outside this fix.",
+    "Legacy drawing GeoJSON above 32 MiB is not rendered unless it matches the bundled vector tiles.",
+    "The final test run does not verify physical GPS-free driving or an entire Kirti Mandir-to-MAIT journey."
+  ]
+}

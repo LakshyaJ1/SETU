@@ -65,6 +65,32 @@ class TripStoreTest {
     }
 
     @Test
+    fun recordedTrajectoryRetainsInertialPointsAndUncertaintySeparatelyFromRawGps() {
+        val trajectoryHeader = JSONObject(header).put("trajectoryStream", "track_pose")
+        val inertial = Pose(GeoPoint(12.9753, 77.6067), 3.0, 80.0, timestampNs = 1_500_000_000,
+            source = "Native inertial", mock = true, filterRadius95Meters = 14.0)
+        val later = inertial.copy(timestampNs = 1_700_000_000, point = GeoPoint(12.9754, 77.6068), filterRadius95Meters = 18.0)
+        val original = "$trajectoryHeader\n$first\n${TripStore.encodePose(inertial).put("type", "track_pose")}\n" +
+            "${TripStore.encodePose(later).put("type", "track_pose")}\n$second\n"
+        val trip = store.import(original.byteInputStream())
+        assertEquals(listOf(inertial, later), trip.points)
+        assertEquals(trip.points, store.all().single().points)
+        val exported = ByteArrayOutputStream()
+        store.export(trip, exported)
+        assertEquals(original, exported.toString("UTF-8"))
+        val legacy = store.import("$header\n$first\n${TripStore.encodePose(inertial).put("type", "native_pose")}\n$second\n".byteInputStream())
+        assertEquals(listOf("Test GPS", "Test GPS"), legacy.points.map { it.source })
+    }
+
+    @Test
+    fun invalidTrajectoryUncertaintyAndUnknownStreamsAreRejected() {
+        val invalid = JSONObject(first).put("filterRadius95Meters", -1)
+        assertTrue(runCatching { store.import("$header\n$invalid\n".byteInputStream()) }.isFailure)
+        val unknown = JSONObject(header).put("trajectoryStream", "unsupported")
+        assertTrue(runCatching { store.import("$unknown\n$first\n".byteInputStream()) }.isFailure)
+    }
+
+    @Test
     fun interruptedFinalRecordIsRecoveredAndExportsCleanly() {
         val id = UUID.randomUUID().toString()
         store.logFile(id).writeText("$header\n$first\n$second\n{\"type\":")
