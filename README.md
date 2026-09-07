@@ -24,7 +24,7 @@ that with measurements whose error does not accumulate with time.
 
 This is the **Python twin** called for in
 [`docs/06-tech-stack.md`](docs/06-tech-stack.md) §6.3. Its job is to make the
-physics falsifiable and to cross-check the eventual C++ port — not to ship on a
+physics falsifiable and to cross-check the C++ filter kernel — not to ship on a
 phone.
 
 ## Quick start
@@ -39,7 +39,38 @@ python -m setu.cli experiment --open            # the falsification experiment +
 
 The experiment writes a self-contained HTML report to `out/` and opens it.
 
+## Android application
+
+The native Kotlin/Compose workspace is in `android/`. Open that directory in
+Android Studio, or follow `android/README.md` to build the debug APK. It includes
+bundled Bengaluru and Delhi maps, local map-pack exploration, regional destination search, GPS capture,
+foreground sensor recording, trip replay, export/import and an AI/ML handoff
+contract. This is a development application, not a production navigation release.
+Map import, direct checksum-verified download, region selection and removal are
+documented in `docs/13-offline-map-packs.md`; no hosted map catalogue is supplied yet.
+
+For the presentation MVP, start with live position tracking or the explicitly
+simulated native-engine GPS-loss demonstration. The rehearsal sequence and
+precise boundaries are in `docs/14-demo-mvp.md`.
+Delhi coverage, the portable local archive and phone verification are documented
+in `docs/15-delhi-offline-map.md`; whole-India offline coverage is not yet included.
+
+Implementation and verification are tracked in `docs/11-android-delivery.md`.
+Actual emulator captures live under `docs/verification/android/`; screenshots
+are not evidence of positioning accuracy. AI/ML models are not bundled. The
+16-state C++20/Eigen kernel and a timestamped GNSS/IMU engine are packaged through
+JNI, with explicit experimental map opt-in and GPS fallback. The engine includes
+WGS84 conversion, WMM2025 reference coefficients and bounded delayed-GPS
+repropagation, but not the full road-constrained architecture. Physical validation,
+signal frontends, learned measurements and broader offline routing remain work;
+see `core/README.md` and `core/STREAMING.md` for the exact boundary.
+
 ## Results
+
+**Validation warning:** the GNSS-derived SVO acceleration prior has been removed
+and regression-tested. The historical simulator numbers below predate that
+correction and have not been regenerated as a results table. They are not
+validated deployment evidence. See `docs/verification/reference/README.md`.
 
 Measured on the simulator, Tier A (200 Hz phone), a 60 s blackout with **all**
 GNSS withheld — position, Doppler and satellite status alike.
@@ -127,8 +158,9 @@ Each of these cost real debugging time and is recorded where it bites.
   wrong block. The fix is multi-hypothesis estimation (the RB-PF over the road
   graph), which this increment does not implement — there is a test asserting the
   failure is still present so it cannot vanish quietly.
-- Not yet built: the Android app, the C++ core, the edge engine, the learned
-  heads, and privileged-information distillation from IO-VNBD.
+- The Android app is now under development with emulator workflow checks. The
+  complete streaming C++ engine, live fusion, edge shell, learned heads, privileged-information
+  distillation from IO-VNBD and production navigation validation remain open.
 
 ## Development
 

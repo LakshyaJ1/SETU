@@ -1,0 +1,16 @@
+{
+  "capture": "35-map-pack-removed.png",
+  "apkSha256": "a879da45466c51bff0dd26126c711c46629e845902e71d9c0b6fe0073f0b010d",
+  "version": "0.1.0",
+  "device": "Android SDK built for x86_64",
+  "sdk": 35,
+  "deviceClockMs": 1788785574138,
+  "fontScale": 1,
+  "orientation": 1,
+  "scenario": "Explicit removal of only the test-owned synthetic pack after switching back to included Bengaluru; recordings untouched",
+  "nativeStatus": "Native engine paused",
+  "pairedImuSamples": 0,
+  "acceptedNativeFixes": 0,
+  "delayedNativeCorrections": 0,
+  "source": "Android UiAutomation.takeScreenshot; unaltered PNG"
+}

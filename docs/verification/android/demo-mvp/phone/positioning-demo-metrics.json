@@ -1,0 +1,10 @@
+{
+  "scenario": "Controlled synthetic GPS\/IMU processed by the packaged native engine; not field accuracy",
+  "frames": 241,
+  "gpsWithheldSeconds": 8,
+  "maximumSyntheticErrorMeters": 0.054745798453518305,
+  "acceptedGpsDuringGap": 0,
+  "radiusBeforeGapMeters": 1.7369511612926791,
+  "radiusEndOfGapMeters": 60.48282103753854,
+  "radiusAfterRecoveryMeters": 1.826866041270011
+}

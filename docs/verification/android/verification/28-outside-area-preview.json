@@ -1,0 +1,16 @@
+{
+  "capture": "28-outside-area-preview.png",
+  "apkSha256": "8f9c49762b6278ef035342733ddd609b27f2a49c67346d8f584adaa7a31a4b26",
+  "version": "0.1.0",
+  "device": "Android SDK built for x86_64",
+  "sdk": 35,
+  "deviceClockMs": 1788787163853,
+  "fontScale": 1,
+  "orientation": 1,
+  "scenario": "Injected mock GPS outside Bengaluru; labelled MG Road preview and disabled drive start; not live GPS",
+  "nativeStatus": "Native engine paused",
+  "pairedImuSamples": 0,
+  "acceptedNativeFixes": 0,
+  "delayedNativeCorrections": 0,
+  "source": "Android UiAutomation.takeScreenshot; unaltered PNG"
+}

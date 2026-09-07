@@ -1,0 +1,9 @@
+﻿{
+    "capture":  "00-checkpoint.png",
+    "apkSha256":  "8f9c49762b6278ef035342733ddd609b27f2a49c67346d8f584adaa7a31a4b26",
+    "commit":  "d4aceca",
+    "branch":  "demo-mvp/position-tracking",
+    "source":  "Unaltered adb screencap, API 35 x86_64 emulator",
+    "scenario":  "Unchanged pre-demo build; emulator GPS, not physical-device accuracy",
+    "screenshotReviewed":  true
+}

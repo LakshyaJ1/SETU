@@ -1,0 +1,16 @@
+{
+  "capture": "32-map-pack-installed.png",
+  "apkSha256": "8f9c49762b6278ef035342733ddd609b27f2a49c67346d8f584adaa7a31a4b26",
+  "version": "0.1.0",
+  "device": "Android SDK built for x86_64",
+  "sdk": 35,
+  "deviceClockMs": 1788787177797,
+  "fontScale": 1,
+  "orientation": 1,
+  "scenario": "Synthetic Verification Grid imported through the app document-stream handler; not active yet; not real map coverage",
+  "nativeStatus": "Native engine paused",
+  "pairedImuSamples": 0,
+  "acceptedNativeFixes": 0,
+  "delayedNativeCorrections": 0,
+  "source": "Android UiAutomation.takeScreenshot; unaltered PNG"
+}

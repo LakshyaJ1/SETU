@@ -1,0 +1,4 @@
+{"type":"FeatureCollection","features":[
+  {"type":"Feature","properties":{"kind":"road","class":"secondary","name":"Test Avenue"},"geometry":{"type":"LineString","coordinates":[[77.59,12.97],[77.60,12.97],[77.60,12.98]]}},
+  {"type":"Feature","properties":{"kind":"park","name":"Fixture Park"},"geometry":{"type":"Polygon","coordinates":[[[77.5905,12.9705],[77.5995,12.9705],[77.5995,12.9795],[77.5905,12.9795],[77.5905,12.9705]]]}}
+]}

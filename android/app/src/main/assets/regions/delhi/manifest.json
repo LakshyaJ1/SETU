@@ -1,0 +1,2735 @@
+{
+  "schema": "setu.map.v1",
+  "id": "delhi",
+  "revision": 1,
+  "name": "Delhi",
+  "summary": "Delhi-wide street map · parks, water, localities and stations",
+  "bounds": [
+    28.39,
+    76.83,
+    28.91,
+    77.36
+  ],
+  "center": [
+    77.209,
+    28.6315
+  ],
+  "previewStart": [
+    77.2176,
+    28.6315
+  ],
+  "previewLabel": "Connaught Place preview",
+  "demoDestination": "india-gate",
+  "source": "OpenStreetMap contributors · Geofabrik Northern Zone",
+  "attribution": "© OpenStreetMap contributors",
+  "license": "ODbL 1.0",
+  "sourceUrl": "https://www.openstreetmap.org/copyright",
+  "dataTimestamp": "2026-09-06T20:21:35Z",
+  "limitations": "Delhi-wide OSM streets; a geographic envelope, not an administrative boundary. Route previews use main roads only, not residential/service lanes. Lines simplified within about 1 m; buildings and relation-only areas omitted. No turn restrictions, closures or safety-validated routes.",
+  "places": [
+    {
+      "id": "connaught-place",
+      "name": "Connaught Place",
+      "detail": "Central Delhi · road-side preview",
+      "point": [
+        77.2176,
+        28.6315
+      ]
+    },
+    {
+      "id": "india-gate",
+      "name": "India Gate",
+      "detail": "Central Delhi · nearby road entrance",
+      "point": [
+        77.2295,
+        28.6129
+      ]
+    },
+    {
+      "id": "osm-node-2812851722",
+      "name": "Acharya Niketan",
+      "detail": "OSM locality",
+      "point": [
+        77.2947817,
+        28.6083003
+      ]
+    },
+    {
+      "id": "osm-node-2991892710",
+      "name": "Adchini",
+      "detail": "OSM locality",
+      "point": [
+        77.197621,
+        28.5380482
+      ]
+    },
+    {
+      "id": "osm-node-2822243670",
+      "name": "Ajay Enclave",
+      "detail": "OSM locality",
+      "point": [
+        77.1062643,
+        28.6381412
+      ]
+    },
+    {
+      "id": "osm-node-2822243669",
+      "name": "Ajay Enclave Extension",
+      "detail": "OSM locality",
+      "point": [
+        77.106767,
+        28.6371093
+      ]
+    },
+    {
+      "id": "osm-node-2911141053",
+      "name": "Ajit Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2659606,
+        28.6664525
+      ]
+    },
+    {
+      "id": "osm-node-5657864721",
+      "name": "Alaknanda",
+      "detail": "OSM locality",
+      "point": [
+        77.2516323,
+        28.5293364
+      ]
+    },
+    {
+      "id": "osm-node-2149585837",
+      "name": "Alipur",
+      "detail": "OSM locality",
+      "point": [
+        77.138667,
+        28.7973118
+      ]
+    },
+    {
+      "id": "osm-node-2713549516",
+      "name": "Amar Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2431499,
+        28.5615391
+      ]
+    },
+    {
+      "id": "osm-node-13511358097",
+      "name": "Amar Park",
+      "detail": "OSM locality",
+      "point": [
+        77.1625825,
+        28.6703921
+      ]
+    },
+    {
+      "id": "osm-node-2826168519",
+      "name": "Ambedkar Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.1497559,
+        28.7254396
+      ]
+    },
+    {
+      "id": "osm-node-2694429377",
+      "name": "Amberhai",
+      "detail": "OSM locality",
+      "point": [
+        77.0500199,
+        28.5784051
+      ]
+    },
+    {
+      "id": "osm-node-2713697722",
+      "name": "Anand Lok",
+      "detail": "OSM locality",
+      "point": [
+        77.2191223,
+        28.5572924
+      ]
+    },
+    {
+      "id": "osm-node-2794451236",
+      "name": "Anand Niketan",
+      "detail": "OSM locality",
+      "point": [
+        77.1638649,
+        28.5785457
+      ]
+    },
+    {
+      "id": "osm-node-10815131299",
+      "name": "Anand Parbat",
+      "detail": "OSM locality",
+      "point": [
+        77.1704149,
+        28.6602309
+      ]
+    },
+    {
+      "id": "osm-node-3004623209",
+      "name": "Anand Vihar",
+      "detail": "OSM locality",
+      "point": [
+        77.3125024,
+        28.641115
+      ]
+    },
+    {
+      "id": "osm-node-10832310392",
+      "name": "Anangpur",
+      "detail": "OSM locality",
+      "point": [
+        77.2688412,
+        28.462523
+      ]
+    },
+    {
+      "id": "osm-node-2713618332",
+      "name": "Andrews Ganj",
+      "detail": "OSM locality",
+      "point": [
+        77.2280152,
+        28.5651135
+      ]
+    },
+    {
+      "id": "osm-node-2713618326",
+      "name": "Andrews Ganj Extension",
+      "detail": "OSM locality",
+      "point": [
+        77.2299752,
+        28.560774
+      ]
+    },
+    {
+      "id": "osm-node-1575062361",
+      "name": "Ankhir",
+      "detail": "OSM locality",
+      "point": [
+        77.2867265,
+        28.4234958
+      ]
+    },
+    {
+      "id": "osm-node-13660390645",
+      "name": "Anuj Nayyar Vihar",
+      "detail": "OSM locality",
+      "point": [
+        77.1297718,
+        28.6008097
+      ]
+    },
+    {
+      "id": "osm-node-2822422558",
+      "name": "Aradhna Enclave",
+      "detail": "OSM locality",
+      "point": [
+        77.179082,
+        28.5751302
+      ]
+    },
+    {
+      "id": "osm-node-2809115218",
+      "name": "Arakpur Bagh",
+      "detail": "OSM locality",
+      "point": [
+        77.1701151,
+        28.5860468
+      ]
+    },
+    {
+      "id": "osm-node-4589489946",
+      "name": "Aram Bagh",
+      "detail": "OSM locality",
+      "point": [
+        77.2107499,
+        28.6433402
+      ]
+    },
+    {
+      "id": "osm-node-1833008506",
+      "name": "Arjondi",
+      "detail": "OSM locality",
+      "point": [
+        77.3164802,
+        28.3966387
+      ]
+    },
+    {
+      "id": "osm-node-2715081974",
+      "name": "Arjun Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2270561,
+        28.5727295
+      ]
+    },
+    {
+      "id": "osm-node-2963994062",
+      "name": "Arjun Park",
+      "detail": "OSM locality",
+      "point": [
+        77.2783394,
+        28.6440141
+      ]
+    },
+    {
+      "id": "osm-node-5766164009",
+      "name": "Arjun Vihar",
+      "detail": "OSM locality",
+      "point": [
+        77.1550497,
+        28.5920342
+      ]
+    },
+    {
+      "id": "osm-node-2936616684",
+      "name": "Aruna Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2259061,
+        28.6979093
+      ]
+    },
+    {
+      "id": "osm-node-4589452408",
+      "name": "Arya Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.213524,
+        28.6459846
+      ]
+    },
+    {
+      "id": "osm-node-13506157298",
+      "name": "Asalatpur Gaon",
+      "detail": "OSM locality",
+      "point": [
+        77.0770499,
+        28.6215656
+      ]
+    },
+    {
+      "id": "osm-node-4373395277",
+      "name": "Asha Pushp Vihar",
+      "detail": "OSM locality",
+      "point": [
+        77.3273216,
+        28.6350455
+      ]
+    },
+    {
+      "id": "osm-node-2822243671",
+      "name": "Ashok Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.101822,
+        28.6360207
+      ]
+    },
+    {
+      "id": "osm-node-2825980899",
+      "name": "Ashok Park",
+      "detail": "OSM locality",
+      "point": [
+        77.1569775,
+        28.671984
+      ]
+    },
+    {
+      "id": "osm-node-13447426287",
+      "name": "Ashok Place",
+      "detail": "OSM locality",
+      "point": [
+        77.2066571,
+        28.6269047
+      ]
+    },
+    {
+      "id": "osm-node-10815131301",
+      "name": "Ashok Vihar",
+      "detail": "OSM locality",
+      "point": [
+        77.1739339,
+        28.6885171
+      ]
+    },
+    {
+      "id": "osm-node-4252790752",
+      "name": "Ashok Vihar Phase III Extension",
+      "detail": "OSM locality",
+      "point": [
+        77.0274408,
+        28.4967161
+      ]
+    },
+    {
+      "id": "osm-node-10834235463",
+      "name": "Asola",
+      "detail": "OSM locality",
+      "point": [
+        77.1847701,
+        28.4530528
+      ]
+    },
+    {
+      "id": "osm-node-2001907153",
+      "name": "Aterna",
+      "detail": "OSM locality",
+      "point": [
+        77.1545849,
+        28.9033077
+      ]
+    },
+    {
+      "id": "osm-node-2703951965",
+      "name": "Azadpur",
+      "detail": "OSM locality",
+      "point": [
+        77.1755473,
+        28.7076568
+      ]
+    },
+    {
+      "id": "osm-node-1832855618",
+      "name": "Baba Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.3139776,
+        28.419982
+      ]
+    },
+    {
+      "id": "osm-node-6491308177",
+      "name": "Babarpur",
+      "detail": "OSM locality",
+      "point": [
+        77.2797551,
+        28.6874305
+      ]
+    },
+    {
+      "id": "osm-node-939234829",
+      "name": "Badarpur",
+      "detail": "OSM locality",
+      "point": [
+        77.3068634,
+        28.4942102
+      ]
+    },
+    {
+      "id": "osm-node-10832441693",
+      "name": "Badkhal",
+      "detail": "OSM locality",
+      "point": [
+        77.2830247,
+        28.4072934
+      ]
+    },
+    {
+      "id": "osm-node-1565056779",
+      "name": "Badkhal village",
+      "detail": "OSM locality",
+      "point": [
+        77.2782395,
+        28.4101372
+      ]
+    },
+    {
+      "id": "osm-node-2701049012",
+      "name": "Badli",
+      "detail": "OSM locality",
+      "point": [
+        77.1440045,
+        28.7337476
+      ]
+    },
+    {
+      "id": "osm-node-10820369598",
+      "name": "Badli Industrial Area Phase 2",
+      "detail": "OSM locality",
+      "point": [
+        77.1312654,
+        28.7464118
+      ]
+    },
+    {
+      "id": "osm-node-6467933896",
+      "name": "Balbir Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2907538,
+        28.6837898
+      ]
+    },
+    {
+      "id": "osm-node-6467933891",
+      "name": "Balbir Nagar Extension",
+      "detail": "OSM locality",
+      "point": [
+        77.290632,
+        28.6854297
+      ]
+    },
+    {
+      "id": "osm-node-2814771705",
+      "name": "Bali Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.128178,
+        28.6541384
+      ]
+    },
+    {
+      "id": "osm-node-2713432486",
+      "name": "Baljeet Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.1605162,
+        28.6563217
+      ]
+    },
+    {
+      "id": "osm-node-3268587269",
+      "name": "Ballimaran",
+      "detail": "OSM locality",
+      "point": [
+        77.2254416,
+        28.6531586
+      ]
+    },
+    {
+      "id": "osm-node-5766162763",
+      "name": "Bana Singh Enclave",
+      "detail": "OSM locality",
+      "point": [
+        77.1366443,
+        28.5493148
+      ]
+    },
+    {
+      "id": "osm-node-13594703600",
+      "name": "Banarsi Dass Estate",
+      "detail": "OSM locality",
+      "point": [
+        77.2186381,
+        28.6979904
+      ]
+    },
+    {
+      "id": "osm-node-2708238727",
+      "name": "Bank Enclave",
+      "detail": "OSM locality",
+      "point": [
+        77.1293811,
+        28.6416337
+      ]
+    },
+    {
+      "id": "osm-node-2715117137",
+      "name": "Bapa Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.180901,
+        28.6542692
+      ]
+    },
+    {
+      "id": "osm-node-2714360414",
+      "name": "Bara Hindu Rao",
+      "detail": "OSM locality",
+      "point": [
+        77.20501,
+        28.6595181
+      ]
+    },
+    {
+      "id": "osm-node-2700242559",
+      "name": "Barwala",
+      "detail": "OSM locality",
+      "point": [
+        77.0618819,
+        28.7613474
+      ]
+    },
+    {
+      "id": "osm-node-2699780089",
+      "name": "Bawana",
+      "detail": "OSM locality",
+      "point": [
+        77.0328847,
+        28.79966
+      ]
+    },
+    {
+      "id": "osm-node-7840142244",
+      "name": "Begampur",
+      "detail": "OSM locality",
+      "point": [
+        77.0649345,
+        28.7267136
+      ]
+    },
+    {
+      "id": "osm-node-7840142243",
+      "name": "Begum Pur",
+      "detail": "OSM locality",
+      "point": [
+        77.0583706,
+        28.725503
+      ]
+    },
+    {
+      "id": "osm-node-12990959207",
+      "name": "Bengali Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.0786363,
+        28.5980649
+      ]
+    },
+    {
+      "id": "osm-node-312921219",
+      "name": "Ber Sarai",
+      "detail": "OSM locality",
+      "point": [
+        77.181444,
+        28.548451
+      ]
+    },
+    {
+      "id": "osm-node-12985538412",
+      "name": "Beri Wala Bagh",
+      "detail": "OSM locality",
+      "point": [
+        77.2061159,
+        28.6638994
+      ]
+    },
+    {
+      "id": "osm-node-2708130865",
+      "name": "Bhagwan Das Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.1480386,
+        28.6708475
+      ]
+    },
+    {
+      "id": "osm-node-10812136394",
+      "name": "Bhajanpura",
+      "detail": "OSM locality",
+      "point": [
+        77.2617817,
+        28.7009399
+      ]
+    },
+    {
+      "id": "osm-node-10831496010",
+      "name": "Bhalswa",
+      "detail": "OSM locality",
+      "point": [
+        77.1588277,
+        28.7454994
+      ]
+    },
+    {
+      "id": "osm-node-1565056782",
+      "name": "Bhankri village",
+      "detail": "OSM locality",
+      "point": [
+        77.2610911,
+        28.3936816
+      ]
+    },
+    {
+      "id": "osm-node-2805938580",
+      "name": "Bharat Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2694303,
+        28.5660025
+      ]
+    },
+    {
+      "id": "osm-node-12592558189",
+      "name": "Bharti Artist Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2906706,
+        28.6377156
+      ]
+    },
+    {
+      "id": "osm-node-6270303706",
+      "name": "Bhavishya Nidhi Enclave",
+      "detail": "OSM locality",
+      "point": [
+        77.2096744,
+        28.5409306
+      ]
+    },
+    {
+      "id": "osm-node-3837776885",
+      "name": "Bihari Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2827076,
+        28.6711259
+      ]
+    },
+    {
+      "id": "osm-node-423735599",
+      "name": "Bikaji Cama Place",
+      "detail": "OSM locality",
+      "point": [
+        77.1876831,
+        28.5685715
+      ]
+    },
+    {
+      "id": "osm-node-2669084834",
+      "name": "Bindapur Village",
+      "detail": "OSM locality",
+      "point": [
+        77.0681823,
+        28.6142004
+      ]
+    },
+    {
+      "id": "osm-node-8852128135",
+      "name": "Block 4",
+      "detail": "OSM locality",
+      "point": [
+        77.1136237,
+        28.6370001
+      ]
+    },
+    {
+      "id": "osm-node-2733423616",
+      "name": "Block C-1 & C-2",
+      "detail": "OSM locality",
+      "point": [
+        77.020526,
+        28.4973905
+      ]
+    },
+    {
+      "id": "osm-node-13508699280",
+      "name": "Block C5",
+      "detail": "OSM locality",
+      "point": [
+        77.1563441,
+        28.695584
+      ]
+    },
+    {
+      "id": "osm-node-2825821056",
+      "name": "Bodh Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.1559935,
+        28.6776478
+      ]
+    },
+    {
+      "id": "osm-node-7257311715",
+      "name": "Brijpuri",
+      "detail": "OSM locality",
+      "point": [
+        77.2751662,
+        28.704747
+      ]
+    },
+    {
+      "id": "osm-node-7840142238",
+      "name": "Budella",
+      "detail": "OSM locality",
+      "point": [
+        77.0699741,
+        28.6368974
+      ]
+    },
+    {
+      "id": "osm-node-2826079162",
+      "name": "Budh Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.1440854,
+        28.6325424
+      ]
+    },
+    {
+      "id": "osm-node-12943433742",
+      "name": "CB Block",
+      "detail": "OSM locality",
+      "point": [
+        77.134755,
+        28.6213578
+      ]
+    },
+    {
+      "id": "osm-node-2714311211",
+      "name": "CC Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.194721,
+        28.6892775
+      ]
+    },
+    {
+      "id": "osm-node-4252796217",
+      "name": "Carterpuri Village",
+      "detail": "OSM locality",
+      "point": [
+        77.0428174,
+        28.5077104
+      ]
+    },
+    {
+      "id": "osm-node-13635524110",
+      "name": "Cavalry Line",
+      "detail": "OSM locality",
+      "point": [
+        77.2161315,
+        28.6929814
+      ]
+    },
+    {
+      "id": "osm-node-6666318646",
+      "name": "Central Vista",
+      "detail": "OSM locality",
+      "point": [
+        77.2185276,
+        28.6134493
+      ]
+    },
+    {
+      "id": "osm-node-563659578",
+      "name": "Chanakyapuri",
+      "detail": "OSM locality",
+      "point": [
+        77.1885212,
+        28.5946775
+      ]
+    },
+    {
+      "id": "osm-node-13099729154",
+      "name": "Chanan Singh Park",
+      "detail": "OSM locality",
+      "point": [
+        77.1291256,
+        28.6063467
+      ]
+    },
+    {
+      "id": "osm-node-10834235462",
+      "name": "Chandan Hola",
+      "detail": "OSM locality",
+      "point": [
+        77.1823025,
+        28.4680311
+      ]
+    },
+    {
+      "id": "osm-node-3268564739",
+      "name": "Chandni Chowk",
+      "detail": "OSM locality",
+      "point": [
+        77.2321937,
+        28.6559834
+      ]
+    },
+    {
+      "id": "osm-node-10818928355",
+      "name": "Chandrawal",
+      "detail": "OSM locality",
+      "point": [
+        77.223748,
+        28.6951051
+      ]
+    },
+    {
+      "id": "osm-node-949778462",
+      "name": "Chattarpur Farms",
+      "detail": "OSM locality",
+      "point": [
+        77.167252,
+        28.480508
+      ]
+    },
+    {
+      "id": "osm-node-2708491205",
+      "name": "Chaukhandi",
+      "detail": "OSM locality",
+      "point": [
+        77.0965683,
+        28.6451383
+      ]
+    },
+    {
+      "id": "osm-node-3268595169",
+      "name": "Chawri Bazaar",
+      "detail": "OSM locality",
+      "point": [
+        77.2297876,
+        28.6499269
+      ]
+    },
+    {
+      "id": "osm-node-10834194973",
+      "name": "Chhattarpur",
+      "detail": "OSM locality",
+      "point": [
+        77.183032,
+        28.503846
+      ]
+    },
+    {
+      "id": "osm-node-2690679809",
+      "name": "Chhawla",
+      "detail": "OSM locality",
+      "point": [
+        77.0037102,
+        28.5623044
+      ]
+    },
+    {
+      "id": "osm-node-9093894577",
+      "name": "Chhota Hasanpur",
+      "detail": "OSM locality",
+      "point": [
+        77.3069802,
+        28.6338403
+      ]
+    },
+    {
+      "id": "osm-node-3837776886",
+      "name": "Chikamberpur",
+      "detail": "OSM locality",
+      "point": [
+        77.3256517,
+        28.6771415
+      ]
+    },
+    {
+      "id": "osm-node-7835031259",
+      "name": "Chilla",
+      "detail": "OSM locality",
+      "point": [
+        77.3021867,
+        28.5847257
+      ]
+    },
+    {
+      "id": "osm-node-2713543086",
+      "name": "Chirag Delhi",
+      "detail": "OSM locality",
+      "point": [
+        77.2280694,
+        28.5381411
+      ]
+    },
+    {
+      "id": "osm-node-10815209842",
+      "name": "Chittaranjan Park",
+      "detail": "OSM locality",
+      "point": [
+        77.2516536,
+        28.5376883
+      ]
+    },
+    {
+      "id": "osm-node-2715081960",
+      "name": "Chuni Lahri Basti",
+      "detail": "OSM locality",
+      "point": [
+        77.2244496,
+        28.5695811
+      ]
+    },
+    {
+      "id": "osm-node-10818928354",
+      "name": "Civil Lines",
+      "detail": "OSM locality",
+      "point": [
+        77.2225999,
+        28.6806862
+      ]
+    },
+    {
+      "id": "osm-node-6351658123",
+      "name": "Cornwallis Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2344193,
+        28.6053043
+      ]
+    },
+    {
+      "id": "osm-node-11096534411",
+      "name": "D Block",
+      "detail": "OSM locality",
+      "point": [
+        77.2950176,
+        28.6371197
+      ]
+    },
+    {
+      "id": "osm-node-2713479260",
+      "name": "DDA Flats",
+      "detail": "OSM locality",
+      "point": [
+        77.2558848,
+        28.52991
+      ]
+    },
+    {
+      "id": "osm-node-13429994681",
+      "name": "DDA SFS Flats",
+      "detail": "OSM locality",
+      "point": [
+        77.1855743,
+        28.6708176
+      ]
+    },
+    {
+      "id": "osm-node-2727168888",
+      "name": "DLF 5",
+      "detail": "OSM locality",
+      "point": [
+        77.0937399,
+        28.4471643
+      ]
+    },
+    {
+      "id": "osm-node-2708128654",
+      "name": "DLF Capital Greens",
+      "detail": "OSM locality",
+      "point": [
+        77.150915,
+        28.6661963
+      ]
+    },
+    {
+      "id": "osm-node-10834200623",
+      "name": "DLF Farms",
+      "detail": "OSM locality",
+      "point": [
+        77.1724534,
+        28.4823661
+      ]
+    },
+    {
+      "id": "osm-node-2822487454",
+      "name": "DLF Industrial Area",
+      "detail": "OSM locality",
+      "point": [
+        77.1426394,
+        28.6566695
+      ]
+    },
+    {
+      "id": "osm-node-13358863835",
+      "name": "DLF Midtown",
+      "detail": "OSM locality",
+      "point": [
+        77.1548,
+        28.6643996
+      ]
+    },
+    {
+      "id": "osm-node-2719341968",
+      "name": "DLF Phase 1",
+      "detail": "OSM locality",
+      "point": [
+        77.090194,
+        28.4765171
+      ]
+    },
+    {
+      "id": "osm-node-2445984394",
+      "name": "DTC Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.1570777,
+        28.651488
+      ]
+    },
+    {
+      "id": "osm-node-2822548971",
+      "name": "DVB Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.1912742,
+        28.6837676
+      ]
+    },
+    {
+      "id": "osm-node-12904072641",
+      "name": "Dabri Village",
+      "detail": "OSM locality",
+      "point": [
+        77.0837385,
+        28.608339
+      ]
+    },
+    {
+      "id": "osm-node-1832884989",
+      "name": "Daulatabad",
+      "detail": "OSM locality",
+      "point": [
+        77.3152129,
+        28.4144314
+      ]
+    },
+    {
+      "id": "osm-node-2713549533",
+      "name": "Dayanand Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2476131,
+        28.5621997
+      ]
+    },
+    {
+      "id": "osm-node-2798408963",
+      "name": "Defence Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2330402,
+        28.5713575
+      ]
+    },
+    {
+      "id": "osm-node-7182578787",
+      "name": "Defence Colony Police Quarters",
+      "detail": "OSM locality",
+      "point": [
+        77.2324539,
+        28.5643077
+      ]
+    },
+    {
+      "id": "osm-node-2825821057",
+      "name": "Dena Ram Park",
+      "detail": "OSM locality",
+      "point": [
+        77.1651288,
+        28.6751147
+      ]
+    },
+    {
+      "id": "osm-node-13457483773",
+      "name": "Derawal Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.188685,
+        28.6992516
+      ]
+    },
+    {
+      "id": "osm-node-13110120728",
+      "name": "Dharampur Lodge",
+      "detail": "OSM locality",
+      "point": [
+        77.201315,
+        28.6760142
+      ]
+    },
+    {
+      "id": "osm-node-2970179080",
+      "name": "Dharampura",
+      "detail": "OSM locality",
+      "point": [
+        77.2318096,
+        28.6538979
+      ]
+    },
+    {
+      "id": "osm-node-10815230046",
+      "name": "Dhaula Kuan",
+      "detail": "OSM locality",
+      "point": [
+        77.162261,
+        28.5948845
+      ]
+    },
+    {
+      "id": "osm-node-3004641289",
+      "name": "Dilshad Garden",
+      "detail": "OSM locality",
+      "point": [
+        77.3220645,
+        28.6806819
+      ]
+    },
+    {
+      "id": "osm-node-2822600399",
+      "name": "Double Storey",
+      "detail": "OSM locality",
+      "point": [
+        77.2453756,
+        28.5641897
+      ]
+    },
+    {
+      "id": "osm-node-12904484900",
+      "name": "Durga Park",
+      "detail": "OSM locality",
+      "point": [
+        77.0861842,
+        28.6028031
+      ]
+    },
+    {
+      "id": "osm-node-2203010089",
+      "name": "Dwarka",
+      "detail": "OSM locality",
+      "point": [
+        77.0429417,
+        28.6007245
+      ]
+    },
+    {
+      "id": "osm-node-13455393992",
+      "name": "EA Pocket",
+      "detail": "OSM locality",
+      "point": [
+        77.1097555,
+        28.6193409
+      ]
+    },
+    {
+      "id": "osm-node-2794272221",
+      "name": "East Block",
+      "detail": "OSM locality",
+      "point": [
+        77.1830056,
+        28.5663751
+      ]
+    },
+    {
+      "id": "osm-node-2837341338",
+      "name": "East Patel Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.1725666,
+        28.645649
+      ]
+    },
+    {
+      "id": "osm-node-12010188632",
+      "name": "East School Block",
+      "detail": "OSM locality",
+      "point": [
+        77.2991478,
+        28.6305485
+      ]
+    },
+    {
+      "id": "osm-node-2809312965",
+      "name": "East Vinod Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.3075035,
+        28.6227661
+      ]
+    },
+    {
+      "id": "osm-node-574230394",
+      "name": "Espace",
+      "detail": "OSM locality",
+      "point": [
+        77.0649962,
+        28.4120009
+      ]
+    },
+    {
+      "id": "osm-node-6657316543",
+      "name": "Fateh Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.1006012,
+        28.6315015
+      ]
+    },
+    {
+      "id": "osm-node-1411271992",
+      "name": "Fatehpur Beri",
+      "detail": "OSM locality",
+      "point": [
+        77.1825027,
+        28.4573589
+      ]
+    },
+    {
+      "id": "osm-node-1832442148",
+      "name": "Fatehpur Chandela",
+      "detail": "OSM locality",
+      "point": [
+        77.3025194,
+        28.4153451
+      ]
+    },
+    {
+      "id": "osm-node-5613978039",
+      "name": "Freedom Fighters Enclave",
+      "detail": "OSM locality",
+      "point": [
+        77.1986538,
+        28.5094555
+      ]
+    },
+    {
+      "id": "osm-node-2797954840",
+      "name": "Friends Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2619181,
+        28.5667513
+      ]
+    },
+    {
+      "id": "osm-node-2810782530",
+      "name": "GT Karnal Road Industrial Area",
+      "detail": "OSM locality",
+      "point": [
+        77.1858331,
+        28.6950799
+      ]
+    },
+    {
+      "id": "osm-node-2825767989",
+      "name": "Gaffar Manzil",
+      "detail": "OSM locality",
+      "point": [
+        77.2832387,
+        28.5566457
+      ]
+    },
+    {
+      "id": "osm-node-9908292573",
+      "name": "Gamri Village",
+      "detail": "OSM locality",
+      "point": [
+        77.2562756,
+        28.6926195
+      ]
+    },
+    {
+      "id": "osm-node-10812202318",
+      "name": "Gandhi Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2715878,
+        28.6587904
+      ]
+    },
+    {
+      "id": "osm-node-2809312966",
+      "name": "Ganesh Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2851699,
+        28.6250692
+      ]
+    },
+    {
+      "id": "osm-node-2825821058",
+      "name": "Ganeshpura",
+      "detail": "OSM locality",
+      "point": [
+        77.1634747,
+        28.6776108
+      ]
+    },
+    {
+      "id": "osm-node-4632947349",
+      "name": "Gangotri Apartments",
+      "detail": "OSM locality",
+      "point": [
+        77.2521015,
+        28.5244125
+      ]
+    },
+    {
+      "id": "osm-node-2715609617",
+      "name": "Gautam Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2124515,
+        28.5621177
+      ]
+    },
+    {
+      "id": "osm-node-10815246202",
+      "name": "Geeta Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2749996,
+        28.6510892
+      ]
+    },
+    {
+      "id": "osm-node-2690981750",
+      "name": "Gemini Park",
+      "detail": "OSM locality",
+      "point": [
+        77.0072118,
+        28.6176011
+      ]
+    },
+    {
+      "id": "osm-node-10815276311",
+      "name": "Gharoli",
+      "detail": "OSM locality",
+      "point": [
+        77.3319912,
+        28.6165864
+      ]
+    },
+    {
+      "id": "osm-node-6833896531",
+      "name": "Gharwal Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.1724787,
+        28.5223821
+      ]
+    },
+    {
+      "id": "osm-node-10815276312",
+      "name": "Ghazipur",
+      "detail": "OSM locality",
+      "point": [
+        77.3203181,
+        28.6302608
+      ]
+    },
+    {
+      "id": "osm-node-2714309089",
+      "name": "Gilahri Bagh",
+      "detail": "OSM locality",
+      "point": [
+        77.1977171,
+        28.6793053
+      ]
+    },
+    {
+      "id": "osm-node-2713482040",
+      "name": "Giri Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2643499,
+        28.5401367
+      ]
+    },
+    {
+      "id": "osm-node-4632947350",
+      "name": "Godavari Apartments",
+      "detail": "OSM locality",
+      "point": [
+        77.2532648,
+        28.5266671
+      ]
+    },
+    {
+      "id": "osm-node-938641774",
+      "name": "Golf Links",
+      "detail": "OSM locality",
+      "point": [
+        77.2311628,
+        28.5959698
+      ]
+    },
+    {
+      "id": "osm-node-2700209048",
+      "name": "Gopal Nagar",
+      "detail": "OSM locality",
+      "point": [
+        76.969781,
+        28.6121435
+      ]
+    },
+    {
+      "id": "osm-node-13122870776",
+      "name": "Gopinath Bazar",
+      "detail": "OSM locality",
+      "point": [
+        77.133685,
+        28.5966612
+      ]
+    },
+    {
+      "id": "osm-node-6491308175",
+      "name": "Gorakh Park",
+      "detail": "OSM locality",
+      "point": [
+        77.2837626,
+        28.6840497
+      ]
+    },
+    {
+      "id": "osm-node-2826168520",
+      "name": "Govind Mohalla",
+      "detail": "OSM locality",
+      "point": [
+        77.1469825,
+        28.7231976
+      ]
+    },
+    {
+      "id": "osm-node-939241523",
+      "name": "Govindpuri",
+      "detail": "OSM locality",
+      "point": [
+        77.2637936,
+        28.5351561
+      ]
+    },
+    {
+      "id": "osm-node-2690714844",
+      "name": "Goyla Khurd",
+      "detail": "OSM locality",
+      "point": [
+        77.0101945,
+        28.585716
+      ]
+    },
+    {
+      "id": "osm-node-939270509",
+      "name": "Greater Kailash",
+      "detail": "OSM locality",
+      "point": [
+        77.2438337,
+        28.5558502
+      ]
+    },
+    {
+      "id": "osm-node-939241606",
+      "name": "Greater Kailash I",
+      "detail": "OSM locality",
+      "point": [
+        77.2360199,
+        28.5512676
+      ]
+    },
+    {
+      "id": "osm-node-2706600651",
+      "name": "Greater Kailash II",
+      "detail": "OSM locality",
+      "point": [
+        77.242467,
+        28.5338204
+      ]
+    },
+    {
+      "id": "osm-node-939278431",
+      "name": "Green Park",
+      "detail": "OSM locality",
+      "point": [
+        77.2038699,
+        28.5564421
+      ]
+    },
+    {
+      "id": "osm-node-2798637566",
+      "name": "Green Park Extension",
+      "detail": "OSM locality",
+      "point": [
+        77.2036565,
+        28.5607037
+      ]
+    },
+    {
+      "id": "osm-node-13457483763",
+      "name": "Gujranwalan Town",
+      "detail": "OSM locality",
+      "point": [
+        77.1887404,
+        28.7013147
+      ]
+    },
+    {
+      "id": "osm-node-6893456498",
+      "name": "Gulmohar Enclave",
+      "detail": "OSM locality",
+      "point": [
+        77.2104353,
+        28.5583071
+      ]
+    },
+    {
+      "id": "osm-node-2715609620",
+      "name": "Gulmohar Park",
+      "detail": "OSM locality",
+      "point": [
+        77.2130055,
+        28.5571011
+      ]
+    },
+    {
+      "id": "osm-node-2811270783",
+      "name": "Gur Mandi",
+      "detail": "OSM locality",
+      "point": [
+        77.1969036,
+        28.6861093
+      ]
+    },
+    {
+      "id": "osm-node-2952012233",
+      "name": "Guru Arjun Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.1602142,
+        28.6495976
+      ]
+    },
+    {
+      "id": "osm-node-2952012234",
+      "name": "Guru Nanak Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.1598664,
+        28.6458975
+      ]
+    },
+    {
+      "id": "osm-node-1992264811",
+      "name": "Gurukul Basti",
+      "detail": "OSM locality",
+      "point": [
+        77.2956956,
+        28.4757692
+      ]
+    },
+    {
+      "id": "osm-node-13061156449",
+      "name": "Haddu Mohalla",
+      "detail": "OSM locality",
+      "point": [
+        77.2995827,
+        28.5360777
+      ]
+    },
+    {
+      "id": "osm-node-2725603939",
+      "name": "Haiderpur",
+      "detail": "OSM locality",
+      "point": [
+        77.1456151,
+        28.7223775
+      ]
+    },
+    {
+      "id": "osm-node-13594720070",
+      "name": "Hakikat Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2087081,
+        28.6987164
+      ]
+    },
+    {
+      "id": "osm-node-6051594696",
+      "name": "Hans Enclave",
+      "detail": "OSM locality",
+      "point": [
+        77.0257583,
+        28.4453686
+      ]
+    },
+    {
+      "id": "osm-node-2825821059",
+      "name": "Hansa Puri",
+      "detail": "OSM locality",
+      "point": [
+        77.1573503,
+        28.6771826
+      ]
+    },
+    {
+      "id": "osm-node-2727648607",
+      "name": "Hari Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.1119344,
+        28.6296489
+      ]
+    },
+    {
+      "id": "osm-node-2805925627",
+      "name": "Harkesh Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2752266,
+        28.5461479
+      ]
+    },
+    {
+      "id": "osm-node-6411571304",
+      "name": "Harswaroop Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.1830318,
+        28.4543326
+      ]
+    },
+    {
+      "id": "osm-node-7840142236",
+      "name": "Hastsal",
+      "detail": "OSM locality",
+      "point": [
+        77.0487636,
+        28.6359648
+      ]
+    },
+    {
+      "id": "osm-node-7840142235",
+      "name": "Hastsal Village",
+      "detail": "OSM locality",
+      "point": [
+        77.0559245,
+        28.6341941
+      ]
+    },
+    {
+      "id": "osm-node-332002754",
+      "name": "Hauz Khas",
+      "detail": "OSM locality",
+      "point": [
+        77.1948144,
+        28.5536023
+      ]
+    },
+    {
+      "id": "osm-node-1706220829",
+      "name": "Hauz Khas Enclave",
+      "detail": "OSM locality",
+      "point": [
+        77.2012358,
+        28.548804
+      ]
+    },
+    {
+      "id": "osm-node-2809115219",
+      "name": "Hauz Rani",
+      "detail": "OSM locality",
+      "point": [
+        77.2117586,
+        28.5291809
+      ]
+    },
+    {
+      "id": "osm-node-938409470",
+      "name": "Hazrat Khwaja Mir Dard Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2291144,
+        28.6401538
+      ]
+    },
+    {
+      "id": "osm-node-2690724225",
+      "name": "Hiran Kudna",
+      "detail": "OSM locality",
+      "point": [
+        76.9984106,
+        28.6723367
+      ]
+    },
+    {
+      "id": "osm-node-2706761307",
+      "name": "Hudco Place",
+      "detail": "OSM locality",
+      "point": [
+        77.2264771,
+        28.5621911
+      ]
+    },
+    {
+      "id": "osm-node-10815144106",
+      "name": "Humayunpur",
+      "detail": "OSM locality",
+      "point": [
+        77.1943617,
+        28.5612584
+      ]
+    },
+    {
+      "id": "osm-node-5318876496",
+      "name": "IFFCO Chowk",
+      "detail": "OSM locality",
+      "point": [
+        77.0722427,
+        28.4724299
+      ]
+    },
+    {
+      "id": "osm-node-13626297229",
+      "name": "IFS Apartments",
+      "detail": "OSM locality",
+      "point": [
+        77.2898205,
+        28.6056632
+      ]
+    },
+    {
+      "id": "osm-node-13647602658",
+      "name": "INA Market",
+      "detail": "OSM locality",
+      "point": [
+        77.2102033,
+        28.5741862
+      ]
+    },
+    {
+      "id": "osm-node-2701064300",
+      "name": "Ibrahimpur",
+      "detail": "OSM locality",
+      "point": [
+        77.1766202,
+        28.7756976
+      ]
+    },
+    {
+      "id": "osm-node-7111147159",
+      "name": "Indira Enclave",
+      "detail": "OSM locality",
+      "point": [
+        77.2021456,
+        28.5027721
+      ]
+    },
+    {
+      "id": "osm-node-6729018439",
+      "name": "Indira Vikas Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2078464,
+        28.7138549
+      ]
+    },
+    {
+      "id": "osm-node-13472587315",
+      "name": "Indraprastha Estate",
+      "detail": "OSM locality",
+      "point": [
+        77.2438287,
+        28.6273744
+      ]
+    },
+    {
+      "id": "osm-node-10815246198",
+      "name": "Indraprastha Extension",
+      "detail": "OSM locality",
+      "point": [
+        77.3067569,
+        28.6305244
+      ]
+    },
+    {
+      "id": "osm-node-2706749980",
+      "name": "Indrapuri",
+      "detail": "OSM locality",
+      "point": [
+        77.1470979,
+        28.6286841
+      ]
+    },
+    {
+      "id": "osm-node-13595222183",
+      "name": "Institutional Area",
+      "detail": "OSM locality",
+      "point": [
+        77.1019708,
+        28.6100845
+      ]
+    },
+    {
+      "id": "osm-node-2805925628",
+      "name": "Ishwar Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.1956155,
+        28.6944491
+      ]
+    },
+    {
+      "id": "osm-node-442110898",
+      "name": "Ishwar Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2696155,
+        28.5591555
+      ]
+    },
+    {
+      "id": "osm-node-1567946882",
+      "name": "Islampur",
+      "detail": "OSM locality",
+      "point": [
+        76.9838785,
+        28.4018679
+      ]
+    },
+    {
+      "id": "osm-node-2692217150",
+      "name": "JJ Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.0134882,
+        28.6632459
+      ]
+    },
+    {
+      "id": "osm-node-10836955221",
+      "name": "Jagdamba Camp",
+      "detail": "OSM locality",
+      "point": [
+        77.2207144,
+        28.5361968
+      ]
+    },
+    {
+      "id": "osm-node-10613922967",
+      "name": "Jahangir Puri",
+      "detail": "OSM locality",
+      "point": [
+        77.1679057,
+        28.7301654
+      ]
+    },
+    {
+      "id": "osm-node-2703915972",
+      "name": "Jailer Wala Bagh",
+      "detail": "OSM locality",
+      "point": [
+        77.1773712,
+        28.7017988
+      ]
+    },
+    {
+      "id": "osm-node-2723877684",
+      "name": "Jaipur Estate",
+      "detail": "OSM locality",
+      "point": [
+        77.2519283,
+        28.5878849
+      ]
+    },
+    {
+      "id": "osm-node-13110109092",
+      "name": "Jaipuria Mill",
+      "detail": "OSM locality",
+      "point": [
+        77.2026796,
+        28.6772824
+      ]
+    },
+    {
+      "id": "osm-node-6738530835",
+      "name": "Jal Vihar",
+      "detail": "OSM locality",
+      "point": [
+        77.2483706,
+        28.5754865
+      ]
+    },
+    {
+      "id": "osm-node-10815216279",
+      "name": "Jamia Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2848272,
+        28.5687308
+      ]
+    },
+    {
+      "id": "osm-node-2303440249",
+      "name": "Janakpuri",
+      "detail": "OSM locality",
+      "point": [
+        77.0874757,
+        28.6219272
+      ]
+    },
+    {
+      "id": "osm-node-1868602822",
+      "name": "Jasola",
+      "detail": "OSM locality",
+      "point": [
+        77.2919683,
+        28.5468543
+      ]
+    },
+    {
+      "id": "osm-node-939235142",
+      "name": "Jasola Vihar",
+      "detail": "OSM locality",
+      "point": [
+        77.2913342,
+        28.5427353
+      ]
+    },
+    {
+      "id": "osm-node-3837776887",
+      "name": "Jeevan Sarita",
+      "detail": "OSM locality",
+      "point": [
+        77.3175132,
+        28.677751
+      ]
+    },
+    {
+      "id": "osm-node-5272392392",
+      "name": "Jhilmil Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.3072827,
+        28.6698142
+      ]
+    },
+    {
+      "id": "osm-node-10030778515",
+      "name": "Jia Sarai",
+      "detail": "OSM locality",
+      "point": [
+        77.1895389,
+        28.546006
+      ]
+    },
+    {
+      "id": "osm-node-10823999061",
+      "name": "Jor Bagh",
+      "detail": "OSM locality",
+      "point": [
+        77.2143495,
+        28.5876212
+      ]
+    },
+    {
+      "id": "osm-node-2971139779",
+      "name": "Jwala Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2964437,
+        28.6717084
+      ]
+    },
+    {
+      "id": "osm-node-2971139778",
+      "name": "Jwala Nagar Extn",
+      "detail": "OSM locality",
+      "point": [
+        77.2984841,
+        28.6719267
+      ]
+    },
+    {
+      "id": "osm-node-13042426038",
+      "name": "Kabir Basti",
+      "detail": "OSM locality",
+      "point": [
+        77.2081144,
+        28.6726571
+      ]
+    },
+    {
+      "id": "osm-node-939270659",
+      "name": "Kailash Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2429694,
+        28.5530522
+      ]
+    },
+    {
+      "id": "osm-node-2706814689",
+      "name": "Kalindi Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.26592,
+        28.5763828
+      ]
+    },
+    {
+      "id": "osm-node-2716742209",
+      "name": "Kalkaji",
+      "detail": "OSM locality",
+      "point": [
+        77.258801,
+        28.5469476
+      ]
+    },
+    {
+      "id": "osm-node-2713479263",
+      "name": "Kalkaji Extension",
+      "detail": "OSM locality",
+      "point": [
+        77.2630731,
+        28.5293633
+      ]
+    },
+    {
+      "id": "osm-node-2805510746",
+      "name": "Kalu Sarai",
+      "detail": "OSM locality",
+      "point": [
+        77.2037409,
+        28.5415421
+      ]
+    },
+    {
+      "id": "osm-node-10815172176",
+      "name": "Kalyan Puri",
+      "detail": "OSM locality",
+      "point": [
+        77.317636,
+        28.6159271
+      ]
+    },
+    {
+      "id": "osm-node-2805925629",
+      "name": "Kalyan Vihar",
+      "detail": "OSM locality",
+      "point": [
+        77.1971156,
+        28.6917865
+      ]
+    },
+    {
+      "id": "osm-node-2823928902",
+      "name": "Kamla Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2039504,
+        28.6806752
+      ]
+    },
+    {
+      "id": "osm-node-2725505971",
+      "name": "Kammruddin Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.0533471,
+        28.6766787
+      ]
+    },
+    {
+      "id": "osm-node-2825821061",
+      "name": "Kanhaiya Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.1648445,
+        28.6800635
+      ]
+    },
+    {
+      "id": "osm-node-2710408120",
+      "name": "Kanjhawala",
+      "detail": "OSM locality",
+      "point": [
+        77.0043151,
+        28.7358173
+      ]
+    },
+    {
+      "id": "osm-node-3837776888",
+      "name": "Kanti Nagar Extension",
+      "detail": "OSM locality",
+      "point": [
+        77.2782957,
+        28.6703769
+      ]
+    },
+    {
+      "id": "osm-node-2699856900",
+      "name": "Kapashera",
+      "detail": "OSM locality",
+      "point": [
+        77.0823049,
+        28.527295
+      ]
+    },
+    {
+      "id": "osm-node-13594804983",
+      "name": "Kapil Vihar",
+      "detail": "OSM locality",
+      "point": [
+        77.1366212,
+        28.6990083
+      ]
+    },
+    {
+      "id": "osm-node-2708101986",
+      "name": "Karampura",
+      "detail": "OSM locality",
+      "point": [
+        77.1472319,
+        28.6646486
+      ]
+    },
+    {
+      "id": "osm-node-2708101992",
+      "name": "Karampura West",
+      "detail": "OSM locality",
+      "point": [
+        77.1409149,
+        28.6661784
+      ]
+    },
+    {
+      "id": "osm-node-3004623210",
+      "name": "Karkarduma",
+      "detail": "OSM locality",
+      "point": [
+        77.3014351,
+        28.6521491
+      ]
+    },
+    {
+      "id": "osm-node-2711124358",
+      "name": "Karol Bagh",
+      "detail": "OSM locality",
+      "point": [
+        77.1890227,
+        28.6529982
+      ]
+    },
+    {
+      "id": "osm-node-943748969",
+      "name": "Kashmere Gate",
+      "detail": "OSM locality",
+      "point": [
+        77.228819,
+        28.6655672
+      ]
+    },
+    {
+      "id": "osm-node-13447649959",
+      "name": "Kashmiri Market",
+      "detail": "OSM locality",
+      "point": [
+        77.2236268,
+        28.6335293
+      ]
+    },
+    {
+      "id": "osm-node-2715163824",
+      "name": "Kasturba Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2256295,
+        28.5774817
+      ]
+    },
+    {
+      "id": "osm-node-325491415",
+      "name": "Katwaria Sarai",
+      "detail": "OSM locality",
+      "point": [
+        77.1862772,
+        28.5418938
+      ]
+    },
+    {
+      "id": "osm-node-13478190584",
+      "name": "Khaampur Gaon",
+      "detail": "OSM locality",
+      "point": [
+        77.1618067,
+        28.6482754
+      ]
+    },
+    {
+      "id": "osm-node-2690713440",
+      "name": "Khaira",
+      "detail": "OSM locality",
+      "point": [
+        76.9686524,
+        28.5964178
+      ]
+    },
+    {
+      "id": "osm-node-2822308913",
+      "name": "Khajan Basti",
+      "detail": "OSM locality",
+      "point": [
+        77.1147269,
+        28.6149874
+      ]
+    },
+    {
+      "id": "osm-node-6615224053",
+      "name": "Khajuri",
+      "detail": "OSM locality",
+      "point": [
+        77.2592439,
+        28.7067757
+      ]
+    },
+    {
+      "id": "osm-node-786590778",
+      "name": "Khanpur",
+      "detail": "OSM locality",
+      "point": [
+        77.2323949,
+        28.5127982
+      ]
+    },
+    {
+      "id": "osm-node-10834406672",
+      "name": "Kharak",
+      "detail": "OSM locality",
+      "point": [
+        77.2051549,
+        28.4688705
+      ]
+    },
+    {
+      "id": "osm-node-2737939553",
+      "name": "Kharkhoda",
+      "detail": "OSM locality",
+      "point": [
+        76.9118034,
+        28.8777329
+      ]
+    },
+    {
+      "id": "osm-node-541347299",
+      "name": "Khirki",
+      "detail": "OSM locality",
+      "point": [
+        77.2179689,
+        28.5323123
+      ]
+    },
+    {
+      "id": "osm-node-2806172931",
+      "name": "Khizrabad",
+      "detail": "OSM locality",
+      "point": [
+        77.2739495,
+        28.5724786
+      ]
+    },
+    {
+      "id": "osm-node-2708487681",
+      "name": "Khyala",
+      "detail": "OSM locality",
+      "point": [
+        77.1009017,
+        28.656392
+      ]
+    },
+    {
+      "id": "osm-node-10815216280",
+      "name": "Kidwai Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2078585,
+        28.5724243
+      ]
+    },
+    {
+      "id": "osm-node-939107102",
+      "name": "Kidwai Nagar East",
+      "detail": "OSM locality",
+      "point": [
+        77.2131433,
+        28.5716096
+      ]
+    },
+    {
+      "id": "osm-node-939107100",
+      "name": "Kidwai Nagar West",
+      "detail": "OSM locality",
+      "point": [
+        77.2045946,
+        28.5717018
+      ]
+    },
+    {
+      "id": "osm-node-2812952492",
+      "name": "Kilokri",
+      "detail": "OSM locality",
+      "point": [
+        77.2643543,
+        28.5781851
+      ]
+    },
+    {
+      "id": "osm-node-2708230152",
+      "name": "Kirti Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.1417729,
+        28.6532807
+      ]
+    },
+    {
+      "id": "osm-node-2814771708",
+      "name": "Kirti Nagar Industrial Area",
+      "detail": "OSM locality",
+      "point": [
+        77.1466655,
+        28.6507381
+      ]
+    },
+    {
+      "id": "osm-node-2691322825",
+      "name": "Kishangarh",
+      "detail": "OSM locality",
+      "point": [
+        77.1665351,
+        28.5194277
+      ]
+    },
+    {
+      "id": "osm-node-786590738",
+      "name": "Kotla Mubarak",
+      "detail": "OSM locality",
+      "point": [
+        77.223205,
+        28.5746738
+      ]
+    },
+    {
+      "id": "osm-node-1634299166",
+      "name": "Kundli Industrial Area",
+      "detail": "OSM locality",
+      "point": [
+        77.1320358,
+        28.8738533
+      ]
+    },
+    {
+      "id": "osm-node-5975711576",
+      "name": "Lado Sarai",
+      "detail": "OSM locality",
+      "point": [
+        77.1920657,
+        28.5254347
+      ]
+    },
+    {
+      "id": "osm-node-10815131003",
+      "name": "Lajpat Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2432851,
+        28.5660924
+      ]
+    },
+    {
+      "id": "osm-node-2713543087",
+      "name": "Lajpat Nagar II",
+      "detail": "OSM locality",
+      "point": [
+        77.2431796,
+        28.5700938
+      ]
+    },
+    {
+      "id": "osm-node-2713543676",
+      "name": "Lajpat Nagar III",
+      "detail": "OSM locality",
+      "point": [
+        77.2404914,
+        28.5678755
+      ]
+    },
+    {
+      "id": "osm-node-2713549529",
+      "name": "Lajpat Nagar IV",
+      "detail": "OSM locality",
+      "point": [
+        77.2398036,
+        28.561184
+      ]
+    },
+    {
+      "id": "osm-node-2825821062",
+      "name": "Lakhu Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.164026,
+        28.6744374
+      ]
+    },
+    {
+      "id": "osm-node-939107103",
+      "name": "Laxmi Bai Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2062778,
+        28.576794
+      ]
+    },
+    {
+      "id": "osm-node-10815246200",
+      "name": "Laxmi Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2751283,
+        28.6360238
+      ]
+    },
+    {
+      "id": "osm-node-2701049003",
+      "name": "Libaspur",
+      "detail": "OSM locality",
+      "point": [
+        77.142996,
+        28.7534267
+      ]
+    },
+    {
+      "id": "osm-node-10823999060",
+      "name": "Lodhi Art District",
+      "detail": "OSM locality",
+      "point": [
+        77.2213286,
+        28.5840648
+      ]
+    },
+    {
+      "id": "osm-node-939107101",
+      "name": "Lodhi Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2268576,
+        28.586203
+      ]
+    },
+    {
+      "id": "osm-node-10811694971",
+      "name": "Lodhi Estate",
+      "detail": "OSM locality",
+      "point": [
+        77.2262907,
+        28.5952424
+      ]
+    },
+    {
+      "id": "osm-node-13459819040",
+      "name": "Lohar Basti",
+      "detail": "OSM locality",
+      "point": [
+        77.134411,
+        28.6270908
+      ]
+    },
+    {
+      "id": "osm-node-2692237467",
+      "name": "Lok Nayak Puram",
+      "detail": "OSM locality",
+      "point": [
+        77.0114594,
+        28.663165
+      ]
+    },
+    {
+      "id": "osm-node-13020516376",
+      "name": "M3M Golf Estate",
+      "detail": "OSM locality",
+      "point": [
+        77.0664133,
+        28.4011436
+      ]
+    },
+    {
+      "id": "osm-node-6344914289",
+      "name": "Madangir",
+      "detail": "OSM locality",
+      "point": [
+        77.2327927,
+        28.5247893
+      ]
+    },
+    {
+      "id": "osm-node-2716596288",
+      "name": "Madanpur Khadar",
+      "detail": "OSM locality",
+      "point": [
+        77.3005184,
+        28.53493
+      ]
+    },
+    {
+      "id": "osm-node-13565025475",
+      "name": "Madhavpuram Village",
+      "detail": "OSM locality",
+      "point": [
+        77.188179,
+        28.5663927
+      ]
+    },
+    {
+      "id": "osm-node-2797954841",
+      "name": "Maharani Bagh",
+      "detail": "OSM locality",
+      "point": [
+        77.2633718,
+        28.5720013
+      ]
+    },
+    {
+      "id": "osm-node-2971139780",
+      "name": "Maharathi Colony",
+      "detail": "OSM locality",
+      "point": [
+        77.2996163,
+        28.6710098
+      ]
+    },
+    {
+      "id": "osm-node-12990858197",
+      "name": "Mahavir Enclave",
+      "detail": "OSM locality",
+      "point": [
+        77.0789777,
+        28.600032
+      ]
+    },
+    {
+      "id": "osm-node-2715081966",
+      "name": "Mahavir Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2273933,
+        28.574216
+      ]
+    },
+    {
+      "id": "osm-node-2811346615",
+      "name": "Mahendru Enclave",
+      "detail": "OSM locality",
+      "point": [
+        77.1852518,
+        28.7024308
+      ]
+    },
+    {
+      "id": "osm-node-313349116",
+      "name": "Mahipalpur",
+      "detail": "OSM locality",
+      "point": [
+        77.1256912,
+        28.5444849
+      ]
+    },
+    {
+      "id": "osm-node-5975711574",
+      "name": "Maidan Garhi",
+      "detail": "OSM locality",
+      "point": [
+        77.1944475,
+        28.4987734
+      ]
+    },
+    {
+      "id": "osm-node-1184383537",
+      "name": "Majnu Ka Tila",
+      "detail": "OSM locality",
+      "point": [
+        77.2260118,
+        28.6986766
+      ]
+    },
+    {
+      "id": "osm-node-2962267398",
+      "name": "Major Bhupinder Singh Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.0867215,
+        28.6460755
+      ]
+    },
+    {
+      "id": "osm-node-7837031934",
+      "name": "Malcha",
+      "detail": "OSM locality",
+      "point": [
+        77.1834133,
+        28.6039358
+      ]
+    },
+    {
+      "id": "osm-node-2823845439",
+      "name": "Malikpur",
+      "detail": "OSM locality",
+      "point": [
+        77.1970806,
+        28.7044934
+      ]
+    },
+    {
+      "id": "osm-node-13042416389",
+      "name": "Malka Ganj",
+      "detail": "OSM locality",
+      "point": [
+        77.2089386,
+        28.6764176
+      ]
+    },
+    {
+      "id": "osm-node-312921211",
+      "name": "Malviya Nagar",
+      "detail": "OSM locality",
+      "point": [
+        77.2124474,
+        28.5339201
+      ]
+    },
+    {
+      "id": "osm-node-2706590639",
+      "name": "Manak Vihar",
+      "detail": "OSM locality",
+      "point": [
+        77.1046552,
+        28.6336379
+      ]
+    },
+    {
+      "id": "osm-node-2708131808",
+      "name": "Manohar Park",
+      "detail": "OSM locality",
+      "point": [
+        77.1527378,
+        28.6704333
+      ]
+    },
+    {
+      "id": "osm-node-2814771709",
+      "name": "Mansarovar Garden",
+      "detail": "OSM locality",
+      "point": [
+        77.1322572,
+        28.6432658
+      ]
+    },
+    {
+      "id": "osm-node-13472762175",
+      "name": "Marble Market",
+      "detail": "OSM locality",
+      "point": [
+        77.1281072,
+        28.642995
+      ]
+    }
+  ],
+  "sha256": {
+    "city.geojson": "16eae273738110533e67916e197cae790d3e7c6092e71d184a09d1ba003ae88c",
+    "roads.json": "6d191d38d3a7574e79998789e8afb112bac5f5b83d8cd08b734620e5898e1490"
+  }
+}

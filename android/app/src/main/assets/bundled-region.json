@@ -1,0 +1,26 @@
+{
+  "schema": "setu.map.v1",
+  "id": "bengaluru-central",
+  "revision": 1,
+  "name": "Bengaluru Central",
+  "summary": "Cubbon Park · MG Road · Vidhana Soudha · Lalbagh north",
+  "bounds": [12.949, 77.575, 12.995, 77.625],
+  "center": [77.5968, 12.9758],
+  "previewStart": [77.6067, 12.9753],
+  "previewLabel": "MG Road preview",
+  "demoDestination": "vidhana",
+  "source": "OpenStreetMap contributors",
+  "attribution": "© OpenStreetMap",
+  "license": "ODbL 1.0",
+  "sourceUrl": "https://www.openstreetmap.org/copyright",
+  "dataTimestamp": "2026-09-06T19:35:36Z",
+  "limitations": "Local development region. Turn restrictions are not included.",
+  "places": [
+    {"id":"cubbon","name":"Cubbon Park","detail":"Park · Kasturba Road entrance","point":[77.5965,12.9746]},
+    {"id":"vidhana","name":"Vidhana Soudha","detail":"Landmark · Dr Ambedkar Road","point":[77.5909,12.9795]},
+    {"id":"metro","name":"MG Road Metro","detail":"Metro station · MG Road","point":[77.6067,12.9753]},
+    {"id":"ubcity","name":"UB City","detail":"Shopping · Vittal Mallya Road","point":[77.5960,12.9715]},
+    {"id":"stadium","name":"Chinnaswamy Stadium","detail":"Stadium · Cubbon Road","point":[77.5997,12.9792]},
+    {"id":"lalbagh","name":"Lalbagh Botanical Garden","detail":"Garden · North gate","point":[77.5872,12.9558]}
+  ]
+}

@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "lock 1",
+    "capture":  "20-landscape-drive.png",
+    "apkSha256":  "2b698c3aadfe7ab9d4605433b2114ef602e9f8a1601100c34fcefc9f899820d0",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788736578,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "247c5920f0e64f967a61524c98b05c1c99f9a3c7c7be5eb0a331cb1236154be1"
+}

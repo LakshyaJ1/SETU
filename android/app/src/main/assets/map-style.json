@@ -1,0 +1,18 @@
+{
+  "version": 8,
+  "name": "SETU daylight",
+  "glyphs": "asset://fonts/{fontstack}/{range}.pbf",
+  "sources": {"city": {"type": "geojson", "data": {"type":"FeatureCollection","features":[]}, "attribution": "© OpenStreetMap contributors"}},
+  "layers": [
+    {"id":"ground","type":"background","paint":{"background-color":"#EDF0E7"}},
+    {"id":"parks","type":"fill","source":"city","filter":["==","kind","park"],"paint":{"fill-color":"#D7E3B5","fill-outline-color":"#C8D8A1"}},
+    {"id":"water","type":"fill","source":"city","filter":["==","kind","water"],"paint":{"fill-color":"#B5D5DC"}},
+    {"id":"buildings","type":"fill","source":"city","minzoom":13,"filter":["==","kind","building"],"paint":{"fill-color":"#DFE3D8","fill-outline-color":"#D5DBCF"}},
+    {"id":"road-casing","type":"line","source":"city","filter":["==","kind","road"],"layout":{"line-cap":"round","line-join":"round"},"paint":{"line-color":"#D3DBCC","line-width":["interpolate",["linear"],["zoom"],12,2,16,9,18,24]}},
+    {"id":"roads","type":"line","source":"city","filter":["==","kind","road"],"layout":{"line-cap":"round","line-join":"round"},"paint":{"line-color":"#FCFDF8","line-width":["interpolate",["linear"],["zoom"],12,1,16,6,18,20]}},
+    {"id":"paths","type":"line","source":"city","filter":["in","class","footway","path","pedestrian"],"paint":{"line-color":"#BDCEA1","line-width":1.2,"line-dasharray":[2,2]}},
+    {"id":"main-roads","type":"line","source":"city","filter":["in","class","primary","secondary","trunk"],"layout":{"line-cap":"round","line-join":"round"},"paint":{"line-color":"#FFFFF9","line-width":["interpolate",["linear"],["zoom"],12,2,16,9,18,25]}},
+    {"id":"road-labels","type":"symbol","source":"city","minzoom":13.8,"filter":["all",["==","kind","road"],["!=","name",""]],"layout":{"symbol-placement":"line","text-field":"{name}","text-font":["Noto Sans Regular"],"text-size":11,"text-max-angle":30,"symbol-spacing":350},"paint":{"text-color":"#67715E","text-halo-color":"#F8FAF2","text-halo-width":2}},
+    {"id":"park-labels","type":"symbol","source":"city","filter":["all",["==","kind","park"],["!=","name",""]],"layout":{"text-field":"{name}","text-font":["Noto Sans Regular"],"text-size":14,"text-max-width":8,"text-padding":16},"paint":{"text-color":"#657D45","text-halo-color":"#DFE9C7","text-halo-width":1.5}}
+  ]
+}

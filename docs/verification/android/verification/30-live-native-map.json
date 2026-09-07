@@ -1,0 +1,16 @@
+{
+  "capture": "30-live-native-map.png",
+  "apkSha256": "8f9c49762b6278ef035342733ddd609b27f2a49c67346d8f584adaa7a31a4b26",
+  "version": "0.1.0",
+  "device": "Android SDK built for x86_64",
+  "sdk": 35,
+  "deviceClockMs": 1788786929014,
+  "fontScale": 1,
+  "orientation": 1,
+  "scenario": "Opted-in native estimate selected by real application map from emulator sensors; no physical accuracy claim",
+  "nativeStatus": "GPS + IMU estimate",
+  "pairedImuSamples": 1181,
+  "acceptedNativeFixes": 6,
+  "delayedNativeCorrections": 5,
+  "source": "Android UiAutomation.takeScreenshot; unaltered PNG"
+}

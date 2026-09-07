@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/SETU.iml" filepath="$PROJECT_DIR$/.idea/SETU.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/app/build/generated/source/buildConfig/androidTest/androidTest.iml" filepath="$PROJECT_DIR$/android/app/build/generated/source/buildConfig/androidTest/androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/app/src/androidTest/androidTest2.iml" filepath="$PROJECT_DIR$/android/app/src/androidTest/androidTest2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/app/build/generated/source/buildConfig/buildConfig.iml" filepath="$PROJECT_DIR$/android/app/build/generated/source/buildConfig/buildConfig.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/app/src/main/main.iml" filepath="$PROJECT_DIR$/android/app/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/app/src/test/test.iml" filepath="$PROJECT_DIR$/android/app/src/test/test.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.22)
+project(setu_android LANGUAGES CXX)
+add_subdirectory(../../../../../core ${CMAKE_CURRENT_BINARY_DIR}/core)
+add_library(setu_jni SHARED setu_jni.cpp)
+target_link_libraries(setu_jni PRIVATE setu_core)
+target_compile_features(setu_jni PRIVATE cxx_std_20)
+target_link_options(setu_jni PRIVATE -Wl,-z,max-page-size=16384)

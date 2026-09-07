@@ -1,0 +1,22 @@
+{
+  "schema": "setu.map.v1",
+  "id": "delhi",
+  "revision": 1,
+  "name": "Delhi",
+  "summary": "Delhi-wide street map · parks, water, localities and stations",
+  "bounds": [28.39, 76.83, 28.91, 77.36],
+  "center": [77.209, 28.6315],
+  "previewStart": [77.2176, 28.6315],
+  "previewLabel": "Connaught Place preview",
+  "demoDestination": "india-gate",
+  "source": "OpenStreetMap contributors · Geofabrik Northern Zone",
+  "attribution": "© OpenStreetMap contributors",
+  "license": "ODbL 1.0",
+  "sourceUrl": "https://www.openstreetmap.org/copyright",
+  "dataTimestamp": "supplied from the PBF header during build",
+  "limitations": "Delhi-wide OSM streets; a geographic envelope, not an administrative boundary. Route previews use main roads only, not residential/service lanes. Lines simplified within about 1 m; buildings and relation-only areas omitted. No turn restrictions, closures or safety-validated routes.",
+  "places": [
+    {"id":"connaught-place","name":"Connaught Place","detail":"Central Delhi · road-side preview","point":[77.2176,28.6315]},
+    {"id":"india-gate","name":"India Gate","detail":"Central Delhi · nearby road entrance","point":[77.2295,28.6129]}
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "apkSha256": "7463bf6e00d3a03ac2d4e19d1be451ed608fe7ee46a4ceec7a9b62d8240e3e04",
+  "deviceModel": "CPH2467",
+  "sdk": 35,
+  "abi": "arm64-v8a",
+  "scenario": "Physical-phone stationary foreground recording; no mock provider configured by verification",
+  "recordedSamples": 54905,
+  "gpsPositions": 78,
+  "gpsPositionsWithMockFlagNotFalse": 0,
+  "rotationVectorSamples": 15639,
+  "rotationHeadingAccuracyValues": [-1],
+  "rotationSensorAccuracyCodes": [3],
+  "nativePoseRecords": 0,
+  "observedStatus": "Waiting for GPS + IMU",
+  "finding": "Missing numerical heading accuracy prevents alignment even though GPS and 200 Hz IMU are arriving. The diagnostic is corrected without weakening the alignment requirement.",
+  "privacy": "Coordinates and raw physical sensor logs remain outside tracked evidence.",
+  "sensorContractSource": "https://developer.android.com/reference/android/hardware/SensorEvent#values"
+}

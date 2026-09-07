@@ -1,0 +1,14 @@
+{
+  "name": "Bengaluru Central",
+  "source": "OpenStreetMap contributors",
+  "license": "ODbL 1.0",
+  "source_url": "https://www.openstreetmap.org/copyright",
+  "bounds": [
+    12.949,
+    77.575,
+    12.995,
+    77.625
+  ],
+  "timestamp": "2026-09-06T19:35:36Z",
+  "limitations": "Local development region. Routing does not yet apply turn-restriction relations."
+}

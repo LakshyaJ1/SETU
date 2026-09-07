@@ -1,0 +1,12 @@
+{
+    "rotationSetting":  "free",
+    "capture":  "37-map-download-form.png",
+    "apkSha256":  "8f9c49762b6278ef035342733ddd609b27f2a49c67346d8f584adaa7a31a4b26",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788787512,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "0a3c09cbcfb8635e8a00d69d569303bb92298c5a4e37038424082b206612103b",
+    "scenario":  "Manually entered local debug fixture URL and complete SHA-256; not a production publisher",
+    "fixtureSha256":  "5a0177e671c17a06780aa17e63b99581b279a780a52e28d263a99d279bffb47c"
+}

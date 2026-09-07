@@ -1,0 +1,12 @@
+{
+    "rotationSetting":  "free",
+    "capture":  "38-map-download-verified.png",
+    "apkSha256":  "8f9c49762b6278ef035342733ddd609b27f2a49c67346d8f584adaa7a31a4b26",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788787525,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "1dd881ce02a49146a0f1f9530e54dc55282896d1474a2dc266eefabd4d8299ed",
+    "scenario":  "Actual download from the temporary host loopback server, archive integrity checked, active map unchanged",
+    "fixtureSha256":  "5a0177e671c17a06780aa17e63b99581b279a780a52e28d263a99d279bffb47c"
+}
