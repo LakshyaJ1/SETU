@@ -58,4 +58,26 @@ class ImuSynchronizerTest {
         assertEquals(gps, navigationPose(gps, estimate, true, 999_999_999))
         assertEquals(gps, navigationPose(gps, NativeEstimate(), true, 1_000_000_000))
     }
+
+    @Test
+    fun missingHeadingAccuracyExplainsFallbackWithoutInventingAPose() {
+        val gps = Pose(GeoPoint(12.9, 77.6), timestampNs = 1_000_000_000)
+        for (mode in 0..1) {
+            val snapshot = DoubleArray(20).apply { this[0] = mode.toDouble() }
+            val estimate = decodeNativeEstimate(snapshot, headingAccuracyAvailable = false)
+            assertEquals("Heading accuracy unavailable", estimate.status)
+            assertTrue(estimate.detail.contains("GPS tracking"))
+            assertNull(estimate.pose)
+            assertEquals(gps, navigationPose(gps, estimate, true, 1_000_000_000))
+            assertEquals(decodeNativeEstimate(snapshot), decodeNativeEstimate(snapshot, headingAccuracyAvailable = true))
+        }
+    }
+
+    @Test
+    fun headingAvailabilityDoesNotOverrideActiveOrWithheldNativeStates() {
+        for (mode in 2..5) {
+            val snapshot = DoubleArray(20).apply { this[0] = mode.toDouble() }
+            assertEquals(decodeNativeEstimate(snapshot), decodeNativeEstimate(snapshot, headingAccuracyAvailable = false))
+        }
+    }
 }

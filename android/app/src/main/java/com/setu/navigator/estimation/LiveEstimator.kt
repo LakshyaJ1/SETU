@@ -36,6 +36,7 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
                     private val record: (JSONObject) -> Unit) : AutoCloseable {
     private val engine = NativeEngine(NativeEngine.magneticData(context))
     private var declination = Double.NaN
+    private var headingAccuracyAvailable: Boolean? = null
     private var pairedSamples = 0L
     private var lastPublish = 0L
     private val synchronizer: ImuSynchronizer = ImuSynchronizer { timestamp, acceleration, gyro ->
@@ -43,7 +44,7 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
         pairedSamples++
         if (timestamp - lastPublish >= 200_000_000L) {
             lastPublish = timestamp
-            val estimate = decodeNativeEstimate(engine.snapshot(), pairedSamples, synchronizerDrops())
+            val estimate = decodeNativeEstimate(engine.snapshot(), pairedSamples, synchronizerDrops(), headingAccuracyAvailable)
             publish(estimate)
             estimate.pose?.let { pose ->
                 record(JSONObject().put("type", "native_pose").put("tNs", pose.timestampNs)
@@ -63,7 +64,8 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
             Sensor.TYPE_ACCELEROMETER -> synchronizer.acceleration(timestamp, values.take(3).map(Float::toDouble).toDoubleArray())
             Sensor.TYPE_GYROSCOPE -> synchronizer.gyroscope(timestamp, values.take(3).map(Float::toDouble).toDoubleArray())
             Sensor.TYPE_ROTATION_VECTOR -> {
-                if (!declination.isFinite() || values.size < 5 || values[4] < 0 || accuracy < SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM) return
+                headingAccuracyAvailable = values.size >= 5 && values[4] >= 0
+                if (!declination.isFinite() || headingAccuracyAvailable != true || accuracy < SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM) return
                 val matrix = FloatArray(9)
                 SensorManager.getRotationMatrixFromVector(matrix, values)
                 engine.attitude(timestamp, trueNorthRotation(DoubleArray(9) { matrix[it].toDouble() }, declination),
@@ -95,11 +97,13 @@ internal fun trueNorthRotation(magnetic: DoubleArray, declination: Double): Doub
     }
 }
 
-internal fun decodeNativeEstimate(values: DoubleArray, paired: Long = 0, dropped: Long = 0): NativeEstimate {
+internal fun decodeNativeEstimate(values: DoubleArray, paired: Long = 0, dropped: Long = 0,
+                                  headingAccuracyAvailable: Boolean? = null): NativeEstimate {
     require(values.size == 20)
     val mode = values[0].toInt()
     val available = mode in 2..3 && listOf(1, 2, 3, 5, 7, 8).all { values[it].isFinite() }
-    val status = when (mode) {
+    val missingHeadingAccuracy = mode in 0..1 && headingAccuracyAvailable == false
+    val status = if (missingHeadingAccuracy) "Heading accuracy unavailable" else when (mode) {
         1 -> "Waiting for heading"
         2 -> "GPS + IMU estimate"
         3 -> "Inertial estimate"
@@ -111,7 +115,9 @@ internal fun decodeNativeEstimate(values: DoubleArray, paired: Long = 0, dropped
     val pose = if (available) Pose(GeoPoint(values[2], values[3]), values[5], values[6].takeIf(Double::isFinite),
         timestampNs = (values[1] * 1e9).toLong(), source = source, altitudeMeters = values[4].takeIf(Double::isFinite),
         mock = values[9].takeIf(Double::isFinite)?.let { it == 1.0 }, filterRadius95Meters = values[7]) else null
-    return NativeEstimate(status, when (mode) {
+    return NativeEstimate(status, if (missingHeadingAccuracy) {
+        "This phone does not report compass uncertainty. Live fusion cannot align safely; GPS tracking, recording and the simulated positioning demo remain available."
+    } else when (mode) {
         1 -> "Needs a recent rotation-vector heading with reported accuracy. No vehicle-forward constraint is assumed."
         4 -> "An IMU gap exceeded 100 ms. Waiting for fresh GPS and heading rather than integrating across it."
         5 -> "More than 10 s without an accepted fix, or a 95% radius above 150 m. GPS remains the fallback."

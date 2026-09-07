@@ -8,11 +8,14 @@ download, explicit selection and removal. This is not PMTiles/MBTiles support,
 a worldwide map service or a production route-safety claim. Runtime verification
 and remaining work are recorded separately in `11-android-delivery.md`.
 
-Bengaluru Central remains included and cannot be removed. Installing another
+Bengaluru Central and Delhi are included and cannot be removed. The Delhi-wide
+street map has main-road route previews; see `15-delhi-offline-map.md` for the
+exact extent, source and limitations. Existing selections are preserved.
+Installing another
 region does not select it. The user explicitly chooses **Use this map**. A newer
 revision is installed alongside the previous revision, so the user can switch
 back before removing the old one. Equal revisions and downgrades are rejected.
-Up to eight imported packs may be retained in addition to the included region.
+Up to eight imported packs may be retained in addition to the included regions.
 
 ## Package contract
 
@@ -55,7 +58,9 @@ The manifest fields are shown in
   digests. The bundled manifest is trusted as an application asset and does not
   need these payload fields; imported manifests do.
 
-`city.geojson` supports 1–80,000 features and at most 600,000 coordinate pairs.
+`city.geojson` supports 1–80,000 features and at most 1,000,000 coordinate pairs.
+The Delhi-capable build raises this point budget from 600,000 without increasing
+the 24 MiB file limit; older APKs can reject the new Delhi distribution pack.
 Feature properties use `kind` (`road`, `park`, `water`, `building`), optional
 `name` and optional `class`. Roads use LineString or MultiLineString; park, water
 and building areas use Polygon or MultiPolygon. Coordinates must be numeric,
@@ -69,7 +74,7 @@ Map labels must use the offline glyph ranges shipped in
 rejected; publishers can supply transliterated names. Full script coverage and
 per-pack glyph delivery remain open. Android UI text is separate from map glyphs.
 
-`roads.json` contains `roads`, an array of 1–20,000 ways. Each has a unique numeric
+`roads.json` contains `roads`, an array of 1–25,000 ways. Each has a unique numeric
 `id`, `nodes` (2–10,000 IDs), matching longitude/latitude `coordinates`, optional
 `name` and `oneway` (`no`, `yes`, `1`, `true`, `-1`). Shared node IDs must refer to
 identical coordinates. Total node references are capped at 200,000. The graph

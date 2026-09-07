@@ -1,5 +1,10 @@
 # Android runtime evidence
 
+The Delhi map build and its APK-linked phone checks are indexed in
+`delhi/README.md`. Earlier presentation-MVP builds and captures are indexed in
+`demo-mvp/README.md`. The earlier evidence below is retained with its original
+build hashes rather than silently being relabelled as the presentation build.
+
 ## Scope and device
 
 These are unaltered screenshots of the installed Android application, captured
@@ -154,7 +159,9 @@ not pixel-exact counter assertions.
 
 The native parity fixture exercises two cases, 294 actions, its original eight measurement
 families and all 279 snapshot values at checkpoints. The x86_64 library is runtime
-tested; arm64-v8a is compiled, not physically validated. A separate engine test
+tested; arm64-v8a was compiled, not physically validated in this baseline. The
+later USB-phone rehearsal and its explicit limits are in `demo-mvp/README.md`;
+it does not retroactively validate these baseline captures. A separate engine test
 covers the added horizontal-velocity kernel update. Seven engine tests exercise
 bounded delayed corrections, initialization, missing altitude, pending fixes,
 outliers, gaps, outage withholding, mock-provenance retention and lifetime. Twenty

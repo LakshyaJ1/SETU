@@ -48,9 +48,9 @@ fun SetuApp(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Unit) 
     }
     val launchExport: (Trip) -> Unit = { trip -> exportTarget = trip; exportFile.launch("setu-${trip.id.take(8)}.setulog") }
     LaunchedEffect(model) { model.messages.collect { snackbar.showSnackbar(it) } }
-    DisposableEffect(settings.keepScreenOn, model.navigating, model.playing) {
+    DisposableEffect(settings.keepScreenOn, model.navigating, model.playing, recording, model.positioningDemo) {
         val window = (context as? Activity)?.window
-        if (settings.keepScreenOn && (model.navigating || model.playing)) window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if (settings.keepScreenOn && (model.navigating || model.playing || recording || model.positioningDemo != null)) window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         else window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         onDispose { window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
     }

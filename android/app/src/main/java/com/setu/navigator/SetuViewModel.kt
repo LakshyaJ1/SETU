@@ -12,9 +12,12 @@ import com.setu.navigator.model.HttpModelProvider
 import com.setu.navigator.estimation.NativeCoreStatus
 import com.setu.navigator.estimation.checkNativeCore
 import com.setu.navigator.estimation.navigationPose
+import com.setu.navigator.estimation.PositioningDemo
+import com.setu.navigator.estimation.buildPositioningDemo
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.ceil
 
 class SetuViewModel(application: Application) : AndroidViewModel(application) {
@@ -61,6 +64,10 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
         private set
     var playing by mutableStateOf(false)
         private set
+    var positioningDemo by mutableStateOf<PositioningDemo?>(null)
+        private set
+    var trackingTrail by mutableStateOf<List<Pose>>(emptyList())
+        private set
     var replaySpeed by mutableFloatStateOf(1f)
         private set
     var modelConnection by mutableStateOf(ModelConnection())
@@ -90,6 +97,20 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     init {
+        viewModelScope.launch {
+            recording.collectLatest { active ->
+                if (!active) navigating = false
+                if (active) {
+                    trackingTrail = emptyList()
+                    while (isActive) {
+                        val now = SystemClock.elapsedRealtimeNanos()
+                        trackingTrail = appendTrackingPose(trackingTrail,
+                            navigationFix(now).takeIf { repository.hub.hasLocationPermission() }, now, repository.recordingStartedNs)
+                        delay(250)
+                    }
+                }
+            }
+        }
         viewModelScope.launch {
             activeMap.drop(1).collect {
                 routeVersion++
@@ -203,6 +224,49 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
         context.startService(Intent(context, RecordingService::class.java).setAction("STOP"))
     }
 
+    fun startTracking() {
+        if (navigating || mapBusy || recording.value) return
+        clearRoute()
+        tab = "Drive"
+        startRecording("Position tracking")
+    }
+
+    fun stopTracking() {
+        stopRecording()
+        overlay = null
+        tab = "Trips"
+    }
+
+    fun openPositioningDemo() {
+        if (mapBusy || navigating || routeLoading) return
+        if (recording.value) { notify("Stop and save your recording before starting the presentation demo."); return }
+        closeReplay()
+        destination = null
+        val maps = repository.maps
+        val version = ++routeVersion
+        routeJob?.cancel()
+        routeLoading = true
+        routeJob = viewModelScope.launch {
+            try {
+                val operation = currentCoroutineContext()
+                val demonstration = withContext(Dispatchers.Default) {
+                    buildPositioningDemo(getApplication(), maps.demonstrationStart) { operation.ensureActive() }
+                }
+                val poses = demonstration.frames.mapNotNull { it.estimate.pose }
+                val distance = demonstration.frames.zipWithNext().sumOf { (previous, current) -> previous.reference.distanceTo(current.reference) }
+                playTrip(Trip("positioning-demo", "Through the GPS gap", 0, demonstration.durationMs, distance,
+                    poses.size.toLong(), poses, synthetic = true))
+                positioningDemo = demonstration
+                route = DriveRoute(demonstration.frames.map { it.reference }, distance, emptyList())
+                routeOriginLabel = "Simulation start"
+                updateReplayPose()
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: LinkageError) { messages.emit("The native positioning engine could not load. Try the route demo or reinstall this build.") }
+            catch (failure: Exception) { messages.emit(failure.message ?: "The positioning demo could not start. Try again.") }
+            finally { if (routeVersion == version) routeLoading = false }
+        }
+    }
+
     fun openDemo() {
         if (mapBusy || navigating) return
         if (recording.value) { notify("Stop recording before opening a replay."); return }
@@ -232,7 +296,7 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
                 route = demonstration
                 routeOriginLabel = "Demo start"
                 destination = null
-                playTrip(Trip("demo", if (maps.region.bundled) "A little Bengaluru loop" else "Explore ${maps.region.name}", 0, duration * 1000L,
+                playTrip(Trip("demo", if (maps.region.id == "bengaluru-central") "A little Bengaluru loop" else "Explore ${maps.region.name}", 0, duration * 1000L,
                     demonstration.distanceMeters, samples.size.toLong(), samples, synthetic = true))
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (error: Exception) { messages.emit(error.message ?: "The sample route could not be loaded.") }
@@ -245,6 +309,7 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
         if (trip.points.size < 2) { notify("This recording has fewer than two GPS positions. Raw sensor data can still be exported."); return }
         if (recording.value) { notify("Stop recording before opening a replay."); return }
         replayJob?.cancel()
+        positioningDemo = null
         val replay = trip.copy(durationMs = (trip.points.last().timestampNs - trip.points.first().timestampNs) / 1_000_000)
         replayTrip = replay
         if (!trip.synthetic) {
@@ -272,6 +337,10 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun updateReplayPose() {
         val trip = replayTrip ?: return
+        positioningDemo?.let {
+            replayPose = it.frameAt(replayPositionMs.toLong()).estimate.pose
+            return
+        }
         val target = trip.points.first().timestampNs + (replayPositionMs * 1_000_000).toLong()
         val insertion = trip.points.binarySearchBy(target) { it.timestampNs }
         val index = (if (insertion >= 0) insertion else -insertion - 2).coerceIn(0, trip.points.lastIndex - 1)
@@ -296,6 +365,7 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
         replayJob = null
         replayTrip = null
         replayPose = null
+        positioningDemo = null
         playing = false
         route = null
     }

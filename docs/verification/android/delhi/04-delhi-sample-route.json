@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "lock 0",
+    "capture":  "04-delhi-sample-route.png",
+    "apkSha256":  "86ae1405bc5f88c9acaf8d6c6b747f0244882fdd567f12c9a5ac04bcf2c7c562",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788801316,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "98fbee1e255ec6f596623a83c7596fdcacf7ab3744003f69202f5384143ce58d"
+}

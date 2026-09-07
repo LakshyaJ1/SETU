@@ -32,6 +32,16 @@ surface, never small text on white. An explicit source label marks replay or
 limited capability; source identity never relies on color. Green never implies
 an unconnected model is healthy.
 
+Live tracking adds a blue observed-position trail (`#176C96` by day,
+`#80CAEF` at night). Panning interrupts camera following; the location control
+resumes it. The tracking sheet keeps the selected source, coordinates, speed and
+uncertainty explicit, including stale observations and missing values.
+
+The presentation demo uses green for the simulated reference, blue for the
+native estimate and amber for the last GPS sample. A persistent simulated-input
+label and a text legend carry those meanings independently of color. Lock,
+GPS loss and Recovery controls provide reproducible presentation moments.
+
 ## Typography
 
 Use the native sans through Material's named type roles. Display is 34 sp / 38 sp,
@@ -72,7 +82,7 @@ a north-facing arrow. Android's accuracy radius appears only when supplied and
 fresh. It is a geographic measurement, not a decorative glow or filter confidence.
 Mock-provider locations retain a visible test label, including when stale.
 
-Native positioning is an explicit experimental opt-in in Diagnostics. Its live
+Native positioning is an explicit preview opt-in in live tracking and Diagnostics. Its live
 heading/GPS/IMU prerequisites, accepted/gated fixes, delayed corrections, resets
 and model-derived 95% radius stay visible. The map names its selected source:
 GPS + IMU, inertial estimate, or GPS fallback. Native radius is not relabelled as

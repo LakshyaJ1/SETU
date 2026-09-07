@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "lock 0",
+    "capture":  "02-native-gap.png",
+    "apkSha256":  "44052b3b0dfbba6789cb7ab1b1b703e9f35619932bb8cb075e976622e009650a",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788797693,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "7a5b78a6cf644722eaf959a5c4f769c03cd7de81e98de9c1e98da60f7848e1c1"
+}

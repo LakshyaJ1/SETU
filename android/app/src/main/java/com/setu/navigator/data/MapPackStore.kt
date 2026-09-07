@@ -21,7 +21,7 @@ data class MapRegion(val key: String, val id: String, val revision: Int, val nam
                      val bounds: List<Double>, val center: GeoPoint, val previewStart: GeoPoint, val previewLabel: String,
                      val places: List<Place>, val demoDestination: String, val source: String, val attribution: String,
                      val license: String, val sourceUrl: String, val dataTimestamp: String, val limitations: String,
-                     val sizeBytes: Long, val directory: File? = null) {
+                     val sizeBytes: Long, val directory: File? = null, val assetDirectory: String? = null) {
     val bundled: Boolean get() = directory == null
     fun contains(point: GeoPoint) = point.latitude in bounds[0]..bounds[2] && point.longitude in bounds[1]..bounds[3]
 }
@@ -31,7 +31,11 @@ class MapPackStore(private val context: Context) {
     private val preferences = context.getSharedPreferences("setu-maps", Context.MODE_PRIVATE)
     val bundled = decode(JSONObject(context.assets.open("bundled-region.json").bufferedReader().use { it.readText() }), "bundled", null,
         context.assets.open("bengaluru.geojson").use { it.available().toLong() } + context.assets.open("bengaluru-roads.json").use { it.available().toLong() })
-    private val mutableRegions = MutableStateFlow(listOf(bundled))
+    private val included = listOf(bundled, decode(
+        JSONObject(context.assets.open("regions/delhi/manifest.json").bufferedReader().use { it.readText() }), "bundled-delhi", null,
+        listOf("city.geojson", "roads.json").sumOf { name -> context.assets.open("regions/delhi/$name").use { it.available().toLong() } }
+    ).copy(assetDirectory = "regions/delhi"))
+    private val mutableRegions = MutableStateFlow(included)
     val regions = mutableRegions.asStateFlow()
     private val mutableMap = MutableStateFlow(OfflineMap(context, bundled))
     val activeMap = mutableMap.asStateFlow()
@@ -41,7 +45,7 @@ class MapPackStore(private val context: Context) {
     fun restore() {
         val installed = root.listFiles().orEmpty().filter { it.isDirectory && it.name.matches(Regex("[a-f0-9-]{36}")) }
             .take(8).mapNotNull { folder -> runCatching { read(folder) }.getOrNull() }
-        mutableRegions.value = listOf(bundled) + installed.sortedWith(compareBy({ it.name }, { -it.revision }))
+        mutableRegions.value = included + installed.sortedWith(compareBy({ it.name }, { -it.revision }))
         val selected = preferences.getString("active", "bundled")
         val region = mutableRegions.value.firstOrNull { it.key == selected } ?: bundled
         mutableMap.value = runCatching { checkedMap(region) }.getOrElse { OfflineMap(context, bundled) }
@@ -68,7 +72,7 @@ class MapPackStore(private val context: Context) {
 
     @Synchronized
     fun import(input: InputStream, checkpoint: () -> Unit = {}): MapRegion {
-        require(mutableRegions.value.size <= 8) { "Eight imported maps are already installed. Remove one first." }
+        require(mutableRegions.value.count { !it.bundled } < 8) { "Eight imported maps are already installed. Remove one first." }
         val temporary = File(context.cacheDir, "map-import-${UUID.randomUUID()}").apply { check(mkdirs()) }
         try {
             val compressed = File(temporary, "archive.zip")
@@ -250,7 +254,7 @@ class MapPackStore(private val context: Context) {
         var inside = false
         fun coordinates(values: JSONArray, depth: Int) {
             require(depth in 0..3)
-            if (depth == 0) { inside = region.contains(point(values)) || inside; points++; require(points <= 600000); return }
+            if (depth == 0) { inside = region.contains(point(values)) || inside; points++; require(points <= 1000000); return }
             require(values.length() > 0) { "Map geometry cannot be empty." }
             for (index in 0 until values.length()) coordinates(values.getJSONArray(index), depth - 1)
         }
@@ -282,7 +286,7 @@ class MapPackStore(private val context: Context) {
 
     private fun validateRoads(file: File, checkpoint: () -> Unit) {
         val roads = document(file).getJSONArray("roads")
-        require(roads.length() in 1..20000)
+        require(roads.length() in 1..25000)
         val nodes = mutableMapOf<Long, GeoPoint>()
         val ways = mutableSetOf<Long>()
         var count = 0

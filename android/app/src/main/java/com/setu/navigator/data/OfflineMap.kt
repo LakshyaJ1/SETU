@@ -15,16 +15,17 @@ class OfflineMap(private val context: Context, val region: MapRegion) {
     private var loaded = false
 
     val sizeBytes: Long get() = region.sizeBytes
-    fun cityJson(): String = region.directory?.resolve("city.geojson")?.readText()
-        ?: context.assets.open("bengaluru.geojson").bufferedReader().use { it.readText() }
+    private fun read(name: String, fallbackAsset: String): String = region.directory?.resolve(name)?.readText()
+        ?: context.assets.open(region.assetDirectory?.let { "$it/$name" } ?: fallbackAsset).bufferedReader().use { it.readText() }
+
+    fun cityJson(): String = read("city.geojson", "bengaluru.geojson")
 
     fun contains(point: GeoPoint) = region.contains(point)
 
     @Synchronized
     private fun loadGraph() {
         if (loaded) return
-        val document = JSONObject(region.directory?.resolve("roads.json")?.readText()
-            ?: context.assets.open("bengaluru-roads.json").bufferedReader().use { it.readText() })
+        val document = JSONObject(read("roads.json", "bengaluru-roads.json"))
         val roads = document.getJSONArray("roads")
         for (roadIndex in 0 until roads.length()) {
             val road = roads.getJSONObject(roadIndex)

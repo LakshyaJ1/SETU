@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "lock 0",
+    "capture":  "01-delhi-included.png",
+    "apkSha256":  "86ae1405bc5f88c9acaf8d6c6b747f0244882fdd567f12c9a5ac04bcf2c7c562",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788800989,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "826dbb7090981ce77060e37eca0e24a5f65481a8d7cab87096f68a571f0afe58"
+}

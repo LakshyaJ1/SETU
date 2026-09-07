@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "lock 0",
+    "capture":  "01-native-lock.png",
+    "apkSha256":  "44052b3b0dfbba6789cb7ab1b1b703e9f35619932bb8cb075e976622e009650a",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788797686,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "6a63b95ac0d81236bff62946575d60b4372f7506556e1efe7aea05ab337ccd7d"
+}

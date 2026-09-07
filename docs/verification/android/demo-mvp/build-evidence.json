@@ -1,0 +1,88 @@
+{
+  "verifiedOn": "2026-09-07",
+  "branch": "demo-mvp/position-tracking",
+  "checkpointCommit": "d4aceca",
+  "workingTreeIncludesUncommittedChanges": true,
+  "supersededBy": "../delhi/build-evidence.json",
+  "apk": {
+    "path": "dist/android/SETU-phone-before-delhi-44052b3.apk",
+    "sha256": "44052b3b0dfbba6789cb7ab1b1b703e9f35619932bb8cb075e976622e009650a",
+    "bytes": 52158487,
+    "installedHashMatches": true,
+    "signatureVerified": true,
+    "zipalign16KiBPassed": true
+  },
+  "testApkSha256": "64e546f57c31b30d39d4939ca4b808838e99c08198be26fe8893b278bc489695",
+  "phone": {
+    "model": "CPH2467",
+    "androidVersion": "15",
+    "sdk": 35,
+    "abi": "arm64-v8a",
+    "viewportPixels": [1080, 2400],
+    "fontScale": 1,
+    "connection": "authorized USB ADB"
+  },
+  "validation": {
+    "assembleDebug": "passed",
+    "assembleDebugAndroidTest": "passed",
+    "jvmTests": {"tests": 15, "failures": 0, "errors": 0},
+    "lint": {"errors": 0, "warnings": 16},
+    "phoneInstrumentation": {
+      "class": "com.setu.navigator.PositioningDemoTest",
+      "tests": 2,
+      "failures": 0,
+      "log": "phone/native-engine-tests.log"
+    },
+    "completeInstrumentationSuite": "not completed; earlier emulator low-memory failures retained separately",
+    "isolatedCompleteSuiteRerun": "not performed"
+  },
+  "nativePresentation": {
+    "inputs": "controlled synthetic GPS and IMU, not Android mock-location injection",
+    "runtime": "packaged ARM64 JNI engine on the physical phone",
+    "frames": 241,
+    "gpsWithheldSeconds": 8,
+    "acceptedGpsDuringGap": 0,
+    "metrics": "phone/positioning-demo-metrics.json",
+    "fieldAccuracyValidated": false
+  },
+  "physicalRecording": {
+    "scenario": "short stationary GPS/IMU smoke test",
+    "durationMs": 12682,
+    "sampleCount": 8894,
+    "gpsPositions": 12,
+    "allGpsMockFlagsFalse": true,
+    "synthetic": false,
+    "endedCleanly": true,
+    "streamCounts": {
+      "accelerometer": 2534,
+      "gyroscope": 2534,
+      "rotation_vector": 2533,
+      "magnetometer": 1269,
+      "gnss_raw": 12,
+      "pose": 12
+    },
+    "replayAdvancedFrom": "00:02 / 00:10",
+    "replayAdvancedTo": "00:07 / 00:10",
+    "privateCaptures": [
+      ".shots/phone-review/08-current-live-tracking.png",
+      ".shots/phone-review/09-current-journey-saved.png",
+      ".shots/phone-review/10-current-saved-replay.png"
+    ]
+  },
+  "dataProtection": {
+    "preExistingRecordingsChecked": 2,
+    "preExistingRawRecordingHashesUnchanged": true,
+    "verificationRecordingsRetained": true,
+    "appDataCleared": false,
+    "androidMockLocationProviderConfiguredByVerification": false,
+    "networkSettingsChangedByVerification": false,
+    "preciseLocationsInTrackedEvidence": false,
+    "recordingActiveAtHandoff": false
+  },
+  "remainingLimits": [
+    "Live native alignment is blocked on this phone by missing numerical heading accuracy; the safeguard was not relaxed.",
+    "The bundled offline map does not cover the physical test location.",
+    "Outdoor movement, GPS-denied positioning accuracy, long-session stability, battery and thermal behavior remain unverified.",
+    "Synthetic native error is not a physical accuracy benchmark."
+  ]
+}

@@ -135,9 +135,9 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     @Synchronized
     fun stop() {
         sensorManager.unregisterListener(this)
-        locationManager.removeUpdates(this)
-        locationManager.unregisterGnssStatusCallback(satellites)
         locationManager.unregisterGnssMeasurementsCallback(rawGnss)
+        locationManager.unregisterGnssStatusCallback(satellites)
+        locationManager.removeUpdates(this)
         locationStarted = false
         val worker = thread
         val estimator = liveEstimator

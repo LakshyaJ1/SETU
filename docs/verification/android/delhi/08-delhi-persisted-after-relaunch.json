@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "lock 0",
+    "capture":  "08-delhi-persisted-after-relaunch.png",
+    "apkSha256":  "86ae1405bc5f88c9acaf8d6c6b747f0244882fdd567f12c9a5ac04bcf2c7c562",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788801853,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "3997378e6f4dcdfc1117a856408dc8f21c3f91b8a95b9ae619881edb90eb6062"
+}

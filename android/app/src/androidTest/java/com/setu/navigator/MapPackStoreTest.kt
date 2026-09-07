@@ -33,7 +33,7 @@ class MapPackStoreTest {
     @Test
     fun installActivateRestoreAndRemovePreserveFallback() {
         val imported = store.import(MapPackFixture.bytes().inputStream())
-        assertEquals(2, store.regions.value.size)
+        assertEquals(3, store.regions.value.size)
         assertTrue(store.activeMap.value.region.bundled)
         store.activate(imported.key)
         assertEquals(imported.key, store.activeMap.value.region.key)
@@ -44,7 +44,7 @@ class MapPackStoreTest {
         assertThrows(IllegalArgumentException::class.java) { store.remove("bundled") }
         store.activate("bundled")
         store.remove(imported.key)
-        assertEquals(1, store.regions.value.size)
+        assertEquals(2, store.regions.value.size)
         assertFalse(imported.directory!!.exists())
         assertTrue(context.cacheDir.listFiles().orEmpty().isEmpty())
     }
@@ -61,7 +61,7 @@ class MapPackStoreTest {
         documents.getValue("manifest.json").put("revision", 3)
         val newer = store.import(MapPackFixture.bytes(documents).inputStream())
         assertEquals(imported.key, store.activeMap.value.region.key)
-        assertEquals(3, store.regions.value.size)
+        assertEquals(4, store.regions.value.size)
         store.activate(newer.key)
         store.remove(imported.key)
     }
@@ -103,7 +103,7 @@ class MapPackStoreTest {
             store.import(MapPackFixture.bytes().inputStream()) { if (++checkpoints == 5) throw CancellationException("Test cancellation") }
         }
         assertTrue(store.activeMap.value.region.bundled)
-        assertEquals(1, store.regions.value.size)
+        assertEquals(2, store.regions.value.size)
         assertTrue(context.cacheDir.listFiles().orEmpty().isEmpty())
         assertTrue(context.filesDir.resolve("map-packs").listFiles().orEmpty().isEmpty())
         val bytes = MapPackFixture.bytes()
@@ -132,7 +132,7 @@ class MapPackStoreTest {
             received = count; assertEquals(bytes.size.toLong(), total)
         }) }
         assertEquals(bytes.size.toLong(), received)
-        assertEquals(2, store.regions.value.size)
+        assertEquals(3, store.regions.value.size)
         assertTrue(store.activeMap.value.region.bundled)
         assertTrue(context.cacheDir.listFiles().orEmpty().isEmpty())
     }
@@ -150,8 +150,29 @@ class MapPackStoreTest {
         assertThrows(IllegalArgumentException::class.java) { store.download("http://example.invalid/map", "0".repeat(64)) }
         assertThrows(IllegalArgumentException::class.java) { store.download("https://user:password@example.invalid/map", "0".repeat(64)) }
         assertThrows(IllegalArgumentException::class.java) { store.download("https://example.invalid/map", "bad-checksum") }
-        assertEquals(1, store.regions.value.size)
+        assertEquals(2, store.regions.value.size)
         assertTrue(context.cacheDir.listFiles().orEmpty().isEmpty())
+    }
+
+    @Test
+    fun includedDelhiCoversOuterCityAndRestoresWithoutReplacingBengaluru() {
+        val delhi = store.regions.value.single { it.id == "delhi" }
+        assertTrue(delhi.bundled)
+        listOf(com.setu.navigator.data.GeoPoint(28.60, 76.84), com.setu.navigator.data.GeoPoint(28.89, 77.10),
+            com.setu.navigator.data.GeoPoint(28.62, 77.33), com.setu.navigator.data.GeoPoint(28.40, 77.20)).forEach {
+            assertTrue(delhi.contains(it))
+        }
+        assertFalse(delhi.contains(com.setu.navigator.data.GeoPoint(12.97, 77.60)))
+        assertThrows(IllegalArgumentException::class.java) { store.remove(delhi.key) }
+        store.activate(delhi.key)
+        val route = store.activeMap.value.route(delhi.previewStart, delhi.places.single { it.id == delhi.demoDestination }.point)
+        assertTrue(route.distanceMeters in 1000.0..15000.0)
+        assertTrue(route.points.size > 2)
+        val restored = MapPackStore(context).apply { restore() }
+        assertEquals(delhi.key, restored.activeMap.value.region.key)
+        assertEquals(setOf("delhi", "bengaluru-central"), restored.regions.value.map { it.id }.toSet())
+        restored.activate("bundled")
+        assertEquals("bengaluru-central", restored.activeMap.value.region.id)
     }
 
     private fun reject(bytes: ByteArray) {

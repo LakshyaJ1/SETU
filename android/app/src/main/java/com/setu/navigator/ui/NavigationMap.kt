@@ -1,5 +1,7 @@
 package com.setu.navigator.ui
 
+import android.content.ComponentCallbacks2
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -43,6 +45,8 @@ import kotlin.math.*
 fun NavigationMap(
     route: DriveRoute?, pose: Pose?, bottomInset: Int, dark: Boolean,
     modifier: Modifier = Modifier, maps: OfflineMap, reserveControls: Boolean = false, originLabel: String = "Start", onReady: (MapLibreMap) -> Unit = {},
+    trail: List<Pose> = emptyList(), comparisonPose: Pose? = null,
+    followPosition: Boolean = false, onFollowInterrupted: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current.density
@@ -54,6 +58,7 @@ fun NavigationMap(
     var mapError by remember { mutableStateOf<String?>(null) }
     var reload by remember { mutableIntStateOf(0) }
     var styleGeneration by remember { mutableIntStateOf(0) }
+    val interruptFollowing by rememberUpdatedState(onFollowInterrupted)
     val json = remember(dark) {
         val source = context.assets.open("map-style.json").bufferedReader().use { it.readText() }
         if (!dark) source else source.replace("#EDF0E7", "#15231C")
@@ -67,6 +72,14 @@ fun NavigationMap(
     }
 
     DisposableEffect(mapView, lifecycle) {
+        val memoryCallbacks = object : ComponentCallbacks2 {
+            override fun onConfigurationChanged(configuration: Configuration) = Unit
+            override fun onLowMemory() = mapView.onLowMemory()
+            override fun onTrimMemory(level: Int) {
+                if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) mapView.onLowMemory()
+            }
+        }
+        context.applicationContext.registerComponentCallbacks(memoryCallbacks)
         mapView.onStart()
         mapView.onResume()
         val observer = LifecycleEventObserver { _, event ->
@@ -81,6 +94,8 @@ fun NavigationMap(
         lifecycle.addObserver(observer)
         onDispose {
             lifecycle.removeObserver(observer)
+            context.applicationContext.unregisterComponentCallbacks(memoryCallbacks)
+            mapView.onLowMemory()
             mapView.onPause()
             mapView.onStop()
             mapView.onDestroy()
@@ -96,6 +111,14 @@ fun NavigationMap(
         }
         mapView.addOnDidFinishRenderingFrameListener(listener)
         onDispose { mapView.removeOnDidFinishRenderingFrameListener(listener) }
+    }
+
+    DisposableEffect(nativeMap) {
+        val listener = MapLibreMap.OnCameraMoveStartedListener { reason ->
+            if (reason == MapLibreMap.OnCameraMoveStartedListener.REASON_API_GESTURE) interruptFollowing()
+        }
+        nativeMap?.addOnCameraMoveStartedListener(listener)
+        onDispose { nativeMap?.removeOnCameraMoveStartedListener(listener) }
     }
 
     Box(modifier) {
@@ -146,9 +169,15 @@ fun NavigationMap(
             style.addSource(GeoJsonSource("uncertainty", emptyFeatures()))
             style.addSource(GeoJsonSource("vehicle", emptyFeatures()))
             style.addSource(GeoJsonSource("endpoints", emptyFeatures()))
+            style.addSource(GeoJsonSource("tracked-path", emptyFeatures()))
+            style.addSource(GeoJsonSource("gps-reference", emptyFeatures()))
             style.addLayer(FillLayer("uncertainty-area", "uncertainty").withProperties(fillColor("#67A879"), fillOpacity(0.18f)))
             style.addLayer(LineLayer("journey-outline", "journey").withProperties(lineColor("#FCFDF9"), lineWidth(9f), lineCap(Property.LINE_CAP_ROUND), lineJoin(Property.LINE_JOIN_ROUND)))
             style.addLayer(LineLayer("journey-line", "journey").withProperties(lineColor("#24764D"), lineWidth(5f), lineCap(Property.LINE_CAP_ROUND), lineJoin(Property.LINE_JOIN_ROUND)))
+            style.addLayer(LineLayer("tracked-line", "tracked-path").withProperties(lineColor(if (dark) "#80CAEF" else "#176C96"),
+                lineWidth(4f), lineCap(Property.LINE_CAP_ROUND), lineJoin(Property.LINE_JOIN_ROUND)))
+            style.addLayer(CircleLayer("last-gps-marker", "gps-reference").withProperties(circleColor("#A96617"),
+                circleRadius(6f), circleStrokeColor("#FCFDF9"), circleStrokeWidth(2f)))
             style.addLayer(CircleLayer("endpoint-markers", "endpoints").withProperties(circleRadius(5f), circleColor("#195A40"), circleStrokeColor("#FCFDF9"), circleStrokeWidth(2f)))
             style.addLayer(SymbolLayer("endpoint-labels", "endpoints").withProperties(textField(Expression.get("label")),
                 textFont(arrayOf("Noto Sans Regular")), textSize(12f), textMaxWidth(10f), textOffset(arrayOf(0f, 1.6f)),
@@ -162,7 +191,7 @@ fun NavigationMap(
                 iconAllowOverlap(true), iconIgnorePlacement(true), iconRotationAlignment(Property.ICON_ROTATION_ALIGNMENT_MAP),
                 iconRotate(Expression.get("bearing"))).withFilter(Expression.has("bearing")))
             styleReady = true
-            if (!maps.region.bundled && mapView.width > 0 && mapView.height > 0) {
+            if (maps.region.key != "bundled" && mapView.width > 0 && mapView.height > 0) {
                 val area = maps.region.bounds
                 val bounds = LatLngBounds.from(area[2], area[3], area[0], area[1])
                 map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, (16 * density).roundToInt()))
@@ -175,7 +204,7 @@ fun NavigationMap(
         if (!styleReady) return@LaunchedEffect
         map.style?.getSourceAs<GeoJsonSource>("journey")?.setGeoJson(route?.let { lineFeature(it.points) } ?: emptyFeatures())
         map.style?.getSourceAs<GeoJsonSource>("endpoints")?.setGeoJson(route?.let { endpointFeatures(it, originLabel) } ?: emptyFeatures())
-        if (route != null && route.points.size > 1) {
+        if (route != null && route.points.size > 1 && !followPosition) {
             val bounds = LatLngBounds.Builder().includes(route.points.map { LatLng(it.latitude, it.longitude) }).build()
             map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,
                 (72 * density).roundToInt(), ((if (reserveControls) 140 else 30) * density).roundToInt(),
@@ -187,6 +216,25 @@ fun NavigationMap(
         if (!styleReady) return@LaunchedEffect
         map.style?.getSourceAs<GeoJsonSource>("vehicle")?.setGeoJson(pose?.let { pointFeature(it) } ?: emptyFeatures())
         map.style?.getSourceAs<GeoJsonSource>("uncertainty")?.setGeoJson(pose?.takeIf { (it.filterRadius95Meters ?: it.accuracyMeters ?: 0.0) > 0 }?.let { confidenceFeature(it) } ?: emptyFeatures())
+    }
+    LaunchedEffect(trail, comparisonPose, nativeMap, styleReady) {
+        if (!styleReady) return@LaunchedEffect
+        val segments = JSONArray()
+        positionSegments(trail).forEach { segment ->
+            segments.put(JSONArray().apply { segment.forEach { put(JSONArray().put(it.longitude).put(it.latitude)) } })
+        }
+        nativeMap?.style?.getSourceAs<GeoJsonSource>("tracked-path")?.setGeoJson(
+            JSONObject().put("type", "Feature").put("properties", JSONObject()).put("geometry",
+                JSONObject().put("type", "MultiLineString").put("coordinates", segments)).toString())
+        nativeMap?.style?.getSourceAs<GeoJsonSource>("gps-reference")?.setGeoJson(comparisonPose?.let(::pointFeature) ?: emptyFeatures())
+    }
+    LaunchedEffect(pose, followPosition, bottomInset, nativeMap, styleReady) {
+        val map = nativeMap ?: return@LaunchedEffect
+        val position = pose ?: return@LaunchedEffect
+        if (!styleReady || !followPosition) return@LaunchedEffect
+        map.moveCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder(map.cameraPosition)
+            .target(LatLng(position.point.latitude, position.point.longitude)).zoom(maxOf(16.0, map.cameraPosition.zoom))
+            .padding(24.0 * density, 104.0 * density, 24.0 * density, bottomInset + 24.0 * density).build()))
     }
 }
 

@@ -40,10 +40,12 @@ fun RecordScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> U
     val fix by model.livePose.collectAsStateWithLifecycle()
     var name by rememberSaveable { mutableStateOf("") }
     var elapsed by remember { mutableLongStateOf(0) }
+    var nowNs by remember { mutableLongStateOf(SystemClock.elapsedRealtimeNanos()) }
     val context = LocalContext.current
     LaunchedEffect(recording) {
-        while (recording) {
-            elapsed = (SystemClock.elapsedRealtimeNanos() - model.repository.recordingStartedNs) / 1_000_000
+        while (true) {
+            nowNs = SystemClock.elapsedRealtimeNanos()
+            elapsed = if (recording) (nowNs - model.repository.recordingStartedNs) / 1_000_000 else 0
             delay(500)
         }
     }
@@ -62,7 +64,7 @@ fun RecordScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> U
                     Text(if (recording) durationLabel(elapsed) else "Ready when\nyou are.",
                         Modifier.padding(top = 20.dp, bottom = 12.dp), style = MaterialTheme.typography.displaySmall)
                     Text(if (recording) "${"%,d".format(records)} timestamped records · raw sensors + GPS"
-                        else "Capture motion, satellite measurements and your GPS path. No AI model required.",
+                        else "Capture motion, satellite measurements and your path in one synchronized recording.",
                         style = MaterialTheme.typography.bodyMedium)
                 }
             }
@@ -70,7 +72,12 @@ fun RecordScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> U
             ReadingRow("Accelerometer", if (sensors.hasAccelerometer) "Detected" else "Not available", Icons.Outlined.Sensors)
             ReadingRow("Gyroscope", if (sensors.hasGyroscope) "Detected" else "Not available", Icons.Outlined.ScreenRotation)
             ReadingRow("Achieved IMU rate", if (sensors.achievedHz > 0) "%.0f Hz · Tier %s".format(sensors.achievedHz, sensors.tier) else "Measuring…", Icons.Outlined.GraphicEq)
-            ReadingRow("GPS position", if (!model.hasLocationPermission) "Permission needed" else if (fix == null) "Waiting for a fix" else "Fix received", Icons.Outlined.GpsFixed)
+            ReadingRow("GPS position", when {
+                !model.hasLocationPermission -> "Permission needed"
+                fix == null -> "Waiting for a fix"
+                fix?.isFresh(maxOf(nowNs, SystemClock.elapsedRealtimeNanos())) == true -> "Fresh fix"
+                else -> "Last fix · waiting for GPS"
+            }, Icons.Outlined.GpsFixed)
             if (!model.hasLocationPermission) TextButton(onClick = {
                 context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${context.packageName}")))
             }) { Text("Manage app permissions") }
@@ -110,7 +117,7 @@ fun DiagnosticsScreen(model: SetuViewModel) {
         }
     }
     Column(Modifier.fillMaxSize()) {
-        PageHeader("Under the hood", "Real sensor readings. No invented confidence scores.", onBack = { model.overlay = null })
+        PageHeader("Under the hood", "The measurements behind your position.", onBack = { model.overlay = null })
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding().padding(horizontal = 24.dp)) {
             Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.primaryContainer) {
                 Row(Modifier.fillMaxWidth().padding(22.dp), verticalAlignment = Alignment.CenterVertically) {

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="licenses">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/android/app/build/intermediates/compressed_assets/debug/compressDebugAssets/out/assets/licenses/NotoSans-OFL.txt.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android/app/build/intermediates/compressed_assets/debug/compressDebugAssets/out/assets/licenses/Eigen-MPL2.txt.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

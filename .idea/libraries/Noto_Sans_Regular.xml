@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Noto Sans Regular">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/android/app/build/intermediates/compressed_assets/debug/compressDebugAssets/out/assets/fonts/Noto Sans Regular/8192-8447.pbf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android/app/build/intermediates/compressed_assets/debug/compressDebugAssets/out/assets/fonts/Noto Sans Regular/0-255.pbf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android/app/build/intermediates/compressed_assets/debug/compressDebugAssets/out/assets/fonts/Noto Sans Regular/256-511.pbf.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

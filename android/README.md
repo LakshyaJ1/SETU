@@ -3,6 +3,18 @@
 Native Kotlin / Jetpack Compose application. Open this `android/` directory in
 Android Studio. The Python scientific reference remains at the repository root.
 
+## Presentation MVP
+
+Delhi is now included alongside Bengaluru Central. Select it in **Settings →
+Offline area → Delhi → Use this map**. The street map covers the Delhi-wide
+envelope; route previews use main roads. See `../docs/15-delhi-offline-map.md`
+for provenance, the offline distribution pack and the India-wide boundary.
+
+Start with **Track my position** for a live recorded session, or
+**Demo GPS loss & recovery** for the clearly labelled native-engine simulation.
+The presentation sequence, APK locations and exact boundaries are documented in
+`../docs/14-demo-mvp.md`. Native demo output is not a physical accuracy claim.
+
 ## Build
 
 Prerequisites: JDK 17 or newer, Android SDK Platform 37.0, NDK 28.2.13676358
@@ -41,6 +53,11 @@ settings and theme switching. Separate device tests cover the road graph and
 recording import, export, deletion and recovery. They save unaltered captures in
 the app's external `files/verification/` directory. Tests do not validate road
 safety, positioning accuracy or physical-device sensor rates.
+The later USB-phone rehearsal observes real GPS and approximately 200 Hz IMU,
+but identifies a missing heading-accuracy input that blocks live native alignment.
+See `../docs/verification/android/delhi/README.md` for the Delhi build's APK-linked
+phone checks, and `../docs/verification/android/demo-mvp/README.md` for the earlier
+controlled native demo and physical GPS tracking evidence.
 Native device tests compare the C++ filter against the Python reference fixture;
 the exact contract and remaining streaming-engine work are in `../core/README.md`.
 

@@ -1,0 +1,100 @@
+{
+  "verifiedOn": "2026-09-07",
+  "branch": "demo-mvp/position-tracking",
+  "checkpointCommit": "d4aceca",
+  "workingTreeIncludesUncommittedChanges": true,
+  "apk": {
+    "path": "dist/android/SETU-demo-mvp.apk",
+    "sha256": "86ae1405bc5f88c9acaf8d6c6b747f0244882fdd567f12c9a5ac04bcf2c7c562",
+    "bytes": 62228039,
+    "installedHashMatches": true,
+    "signatureVerified": true,
+    "zipalign16KiBPassed": true
+  },
+  "testApkSha256": "fb724b014ab16e02de4a503d890d54af23dba145bcd8c4d7cfccce5b7e977988",
+  "mapPack": {
+    "path": "dist/maps/delhi.setumap",
+    "sha256": "084ce38e69a5722eaf81f6f61c5eed062b10969e01b8b0ebbeb2adc6770dab13",
+    "bytes": 8727331,
+    "selectedRegionKey": "bundled-delhi",
+    "boundsSouthWestNorthEast": [28.39, 76.83, 28.91, 77.36],
+    "sourceDataTimestamp": "2026-09-06T20:21:35Z",
+    "sourceSha256": "42cf5b71f0acfab938f3af70a68fc594e5b10828ed400563da68eca5704c06ab",
+    "visualRoadSegments": 227111,
+    "visualCoordinates": 928725,
+    "routeGraphWays": 20188,
+    "routeGraphNodeReferences": 115314,
+    "payloadHashesVerified": true,
+    "selectionSurvivesProcessRestart": true,
+    "sampleRouteDisplayedKilometers": 4.6,
+    "sampleReplayIsSynthetic": true,
+    "wholeIndiaIncluded": false
+  },
+  "phone": {
+    "model": "CPH2467",
+    "androidVersion": "15",
+    "sdk": 35,
+    "abi": "arm64-v8a",
+    "viewportPixels": [1080, 2400],
+    "fontScale": 1,
+    "connection": "authorized USB ADB"
+  },
+  "validation": {
+    "assembleDebug": "passed",
+    "assembleDebugAndroidTest": "passed",
+    "jvmTests": {"tests": 15, "failures": 0, "errors": 0},
+    "pythonMapTests": {"tests": 15, "failed": 0, "pyosmiumIntegrationIncluded": true},
+    "pythonFormattingAndLint": "passed",
+    "lint": {"errors": 0, "warnings": 16},
+    "phoneInstrumentation": {
+      "classes": [
+        "com.setu.navigator.MapPackStoreTest",
+        "com.setu.navigator.OfflineMapTest",
+        "com.setu.navigator.PositioningDemoTest"
+      ],
+      "tests": 13,
+      "failures": 0,
+      "seconds": 4.826,
+      "log": "phone-map-tests.log"
+    },
+    "completeInstrumentationStressSuite": "not rerun on this build",
+    "airplaneModeAcquisitionTest": "not performed"
+  },
+  "physicalRecording": {
+    "scenario": "stationary GPS and local-map smoke test",
+    "durationMs": 136066,
+    "sampleCount": 95330,
+    "gpsPositions": 91,
+    "allGpsMockFlagsFalse": true,
+    "allPositionsInsideDelhi": true,
+    "synthetic": false,
+    "endedCleanly": true,
+    "stopMethod": "normal app STOP service action invoked under app UID",
+    "streamCounts": {
+      "accelerometer": 27186,
+      "gyroscope": 27186,
+      "rotation_vector": 27186,
+      "magnetometer": 13606,
+      "gnss_raw": 75,
+      "pose": 91
+    },
+    "privateCapture": ".shots/delhi-review/05-delhi-live-position.png"
+  },
+  "dataProtection": {
+    "preExistingRecordingsChecked": 5,
+    "preExistingRawRecordingHashesUnchanged": true,
+    "verificationRecordingRetained": true,
+    "appDataCleared": false,
+    "androidMockLocationProviderConfiguredByVerification": false,
+    "networkSettingsChangedByVerification": false,
+    "preciseLocationsInTrackedEvidence": false,
+    "recordingActiveAtHandoff": false
+  },
+  "remainingLimits": [
+    "Unknown numerical heading accuracy still blocks live native alignment on this phone.",
+    "Delhi route previews use main roads; residential and service streets are visible but outside the routing graph.",
+    "No whole-India map, turn restrictions, live closures or safety-validated driving routes are supplied.",
+    "The initial overview capture was blank; subsequent loaded and relaunch captures show the map.",
+    "Outdoor movement, GPS-denied positioning accuracy, long-session stability and battery/thermal behavior remain unverified."
+  ]
+}

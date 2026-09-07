@@ -25,6 +25,16 @@ SETU joins sensor-derived motion with road geometry. It must reveal which
 measurements are actually available rather than cosmetically keeping a marker
 moving. A moving demonstration marker is not evidence of navigation accuracy.
 
+## Presentation MVP
+
+The immediate delivery is an Android presentation MVP, not the complete field
+release. Its core loop is live position tracking, local recording, saved-journey
+replay and offline route exploration. A separate native-engine demonstration
+uses explicitly simulated GPS and motion inputs to explain a short GPS gap,
+uncertainty growth and reacquisition. It must never be confused with a measured
+blackout trial. The walkthrough and release boundaries live in
+`../docs/14-demo-mvp.md`.
+
 ## Operating Context
 
 Navigation is glanceable and usable in daylight or at night. Detailed charts and

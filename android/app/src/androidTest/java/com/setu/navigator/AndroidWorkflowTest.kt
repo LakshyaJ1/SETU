@@ -296,6 +296,163 @@ class AndroidWorkflowTest {
         }
     }
 
+    @Test
+    fun presentationDemoShowsNativeLossRecoveryAndSurvivesRecreation() {
+        val model = ViewModelProvider(compose.activity)[SetuViewModel::class.java]
+        val previousSettings = model.settings.value
+        val previousTrips = model.repository.tripStore.all().map { it.id }.toSet()
+        check(!model.recording.value)
+        try {
+            compose.runOnIdle {
+                model.closeReplay()
+                model.clearRoute()
+                model.overlay = null
+                model.tab = "Drive"
+                model.updateSettings(previousSettings.copy(theme = "Light"))
+            }
+            compose.onNodeWithTag("positioning-demo").performScrollTo().performClick()
+            compose.waitUntil(60000) { model.positioningDemo != null }
+            compose.onNodeWithTag("demo-phase-2000").performScrollTo().performClick()
+            compose.onNodeWithTag("position-demo-stage").assertTextEquals("GPS + motion")
+            capture("42-positioning-demo-lock", "Simulated GPS and IMU processed by the native engine; GPS-lock phase, not live sensor accuracy")
+            compose.onNodeWithTag("demo-phase-10000").performScrollTo().performClick()
+            compose.onNodeWithTag("position-demo-stage").assertTextEquals("GPS withheld · IMU tracking")
+            check(model.positioningDemo!!.frameAt(10000).estimate.status == "Inertial estimate")
+            compose.activityRule.scenario.recreate()
+            compose.onNodeWithTag("position-demo-stage").assertTextEquals("GPS withheld · IMU tracking")
+            check(!model.playing && model.replayPositionMs == 10000f)
+            capture("43-positioning-demo-gap", "Native output while synthetic GPS is withheld; paused state restored after Activity recreation")
+            compose.onNodeWithTag("demo-phase-18000").performScrollTo().performClick()
+            compose.onNodeWithTag("position-demo-stage").assertTextEquals("GPS reacquired")
+            capture("44-positioning-demo-recovery", "Native engine accepts synthetic GPS after the eight-second input gap")
+            compose.runOnIdle { model.updateSettings(model.settings.value.copy(theme = "Dark")) }
+            capture("45-positioning-demo-dark", "Dark-theme presentation demo; synthetic inputs, native output")
+            compose.onNodeWithContentDescription("Exit replay").performClick()
+            compose.onNodeWithTag("start-tracking").assertExists()
+            check(model.positioningDemo == null)
+            check(previousTrips == model.repository.tripStore.all().map { it.id }.toSet())
+        } finally {
+            compose.runOnIdle { model.closeReplay(); model.updateSettings(previousSettings) }
+        }
+    }
+
+    @Test
+    fun liveTrackingFollowsMockFixesRecordsAndSavesWithoutADestination() {
+        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
+        automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if (Build.VERSION.SDK_INT >= 33) automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.POST_NOTIFICATIONS)
+        val model = ViewModelProvider(compose.activity)[SetuViewModel::class.java]
+        val previousSettings = model.settings.value
+        val previousTrips = model.repository.tripStore.all().map { it.id }.toSet()
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        var ownedTrip: Trip? = null
+        var sequence = 0
+        val locations = object : Runnable {
+            override fun run() {
+                model.repository.hub.onLocationChanged(Location("setu-demo-test").apply {
+                    latitude = 12.9753 + sequence * 0.000002
+                    longitude = 77.6067 + sequence * 0.00004
+                    elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
+                    time = System.currentTimeMillis()
+                    speed = 6f
+                    bearing = 87f
+                    accuracy = 4f
+                    LocationCompat.setMock(this, true)
+                })
+                sequence++
+                handler.postDelayed(this, 750)
+            }
+        }
+        var ownsRecording = false
+        check(!model.recording.value)
+        try {
+            compose.runOnIdle {
+                model.closeReplay()
+                model.clearRoute()
+                model.overlay = null
+                model.tab = "Drive"
+                model.updateSettings(previousSettings.copy(theme = "Light", nativePositioning = false))
+                model.refreshPermissions()
+            }
+            compose.onNodeWithTag("start-tracking").performScrollTo().performClick()
+            ownsRecording = true
+            compose.waitUntil(15000) { model.recording.value }
+            compose.runOnIdle { model.repository.hub.stop(); handler.post(locations) }
+            compose.waitUntil(20000) { model.trackingTrail.size >= 5 }
+            check(model.route == null && model.destination == null)
+            check(model.trackingTrail.first().point.distanceTo(model.trackingTrail.last().point) > 10)
+            compose.onNodeWithTag("tracking-source").assertTextEquals("Test location · recording locally")
+            compose.onNodeWithTag("follow-position").performClick()
+            val cameraTarget = java.util.concurrent.atomic.AtomicReference<org.maplibre.android.geometry.LatLng>()
+            compose.runOnIdle {
+                val views = java.util.ArrayDeque<android.view.View>()
+                views.add(compose.activity.window.decorView)
+                while (views.isNotEmpty()) {
+                    val view = views.removeFirst()
+                    if (view is org.maplibre.android.maps.MapView) view.getMapAsync { cameraTarget.set(it.cameraPosition.target) }
+                    else if (view is android.view.ViewGroup) repeat(view.childCount) { views.add(view.getChildAt(it)) }
+                }
+            }
+            compose.waitUntil(5000) { cameraTarget.get() != null }
+            val camera = cameraTarget.get()
+            check(com.setu.navigator.data.GeoPoint(camera.latitude, camera.longitude)
+                .distanceTo(requireNotNull(model.navigationFix()).point) < 20)
+            capture("46-live-position-trail", "Controlled mock Android locations exercise live following and foreground recording; not physical-device positioning accuracy")
+            val beforeRecreation = model.trackingTrail.size
+            compose.activityRule.scenario.recreate()
+            compose.waitUntil(15000) { model.trackingTrail.size >= beforeRecreation }
+            compose.onNodeWithTag("stop-tracking").performScrollTo().performClick()
+            compose.waitUntil(15000) { !model.recording.value }
+            val saved = model.repository.tripStore.all().single { it.id !in previousTrips }
+            ownedTrip = saved
+            check(saved.points.size >= 5)
+            check(saved.points.any { it.mock == true })
+            compose.onNodeWithTag("tab-Trips").assertIsSelected()
+            compose.onNodeWithTag("trip-${saved.id}").performScrollTo().performClick()
+            capture("47-tracked-journey-saved", "Recorded mock-location journey saved through the foreground service; retained user trips unchanged")
+            compose.onNodeWithTag("replay-trip").performScrollTo().performClick()
+            compose.onNodeWithTag("replay-play-pause").performClick()
+            check(model.replayTrip?.id == saved.id && model.replayTrip?.synthetic == false)
+            capture("49-tracked-journey-replay", "Saved controlled mock-location journey replayed through the user-facing Trips flow")
+            compose.onNodeWithContentDescription("Exit replay").performClick()
+            compose.runOnIdle { model.overlay = null; model.tab = "Record" }
+            compose.onNodeWithText("No AI model required.", substring = true).assertDoesNotExist()
+            compose.onNodeWithText("Capture motion, satellite measurements and your path in one synchronized recording.").assertExists()
+            capture("48-record-presentation-copy", "Record screen uses presentation-ready acquisition copy; no model availability claim")
+        } finally {
+            handler.removeCallbacksAndMessages(null)
+            compose.runOnIdle {
+                if (ownsRecording && model.recording.value) ownedTrip = model.repository.finishRecording()
+                model.updateSettings(previousSettings)
+                model.overlay = null
+                model.selectedTrip = null
+                model.repository.hub.onProviderDisabled(android.location.LocationManager.GPS_PROVIDER)
+                model.repository.hub.start()
+            }
+            ownedTrip?.let(model.repository.tripStore::delete)
+            model.repository.refreshTrips()
+        }
+    }
+
+    @Test
+    fun sensorSubscriptionsCanBeRepeatedlyStoppedAndRestarted() {
+        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
+        automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        val model = ViewModelProvider(compose.activity)[SetuViewModel::class.java]
+        check(!model.recording.value)
+        try {
+            repeat(8) {
+                compose.runOnIdle { model.repository.hub.stop(); model.refreshPermissions() }
+                compose.waitUntil(15000) { model.nativeEstimate.value.pairedSamples >= 20 }
+                Thread.sleep(1100)
+            }
+        } finally {
+            compose.runOnIdle { model.refreshPermissions() }
+        }
+    }
+
     private fun capture(name: String, scenario: String = "Application workflow on API 35 emulator") {
         compose.waitForIdle()
         compose.waitUntil(30000) { compose.onAllNodesWithTag("offline-map-loading").fetchSemanticsNodes().isEmpty() }

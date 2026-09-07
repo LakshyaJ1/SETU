@@ -36,6 +36,12 @@ an experimental safety boundary, not a claim of validated driving accuracy.
   Missing sensor accuracy does not become known north. A heading sample is not
   proof of a rigid vehicle mount, so NHC, forward-speed and SVO constraints are
   deliberately not enabled by this adapter.
+- A missing rotation-vector heading-accuracy value, including Android's `-1`
+  sentinel, is shown as **Heading accuracy unavailable** while awaiting initial
+  alignment. A high sensor calibration code alone does not supply a numerical
+  uncertainty. GPS tracking remains available; the adapter does not invent a
+  heading variance to force initialization. This message does not replace an
+  already running native estimate or hide a sensor-gap/withheld state.
 - GeographicLib 2.5 implements WGS84 local Cartesian conversion. No ellipsoid
   is hand-implemented. Optional altitude is ellipsoid height; it is not MSL.
   Without initial altitude and vertical uncertainty, altitude output remains
