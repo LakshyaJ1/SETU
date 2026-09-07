@@ -1,0 +1,12 @@
+{
+    "rotationSetting":  "free",
+    "capture":  "39-map-document-picker.png",
+    "apkSha256":  "8f9c49762b6278ef035342733ddd609b27f2a49c67346d8f584adaa7a31a4b26",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788787774,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "8ebab8efd0fe2e851f1e65128b76be2894be34b6680587bee5cca1c09dd5ca0e",
+    "scenario":  "Android document-provider UI invoked from SETU to select the synthetic verification-grid.setumap file",
+    "fixtureSha256":  "5a0177e671c17a06780aa17e63b99581b279a780a52e28d263a99d279bffb47c"
+}

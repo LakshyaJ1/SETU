@@ -1,0 +1,15 @@
+{
+    "afterApkSha256":  "8f9c49762b6278ef035342733ddd609b27f2a49c67346d8f584adaa7a31a4b26",
+    "afterDistinctColors":  1782,
+    "pixelRegion":  [
+                        70,
+                        470,
+                        650,
+                        730
+                    ],
+    "after":  "verification/35-map-pack-removed.png",
+    "before":  "investigation/map-preview-before-texture.png",
+    "inspection":  "Unaltered captures visually inspected; map present after returning from scrolled list. This is not a rendering-performance or device-matrix guarantee.",
+    "beforeDistinctColors":  1,
+    "beforeApkSha256":  "a879da45466c51bff0dd26126c711c46629e845902e71d9c0b6fe0073f0b010d"
+}

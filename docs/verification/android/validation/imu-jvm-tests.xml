@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.setu.navigator.ImuSynchronizerTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-09-07T12:59:21.180Z" hostname="LAPTOP-02I5BMKR" time="0.066">
+  <properties/>
+  <testcase name="missingCounterpartIsBoundedAndRecovers" classname="com.setu.navigator.ImuSynchronizerTest" time="0.035"/>
+  <testcase name="nativeSelectionRequiresOptInAndAFreshPublishedState" classname="com.setu.navigator.ImuSynchronizerTest" time="0.006"/>
+  <testcase name="declinationRotatesMagneticNorthTowardTrueEast" classname="com.setu.navigator.ImuSynchronizerTest" time="0.006"/>
+  <testcase name="interpolationUsesTimestampsAndNeverInventsAcrossGaps" classname="com.setu.navigator.ImuSynchronizerTest" time="0.018"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "free",
+    "capture":  "29-native-live-investigation.png",
+    "apkSha256":  "91bdad8c2fff47caf584e821e361fc8e1df8506ccc55c700b7554307812b720d",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788781803,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "40f94b4dea6101dfc6a3c1efa614893317dd37d671ab81a68e87a49db2b5c9b7"
+}

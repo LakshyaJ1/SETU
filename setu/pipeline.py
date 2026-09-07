@@ -208,19 +208,8 @@ def run_pipeline(
     channels: dict[str, tuple[np.ndarray, np.ndarray]] = {}
     tier = log.tier
 
-    if cfg.use_svo:
-        # The longitudinal-acceleration prior needs a body frame, and the mount
-        # is only approximately known at this point. The magnitude of horizontal
-        # specific force is a usable proxy and needs no mount at all.
-        a_long_proxy = np.gradient(
-            np.linalg.norm(log.gnss.vel_enu[:, :2], axis=1), log.gnss.t
-        ) if len(log.gnss) > 3 else None
-        a_long = (
-            np.interp(imu.t, log.gnss.t, a_long_proxy) if a_long_proxy is not None else None
-        )
-        svo = SpectralOdometer(k_svo=ekf.s.k_svo, config=cfg.svo).estimate(
-            log.imu, a_long=a_long
-        )
+    if cfg.use_svo:
+        svo = SpectralOdometer(k_svo=ekf.s.k_svo, config=cfg.svo).estimate(log.imu)
         if svo.available:
             resampled = svo.speed.resampled_to(imu.t)
             speed_sources.append(resampled)

@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "lock 0",
+    "capture":  "18-large-text-drive.png",
+    "apkSha256":  "2b698c3aadfe7ab9d4605433b2114ef602e9f8a1601100c34fcefc9f899820d0",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788736346,
+    "fontScale":  2,
+    "sdk":  35,
+    "screenshotSha256":  "bab4c39e5f296506def753e528dab815816f251b7e75528d0d1820b520cdd4f3"
+}

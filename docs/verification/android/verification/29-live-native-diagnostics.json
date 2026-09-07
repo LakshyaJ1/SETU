@@ -1,0 +1,16 @@
+{
+  "capture": "29-live-native-diagnostics.png",
+  "apkSha256": "8f9c49762b6278ef035342733ddd609b27f2a49c67346d8f584adaa7a31a4b26",
+  "version": "0.1.0",
+  "device": "Android SDK built for x86_64",
+  "sdk": 35,
+  "deviceClockMs": 1788786924999,
+  "fontScale": 1,
+  "orientation": 1,
+  "scenario": "Actual Android sensor\/GPS callbacks in emulator; native filter and delayed corrections; not a physical road drive",
+  "nativeStatus": "GPS + IMU estimate",
+  "pairedImuSamples": 761,
+  "acceptedNativeFixes": 3,
+  "delayedNativeCorrections": 2,
+  "source": "Android UiAutomation.takeScreenshot; unaltered PNG"
+}

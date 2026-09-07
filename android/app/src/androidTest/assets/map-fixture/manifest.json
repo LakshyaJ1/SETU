@@ -1,0 +1,22 @@
+{
+  "schema": "setu.map.v1",
+  "id": "verification-grid",
+  "revision": 1,
+  "name": "Verification Grid",
+  "summary": "Synthetic test area · Not a real street map",
+  "bounds": [12.965, 77.585, 12.985, 77.605],
+  "center": [77.595, 12.975],
+  "previewStart": [77.59, 12.97],
+  "previewLabel": "Test start preview",
+  "demoDestination": "test-destination",
+  "source": "SETU verification fixture",
+  "attribution": "Synthetic test map",
+  "license": "Project test data",
+  "sourceUrl": "https://example.invalid/setu-test-map",
+  "dataTimestamp": "2026-09-07T00:00:00Z",
+  "limitations": "Synthetic geometry for software verification only. Do not navigate using this map.",
+  "places": [
+    {"id":"test-start","name":"Test start","detail":"Synthetic start point","point":[77.59,12.97]},
+    {"id":"test-destination","name":"Test destination","detail":"Synthetic destination","point":[77.60,12.98]}
+  ]
+}

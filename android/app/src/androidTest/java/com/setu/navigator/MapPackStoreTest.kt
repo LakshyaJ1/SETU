@@ -1,0 +1,182 @@
+package com.setu.navigator
+
+import android.content.ContextWrapper
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import com.setu.navigator.data.MapPackStore
+import org.junit.After
+import org.junit.Assert.*
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.io.File
+import java.net.InetAddress
+import java.net.ServerSocket
+import java.util.UUID
+import java.util.concurrent.CancellationException
+import kotlin.concurrent.thread
+
+@RunWith(AndroidJUnit4::class)
+class MapPackStoreTest {
+    private val target = InstrumentationRegistry.getInstrumentation().targetContext
+    private val namespace = "map-tests-${UUID.randomUUID()}"
+    private val directory = File(target.cacheDir, namespace).apply { mkdirs() }
+    private val context = object : ContextWrapper(target) {
+        override fun getFilesDir() = File(directory, "files").apply { mkdirs() }
+        override fun getCacheDir() = File(directory, "cache").apply { mkdirs() }
+        override fun getSharedPreferences(name: String, mode: Int) = target.getSharedPreferences("$namespace-$name", mode)
+    }
+    private val store = MapPackStore(context)
+
+    @After
+    fun cleanup() { directory.deleteRecursively(); target.deleteSharedPreferences("$namespace-setu-maps") }
+
+    @Test
+    fun installActivateRestoreAndRemovePreserveFallback() {
+        val imported = store.import(MapPackFixture.bytes().inputStream())
+        assertEquals(2, store.regions.value.size)
+        assertTrue(store.activeMap.value.region.bundled)
+        store.activate(imported.key)
+        assertEquals(imported.key, store.activeMap.value.region.key)
+        assertTrue(store.activeMap.value.route(imported.previewStart, imported.places.last().point).distanceMeters > 2000)
+        val restored = MapPackStore(context).apply { restore() }
+        assertEquals(imported.key, restored.activeMap.value.region.key)
+        assertThrows(IllegalArgumentException::class.java) { store.remove(imported.key) }
+        assertThrows(IllegalArgumentException::class.java) { store.remove("bundled") }
+        store.activate("bundled")
+        store.remove(imported.key)
+        assertEquals(1, store.regions.value.size)
+        assertFalse(imported.directory!!.exists())
+        assertTrue(context.cacheDir.listFiles().orEmpty().isEmpty())
+    }
+
+    @Test
+    fun revisionsNeverSilentlyReplaceOrDowngrade() {
+        val documents = MapPackFixture.documents()
+        documents.getValue("manifest.json").put("revision", 2)
+        val imported = store.import(MapPackFixture.bytes(documents).inputStream())
+        store.activate(imported.key)
+        reject(MapPackFixture.bytes(documents))
+        documents.getValue("manifest.json").put("revision", 1)
+        reject(MapPackFixture.bytes(documents))
+        documents.getValue("manifest.json").put("revision", 3)
+        val newer = store.import(MapPackFixture.bytes(documents).inputStream())
+        assertEquals(imported.key, store.activeMap.value.region.key)
+        assertEquals(3, store.regions.value.size)
+        store.activate(newer.key)
+        store.remove(imported.key)
+    }
+
+    @Test
+    fun badArchivesAndChecksumsLeaveNoInstalledFiles() {
+        reject(MapPackFixture.zip(mapOf("../escaped.json" to byteArrayOf(1))))
+        reject(MapPackFixture.zip(mapOf("manifest.json" to byteArrayOf(1))))
+        reject(MapPackFixture.zip(mapOf("manifest.json" to ByteArray(65537) { 32 })))
+        reject(MapPackFixture.bytes { it.getJSONObject("sha256").put("city.geojson", "0".repeat(64)) })
+        val complete = MapPackFixture.bytes()
+        reject(complete.copyOf(complete.size - 22))
+        assertTrue(context.filesDir.resolve("map-packs").listFiles().orEmpty().isEmpty())
+        assertFalse(context.cacheDir.resolve("escaped.json").exists())
+    }
+
+    @Test
+    fun invalidGeometryMetadataAndGraphAreRejected() {
+        fun malformed(change: (MutableMap<String, org.json.JSONObject>) -> Unit) {
+            val documents = MapPackFixture.documents(); change(documents); reject(MapPackFixture.bytes(documents))
+        }
+        malformed { it.getValue("manifest.json").put("schema", "setu.map.v999") }
+        malformed { it.getValue("manifest.json").put("revision", 1.5) }
+        malformed { it.getValue("manifest.json").put("sourceUrl", "https://user:password@example.invalid") }
+        malformed { it.getValue("city.geojson").getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0).put(1, 91) }
+        malformed { it.getValue("city.geojson").getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0).put(1, "12.97") }
+        malformed { it.getValue("city.geojson").getJSONArray("features").getJSONObject(0).getJSONObject("geometry").put("coordinates", org.json.JSONArray()) }
+        malformed { it.getValue("city.geojson").getJSONArray("features").getJSONObject(0).getJSONObject("properties").put("name", "\u4eac\u90fd") }
+        malformed { it.getValue("roads.json").getJSONArray("roads").getJSONObject(0).put("oneway", "sometimes") }
+        malformed { it.getValue("roads.json").getJSONArray("roads").getJSONObject(0).put("id", 1.5) }
+        malformed { it.getValue("roads.json").getJSONArray("roads").getJSONObject(0).getJSONArray("nodes").put(2, 1) }
+        malformed { it.getValue("roads.json").getJSONArray("roads").getJSONObject(0).put("oneway", "-1") }
+    }
+
+    @Test
+    fun cancellationKeepsThePreviousMapAndCleansStaging() {
+        var checkpoints = 0
+        assertThrows(CancellationException::class.java) {
+            store.import(MapPackFixture.bytes().inputStream()) { if (++checkpoints == 5) throw CancellationException("Test cancellation") }
+        }
+        assertTrue(store.activeMap.value.region.bundled)
+        assertEquals(1, store.regions.value.size)
+        assertTrue(context.cacheDir.listFiles().orEmpty().isEmpty())
+        assertTrue(context.filesDir.resolve("map-packs").listFiles().orEmpty().isEmpty())
+        val bytes = MapPackFixture.bytes()
+        serve(bytes) { address -> assertThrows(CancellationException::class.java) {
+            store.download(address, MapPackFixture.sha256(bytes), checkpoint = { throw CancellationException("Test cancellation") })
+        } }
+        assertTrue(context.cacheDir.listFiles().orEmpty().isEmpty())
+    }
+
+    @Test
+    fun corruptInstalledMapCannotActivateAndRestoresFallback() {
+        val imported = store.import(MapPackFixture.bytes().inputStream())
+        store.activate(imported.key)
+        imported.directory!!.resolve("city.geojson").appendText(" ")
+        assertThrows(IllegalArgumentException::class.java) { store.activate(imported.key) }
+        val restored = MapPackStore(context).apply { restore() }
+        assertTrue(restored.activeMap.value.region.bundled)
+        restored.remove(imported.key)
+    }
+
+    @Test
+    fun directDownloadChecksHashAndDoesNotActivateAutomatically() {
+        val bytes = MapPackFixture.bytes()
+        var received = 0L
+        serve(bytes) { address -> store.download(address, MapPackFixture.sha256(bytes), { count, total ->
+            received = count; assertEquals(bytes.size.toLong(), total)
+        }) }
+        assertEquals(bytes.size.toLong(), received)
+        assertEquals(2, store.regions.value.size)
+        assertTrue(store.activeMap.value.region.bundled)
+        assertTrue(context.cacheDir.listFiles().orEmpty().isEmpty())
+    }
+
+    @Test
+    fun failedDownloadsNeverInstallOrFollowRedirects() {
+        val bytes = MapPackFixture.bytes()
+        serve(bytes) { address -> assertThrows(IllegalArgumentException::class.java) { store.download(address, "0".repeat(64)) } }
+        serve(bytes, status = "302 Found", extra = "Location: http://127.0.0.1:1/should-not-follow\r\n") { address ->
+            assertThrows(IllegalArgumentException::class.java) { store.download(address, MapPackFixture.sha256(bytes)) }
+        }
+        serve(bytes, declaredSize = bytes.size + 20) { address ->
+            assertThrows(Exception::class.java) { store.download(address, MapPackFixture.sha256(bytes)) }
+        }
+        assertThrows(IllegalArgumentException::class.java) { store.download("http://example.invalid/map", "0".repeat(64)) }
+        assertThrows(IllegalArgumentException::class.java) { store.download("https://user:password@example.invalid/map", "0".repeat(64)) }
+        assertThrows(IllegalArgumentException::class.java) { store.download("https://example.invalid/map", "bad-checksum") }
+        assertEquals(1, store.regions.value.size)
+        assertTrue(context.cacheDir.listFiles().orEmpty().isEmpty())
+    }
+
+    private fun reject(bytes: ByteArray) {
+        val before = store.regions.value
+        assertThrows(Exception::class.java) { store.import(bytes.inputStream()) }
+        assertEquals(before, store.regions.value)
+        assertTrue(context.cacheDir.listFiles().orEmpty().isEmpty())
+    }
+
+    private fun serve(bytes: ByteArray, status: String = "200 OK", extra: String = "", declaredSize: Int = bytes.size, block: (String) -> Unit) {
+        ServerSocket(0, 1, InetAddress.getByName("127.0.0.1")).use { server ->
+            val worker = thread(isDaemon = true) { runCatching {
+                server.accept().use { socket ->
+                    socket.soTimeout = 3000
+                    val reader = socket.getInputStream().bufferedReader()
+                    while (!reader.readLine().isNullOrEmpty()) { }
+                    socket.getOutputStream().apply {
+                        write("HTTP/1.1 $status\r\nContent-Length: $declaredSize\r\n${extra}Connection: close\r\n\r\n".toByteArray())
+                        write(bytes); flush()
+                    }
+                }
+            } }
+            block("http://127.0.0.1:${server.localPort}/fixture.setumap")
+            worker.join(4000)
+            assertFalse("Test HTTP server should finish", worker.isAlive)
+        }
+    }
+}

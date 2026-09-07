@@ -10,12 +10,14 @@ accurate today because two errors cancel is not a filter anyone should trust.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import numpy as np
 import pytest
 
 from setu.eval.experiment import BASELINES, run_outage, sawtooth_score
 from setu.eval.metrics import evaluate_outage, summarise
-from setu.pipeline import run_pipeline
+from setu.pipeline import PipelineConfig, run_pipeline
 from setu.sim import PHONE_MID, simulate_drive
 
 OUTAGE = (150.0, 210.0)
@@ -39,9 +41,7 @@ def solution(drive, the_map):
 
 
 def horizontal_error(sol, truth):
-    tp = np.stack(
-        [np.interp(sol.t, truth.t, truth.pos_enu[:, k]) for k in range(2)], axis=1
-    )
+    tp = np.stack([np.interp(sol.t, truth.t, truth.pos_enu[:, k]) for k in range(2)], axis=1)
     return np.linalg.norm(sol.pos_enu[:, :2] - tp, axis=1)
 
 
@@ -80,6 +80,44 @@ class TestMetrics:
 
 
 class TestPipeline:
+    def test_spectral_inputs_do_not_include_a_gnss_acceleration_prior(self, monkeypatch):
+        drive = simulate_drive(
+            "curvy_a_road",
+            route_length_m=700.0,
+            device=PHONE_MID,
+            outages=((10.0, 20.0),),
+            seed=17,
+        )
+
+        def inspect_inputs(odometer, imu, *, a_long=None, speed_hint=None):
+            assert imu is drive.log.imu
+            assert a_long is None, "The spectral frontend must not receive an unmasked GNSS prior"
+            assert speed_hint is None
+            raise RuntimeError("spectral inputs inspected")
+
+        monkeypatch.setattr("setu.pipeline.SpectralOdometer.estimate", inspect_inputs)
+        with pytest.raises(RuntimeError, match="spectral inputs inspected"):
+            run_pipeline(drive.log, config=PipelineConfig(warmup_s=5.0))
+
+    def test_unavailable_gnss_velocity_cannot_change_the_solution(self):
+        drive = simulate_drive(
+            "curvy_a_road",
+            route_length_m=700.0,
+            device=PHONE_MID,
+            outages=((10.0, 20.0),),
+            seed=17,
+        )
+        unavailable = ~drive.log.gnss.available
+        assert unavailable.any()
+        poisoned_velocity = drive.log.gnss.vel_enu.copy()
+        poisoned_velocity[unavailable] = [4000.0, -3000.0, 0.0]
+        poisoned_log = replace(drive.log, gnss=replace(drive.log.gnss, vel_enu=poisoned_velocity))
+        config = PipelineConfig(warmup_s=5.0, use_cts=False, use_csa=False)
+        original = run_pipeline(drive.log, config=config)
+        poisoned = run_pipeline(poisoned_log, config=config)
+        assert np.array_equal(original.pos_enu, poisoned.pos_enu)
+        assert np.array_equal(original.vel_enu, poisoned.vel_enu)
+
     def test_measurements_are_accepted_not_gated_out(self, solution):
         """The symptom every pipeline bug so far has produced.
 
@@ -224,9 +262,7 @@ class TestReport:
         from setu.eval.experiment import ExperimentResult
 
         traces = [
-            run_outage(
-                drive, the_map, BASELINES[lb], start_s=OUTAGE[0], end_s=OUTAGE[1], label=lb
-            )
+            run_outage(drive, the_map, BASELINES[lb], start_s=OUTAGE[0], end_s=OUTAGE[1], label=lb)
             for lb in ("B1_ins", "B2_ins_nhc_zupt", "SETU")
         ]
         return ExperimentResult(
