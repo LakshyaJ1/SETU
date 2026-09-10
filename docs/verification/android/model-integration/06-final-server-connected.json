@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "free",
+    "capture":  "06-final-server-connected.png",
+    "apkSha256":  "48253e32b47456cee853d0a211ff9b78668675354a338c162f26c62a62750a87",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788874228,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "d8d9469c7ffad991633881a174ebaf593d027aa3185cf75b2f236c1160a51dc7"
+}

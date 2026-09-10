@@ -60,6 +60,20 @@ window are explained in `docs/16-sensor-fallback.md`. Internet-off is not the sa
 as starting without a GPS fix.
 
 Implementation and verification are tracked in `docs/11-android-delivery.md`.
+The approved production continuation is tracked in `docs/18-production-delivery.md`.
+The model-integration preview connects the supplied HTTPS provider to opt-in,
+recording-only IMU evaluation. Its current validity-zero predictions are never
+used for navigation; offline weights and calibrated native fusion remain open.
+See `docs/verification/android/model-integration/README.md` for the APK and checks.
+The latest reliability build is `dist/android/SETU-reliability-preview.apk`.
+It repairs incomplete offline tile storage, checks every packaged tile, adds a
+road-segment pruning index and improves native output cadence. Phone verification
+and the unresolved OEM background-freezing limitation are recorded in
+`docs/verification/android/phone-reliability/README.md`. This is not a claim of
+complete GPS-denied driving support or a finished production estimator.
+The earlier `dist/android/SETU-routing-preview.apk` also includes compiled NCR graph
+loading and connected-road entrance fallback. Its checks and remaining limits are
+in `docs/verification/android/compiled-routing/README.md`.
 Actual emulator captures live under `docs/verification/android/`; screenshots
 are not evidence of positioning accuracy. AI/ML models are not bundled. The
 16-state C++20/Eigen kernel and a timestamped GNSS/IMU engine are packaged through

@@ -11,7 +11,8 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class OfflineMapTest {
-    private val maps = MapPackStore(InstrumentationRegistry.getInstrumentation().targetContext).activeMap.value
+    private val context = InstrumentationRegistry.getInstrumentation().targetContext
+    private val maps = OfflineMap(context, MapPackStore(context).regions.value.single { it.key == "bundled" })
 
     @Test
     fun includedDestinationsHaveDrivableRoutes() {

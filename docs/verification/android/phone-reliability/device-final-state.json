@@ -1,0 +1,11 @@
+{
+    "originalRawRecordings":  20,
+    "checksumsUnchanged":  true,
+    "testOwnedExtrasBackedUpAndRemoved":  2,
+    "wifi":  "0",
+    "mobile":  "1",
+    "location":  "true",
+    "batterySaver":  "1",
+    "appBackgroundAllowance":  "Enabled for SETU during testing; insufficient to prevent OEM freeze",
+    "foregroundRecordingActive":  false
+}

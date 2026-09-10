@@ -1,0 +1,12 @@
+{
+  "schema": "setu.road-graph.v1",
+  "archive": "roads.bin.gzip",
+  "sha256": "643e95f1f785d64a3a30e7e54de6a99ecc0cd3455ce5075f04a4ecca77371d9b",
+  "sourceSha256": "bb026f14f78a6b1f42a9d74d90aa27ae92cac0d1e4a966c6ff9b1791cd139b6d",
+  "bytes": 191,
+  "archiveBytes": 120,
+  "archiveSha256": "ac8b00f8a8b08026aa65c21995eef3db3e02b968ae4457872a2effeec77bb2e6",
+  "nodes": 3,
+  "edges": 4,
+  "names": 1
+}

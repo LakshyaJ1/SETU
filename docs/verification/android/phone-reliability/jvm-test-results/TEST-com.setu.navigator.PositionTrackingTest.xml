@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.setu.navigator.PositionTrackingTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-09-08T22:06:48.589Z" hostname="LAPTOP-02I5BMKR" time="0.009">
+  <properties/>
+  <testcase name="keepsTheDisplayHistoryBoundedWithoutChangingTheLatestFix" classname="com.setu.navigator.PositionTrackingTest" time="0.007"/>
+  <testcase name="ignoresMissingStaleFutureAndPreSessionPositions" classname="com.setu.navigator.PositionTrackingTest" time="0.0"/>
+  <testcase name="throttlesDuplicateUpdatesWithoutReorderingTheTrace" classname="com.setu.navigator.PositionTrackingTest" time="0.0"/>
+  <testcase name="replayPreservesSensorProvenanceAndDoesNotInventAcrossGaps" classname="com.setu.navigator.PositionTrackingTest" time="0.001"/>
+  <testcase name="neverDrawsAConnectionAcrossAnOutageOrSourceChange" classname="com.setu.navigator.PositionTrackingTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

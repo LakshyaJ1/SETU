@@ -3,10 +3,41 @@
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import tempfile
 import zipfile
 from pathlib import Path
+
+from tools.build_road_graph import file_sha256
+
+
+def tile_index(archive: Path):
+    tiles = []
+    names = set()
+    total = 0
+    with zipfile.ZipFile(archive) as source:
+        for entry in source.infolist():
+            if not re.fullmatch(r"(?:[6-9]|1[0-3])/[0-9]{1,4}/[0-9]{1,4}\.pbf", entry.filename):
+                raise ValueError("Invalid tile path")
+            zoom, column, row = map(int, entry.filename.removesuffix(".pbf").split("/"))
+            if column >= 2**zoom or row >= 2**zoom or entry.filename in names:
+                raise ValueError("Invalid or duplicate tile coordinates")
+            if not 0 < entry.file_size <= 500000 or len(tiles) >= 25000:
+                raise ValueError("Tile archive exceeds its limits")
+            total += entry.file_size
+            if total > 512 * 1024 * 1024:
+                raise ValueError("Tile archive exceeds its limits")
+            content = source.read(entry)
+            names.add(entry.filename)
+            tiles.append([entry.filename, len(content), hashlib.sha256(content).hexdigest()])
+    if not tiles:
+        raise ValueError("Empty tile archive")
+    return {
+        "schema": "setu.tile-index.v1",
+        "archiveSha256": file_sha256(archive),
+        "tiles": sorted(tiles),
+    }
 
 
 def minimum_zoom(properties):
@@ -95,10 +126,8 @@ def build(source: Path, output: Path, tippecanoe: str):
                 )
                 entry.compress_type = zipfile.ZIP_DEFLATED
                 target.writestr(entry, content)
-        with archive.open("rb") as stream:
-            checksum = hashlib.file_digest(stream, "sha256").hexdigest()
-        with (source / "city.geojson").open("rb") as stream:
-            source_hash = hashlib.file_digest(stream, "sha256").hexdigest()
+        checksum = file_sha256(archive)
+        source_hash = file_sha256(source / "city.geojson")
         metadata = {
             "schema": "setu.vector-tiles.v1",
             "archive": archive.name,

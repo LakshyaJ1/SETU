@@ -1,0 +1,18 @@
+........................................................................ [ 33%]
+.......F................................................................ [ 67%]
+................s....s...............................................    [100%]
+================================== FAILURES ===================================
+E   AssertionError: assert '<script' not in '<!doctype h...>\n</html>\n'
+      
+      '<script' is contained here:
+        >
+        
+        </div>
+        <script>
+        /* Adds the sweep when the chart is reached. Purely additive: the page is...
+      
+      ...Full output truncated (15 lines hidden), use '-vv' to show
+C:\Users\AKSHIT JAIN\OneDrive\Desktop\something-main\data\query\SETU\tests\test_eval_and_report.py:285: AssertionError: assert '<script' not in '<!doctype h...>\n</html>\n'
+=========================== short test summary info ===========================
+FAILED tests/test_eval_and_report.py::TestReport::test_renders_valid_standalone_html
+1 failed, 210 passed, 2 skipped in 248.26s (0:04:08)

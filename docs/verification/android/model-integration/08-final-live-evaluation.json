@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "free",
+    "capture":  "08-final-live-evaluation.png",
+    "apkSha256":  "48253e32b47456cee853d0a211ff9b78668675354a338c162f26c62a62750a87",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788874271,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "1fe5d9cf59fcad56f226f4c73f58e88b90452e202a557a7eaad2dfacbb9d9047"
+}

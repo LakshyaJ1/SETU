@@ -1,29 +1,34 @@
 package com.setu.navigator.data
 
 import java.util.PriorityQueue
+import java.nio.DoubleBuffer
+import java.nio.IntBuffer
 import kotlin.math.*
 
-class RoadGraph private constructor(
-    private val latitudes: DoubleArray, private val longitudes: DoubleArray,
-    private val heads: IntArray, private val sourceNodes: IntArray, private val targets: IntArray, private val next: IntArray,
-    private val lengths: DoubleArray, private val nameIds: IntArray, private val names: List<String>,
+class RoadGraph internal constructor(
+    internal val latitudes: DoubleBuffer, internal val longitudes: DoubleBuffer,
+    internal val heads: IntBuffer, internal val sourceNodes: IntBuffer, internal val targets: IntBuffer, internal val next: IntBuffer,
+    internal val lengths: DoubleBuffer, internal val nameIds: IntBuffer, internal val names: List<String>,
 ) {
-    val nodeCount get() = latitudes.size
-    val edgeCount get() = targets.size
+    val nodeCount get() = latitudes.limit()
+    val edgeCount get() = targets.limit()
     private data class Snap(val from: Int, val edge: Int, val fraction: Double, val point: GeoPoint, val offset: Double)
     private data class Visit(val node: Int, val cost: Double, val priority: Double)
     private fun point(node: Int) = GeoPoint(latitudes[node], longitudes[node])
+    private var segmentIndex: RoadSegmentIndex? = null
 
-    private fun snaps(location: GeoPoint, checkpoint: () -> Unit): List<Snap> {
-        val candidates = mutableListOf<Snap>()
+    @Synchronized
+    internal fun index(checkpoint: () -> Unit = {}): RoadSegmentIndex = segmentIndex
+        ?: RoadSegmentIndex.build(this, checkpoint).also { segmentIndex = it }
+
+    private fun snaps(location: GeoPoint, checkpoint: () -> Unit, alternatives: Boolean = false): List<Snap> {
+        val candidates = PriorityQueue<Snap>(compareByDescending<Snap> { it.offset }.thenByDescending { it.edge })
         val eastScale = 111320.0 * cos(Math.toRadians(location.latitude))
         var closest = 250.0
-        for (node in heads.indices) {
-            if (node % 4096 == 0) checkpoint()
+        index(checkpoint).visit(location, checkpoint) { edge ->
+            val node = sourceNodes[edge]
             val east = (longitudes[node] - location.longitude) * eastScale
             val north = (latitudes[node] - location.latitude) * 111320.0
-            var edge = heads[node]
-            while (edge >= 0) {
                 val target = targets[edge]
                 val deltaEast = (longitudes[target] - longitudes[node]) * eastScale
                 val deltaNorth = (latitudes[target] - latitudes[node]) * 111320.0
@@ -31,18 +36,17 @@ class RoadGraph private constructor(
                 val fraction = if (squaredLength == 0.0) 0.0 else
                     (-(east * deltaEast + north * deltaNorth) / squaredLength).coerceIn(0.0, 1.0)
                 val offsetSquared = (east + fraction * deltaEast).pow(2) + (north + fraction * deltaNorth).pow(2)
-                if (offsetSquared <= (closest + 0.1).pow(2)) {
+                if (offsetSquared <= (if (alternatives) 250.0 else closest + 0.1).pow(2)) {
                     val offset = sqrt(offsetSquared)
-                    if (offset < closest - 0.1) candidates.clear()
+                    if (!alternatives && offset < closest - 0.1) candidates.clear()
                     closest = minOf(closest, offset)
-                    if (candidates.size < 32 && offset <= 250.0) {
+                    if (offset <= 250.0) {
                         candidates.add(Snap(node, edge, fraction, point(node).interpolate(point(target), fraction), offset))
+                        if (candidates.size > 256) candidates.remove()
                     }
                 }
-                edge = next[edge]
-            }
         }
-        return candidates.filter { it.offset <= closest + 0.1 }
+        return candidates.filter { alternatives || it.offset <= closest + 0.1 }.sortedWith(compareBy<Snap> { it.offset }.thenBy { it.edge })
     }
 
     fun route(from: GeoPoint, to: GeoPoint, checkpoint: () -> Unit = {}): DriveRoute {
@@ -50,7 +54,15 @@ class RoadGraph private constructor(
         require(starts.isNotEmpty()) { "No mapped driving road within 250 metres of your start. Choose a nearby public road." }
         val ends = snaps(to, checkpoint)
         require(ends.isNotEmpty()) { "No mapped driving road within 250 metres of this destination. Choose a nearby entrance." }
+        return search(from, to, starts, ends, checkpoint)
+            ?: search(from, to, starts, snaps(to, checkpoint, true), checkpoint)
+            ?: search(from, to, snaps(from, checkpoint, true), snaps(to, checkpoint, true), checkpoint)
+            ?: error("No connected driving route between roads within 250 metres of these points. Try another public-road entrance.")
+    }
+
+    private fun search(from: GeoPoint, to: GeoPoint, starts: List<Snap>, ends: List<Snap>, checkpoint: () -> Unit): DriveRoute? {
         val endNodes = ends.groupBy { it.from }
+        val endEdges = ends.groupBy { it.edge }
         val maximumOffset = ends.maxOf { it.offset } + 2.0
         fun heuristic(node: Int) = maxOf(0.0, point(node).distanceTo(to) - maximumOffset)
         val costs = DoubleArray(nodeCount) { Double.POSITIVE_INFINITY }
@@ -61,12 +73,12 @@ class RoadGraph private constructor(
         var bestEnd: Snap? = null
         var directStart: Snap? = null
         starts.forEachIndexed { index, start ->
-            ends.filter { it.edge == start.edge && it.fraction >= start.fraction }.forEach { end ->
-                val distance = (end.fraction - start.fraction) * lengths[start.edge]
+            endEdges[start.edge].orEmpty().filter { it.fraction >= start.fraction }.forEach { end ->
+                val distance = start.offset + (end.fraction - start.fraction) * lengths[start.edge] + end.offset
                 if (distance < bestCost) { bestCost = distance; bestEnd = end; directStart = start }
             }
             val target = targets[start.edge]
-            val cost = (1.0 - start.fraction) * lengths[start.edge]
+            val cost = start.offset + (1.0 - start.fraction) * lengths[start.edge]
             if (cost < costs[target]) {
                 costs[target] = cost
                 root[target] = index
@@ -80,7 +92,7 @@ class RoadGraph private constructor(
             if (visit.priority >= bestCost) break
             if (visit.cost > costs[visit.node]) continue
             endNodes[visit.node].orEmpty().forEach { end ->
-                val cost = visit.cost + end.fraction * lengths[end.edge]
+                val cost = visit.cost + end.fraction * lengths[end.edge] + end.offset
                 if (cost < bestCost) { bestCost = cost; bestEnd = end; directStart = null }
             }
             var edge = heads[visit.node]
@@ -96,7 +108,7 @@ class RoadGraph private constructor(
                 edge = next[edge]
             }
         }
-        val end = bestEnd ?: error("The nearest roads are not connected in this map. Try another public-road entrance.")
+        val end = bestEnd ?: return null
         val points = mutableListOf<GeoPoint>()
         val roadNames = mutableListOf<String>()
         fun append(location: GeoPoint, edge: Int) {
@@ -104,7 +116,7 @@ class RoadGraph private constructor(
             else if (points.last().distanceTo(location) > 0.01) { points.add(location); roadNames.add(names[nameIds[edge]]) }
         }
         if (directStart != null) {
-            append(directStart!!.point, directStart!!.edge)
+            append(directStart.point, directStart.edge)
         } else {
             val edges = mutableListOf<Int>()
             var node = end.from
@@ -214,14 +226,10 @@ class RoadGraph private constructor(
             val count = expectedNodes ?: nodeSize
             require(count > 0 && edgeSize > 0 && (0 until count).all { latitudes[it].isFinite() }) { "The road graph has missing nodes." }
             require(expectedEdges == null || expectedEdges == edgeSize) { "Road edge count does not match its metadata." }
-            return RoadGraph(if (latitudes.size == count) latitudes else latitudes.copyOf(count),
-                if (longitudes.size == count) longitudes else longitudes.copyOf(count),
-                if (heads.size == count) heads else heads.copyOf(count),
-                if (sources.size == edgeSize) sources else sources.copyOf(edgeSize),
-                if (targets.size == edgeSize) targets else targets.copyOf(edgeSize),
-                if (next.size == edgeSize) next else next.copyOf(edgeSize),
-                if (lengths.size == edgeSize) lengths else lengths.copyOf(edgeSize),
-                if (nameIds.size == edgeSize) nameIds else nameIds.copyOf(edgeSize), names.toList())
+            return RoadGraph(DoubleBuffer.wrap(latitudes, 0, count), DoubleBuffer.wrap(longitudes, 0, count),
+                IntBuffer.wrap(heads, 0, count), IntBuffer.wrap(sources, 0, edgeSize), IntBuffer.wrap(targets, 0, edgeSize),
+                IntBuffer.wrap(next, 0, edgeSize), DoubleBuffer.wrap(lengths, 0, edgeSize),
+                IntBuffer.wrap(nameIds, 0, edgeSize), names.toList())
         }
     }
 }

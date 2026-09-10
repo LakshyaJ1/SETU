@@ -53,7 +53,7 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
         applyMotionAlignment(timestamp)
         engine.imu(timestamp, acceleration, gyro)
         pairedSamples++
-        if (timestamp - lastPublish >= 200_000_000L) {
+        if (timestamp - lastPublish >= 100_000_000L) {
             lastPublish = timestamp
             val snapshot = engine.snapshot()
             var estimate = decodeNativeEstimate(snapshot, pairedSamples, synchronizerDrops(), headingAccuracyAvailable)
@@ -72,6 +72,7 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
                 record(JSONObject().put("type", "native_state").put("tNs", timestamp)
                     .put("status", estimate.status).put("detail", estimate.detail)
                     .put("pairedSamples", pairedSamples).put("acceptedGps", estimate.accepted)
+                    .put("pairingDrops", estimate.pairingDrops)
                     .put("headingSource", estimate.headingSource ?: JSONObject.NULL)
                     .put("hasEstimate", estimate.pose != null))
             }

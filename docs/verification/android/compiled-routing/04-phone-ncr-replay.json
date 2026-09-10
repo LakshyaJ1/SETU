@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "lock 0",
+    "capture":  "04-phone-ncr-replay.png",
+    "apkSha256":  "080c738b059da3da653f1d05c86e39fe31e5a9357349ae190ac3121b7e835cd3",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788898928,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "8541e8d00432d7ba0d1df6790bcdd86eb22589a083d29c0fa54b1cf8a3ffd9a5"
+}

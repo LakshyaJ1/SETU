@@ -1,0 +1,122 @@
+{
+    "branch":  "demo-mvp/position-tracking",
+    "baseCommit":  "ab84894a4ee5cf31716673bc4b70d26ee53e8ffe",
+    "workingTreeIncludesUncommittedChanges":  true,
+    "fullProductionComplete":  false,
+    "apk":  {
+                "path":  "dist/android/SETU-reliability-preview.apk",
+                "bytes":  203083187,
+                "sha256":  "84c120c458b573c68225acc1fd31ed9bde1fddb4d4f645e9b28a28e8b78b2947",
+                "installedOnPhone":  true,
+                "installedPhoneSha256":  "84c120c458b573c68225acc1fd31ed9bde1fddb4d4f645e9b28a28e8b78b2947",
+                "signatureVerified":  true,
+                "zipalign16KiBPassed":  true,
+                "signing":  "Android debug / APK v2"
+            },
+    "finalTestApkSha256":  "33e8ec5afec4188d8db52d5b2d0df68aad9e953742ffdebcb7ba9c522f72a2af",
+    "finalRegressionTestApkSha256":  "96874cd975295d1ec0383f73cb8beec9391699fe7314151a1ccd7dcb05f9d3d2",
+    "verification":  {
+                         "jvm":  {
+                                     "passed":  49,
+                                     "failed":  0
+                                 },
+                         "lint":  {
+                                      "errors":  0,
+                                      "warnings":  17
+                                  },
+                         "earlierPhoneCore":  {
+                                                  "apkSha256":  "5e7fe0fe3d87c556b404efd9de075e7dda6d4aede60a87d52397680b7e9076d8",
+                                                  "skipped":  1,
+                                                  "failed":  0,
+                                                  "passed":  52
+                                              },
+                         "earlierPhoneUi":  {
+                                                "apkSha256":  "3d964bae46b71022de2ffa8e21bfac8daa5766186df1b5cf3a20f3d85d17c088",
+                                                "failed":  0,
+                                                "passed":  6
+                                            },
+                         "finalEmulatorUi":  {
+                                                 "failure":  "Pre-existing verification-grid map protected; not removed",
+                                                 "failed":  1,
+                                                 "passed":  5
+                                             },
+                         "finalEmulatorMapRenderer":  {
+                                                          "cycles":  6,
+                                                          "failed":  0,
+                                                          "passed":  1
+                                                      },
+                         "finalPhoneCore":  {
+                                                "passed":  36,
+                                                "runnerProcessCrashWasOperatorForceStop":  true,
+                                                "failed":  1,
+                                                "notCompleted":  16,
+                                                "failure":  "No compose hierarchies after external foreground intervention",
+                                                "status":  "Interrupted by operator after locked/sleeping phone stalled during tile test"
+                                            },
+                         "finalPhoneBackground":  {
+                                                      "actualMs":  144918,
+                                                      "lastSampleAgeNs":  133998726714,
+                                                      "mobileDataEnabled":  false,
+                                                      "appBackgroundAllowed":  true,
+                                                      "passed":  0,
+                                                      "nominalMs":  15000,
+                                                      "locationEnabled":  false,
+                                                      "batterySaverEnabled":  false,
+                                                      "foregroundServiceActive":  true,
+                                                      "failed":  1,
+                                                      "wifiEnabled":  false
+                                                  },
+                         "finalPhysicalForeground":  {
+                                                         "status":  "Passed on the unlocked phone",
+                                                         "passed":  1,
+                                                         "failed":  0,
+                                                         "requestedDurationMs":  30000,
+                                                         "actualDurationMs":  30000,
+                                                         "achievedHz":  199.8273158279629,
+                                                         "lastSampleAgeNs":  67049621,
+                                                         "maximumRawImuGapNs":  5005625,
+                                                         "nativePairedSamples":  6461,
+                                                         "pairingDrops":  0,
+                                                         "wifiEnabled":  false,
+                                                         "mobileDataEnabled":  false,
+                                                         "locationEnabled":  false,
+                                                         "batterySaverEnabled":  true,
+                                                         "modelSharingEnabled":  false,
+                                                         "recordingSaved":  true,
+                                                         "testOwnedRecordingRemoved":  true,
+                                                         "noAccuracyClaim":  true
+                                                     },
+                         "pythonFocused":  {
+                                               "skipped":  2,
+                                               "failed":  0,
+                                               "passed":  39
+                                           },
+                         "pythonFull":  {
+                                            "failure":  "tests/test_eval_and_report.py::TestReport::test_renders_valid_standalone_html",
+                                            "skipped":  2,
+                                            "failed":  1,
+                                            "passed":  210
+                                        },
+                         "ruffChangedPythonPassed":  true,
+                         "finalEmulatorRemainingCore":  {
+                                                            "classes":  [
+                                                                            "OfflineTilesTest",
+                                                                            "PositioningDemoTest",
+                                                                            "SensorFallbackTest",
+                                                                            "TripStoreTest"
+                                                                        ],
+                                                            "skipped":  1,
+                                                            "failed":  0,
+                                                            "passed":  15
+                                                        }
+                     },
+    "deviceState":  "device-final-state.json",
+    "remaining":  [
+                      "OEM background freeze",
+                      "Validated offline model bundle and calibrated fusion",
+                      "Road-constrained estimation",
+                      "Complex GPS-denied drive validation",
+                      "Whole-India maps"
+                  ],
+    "sourceNotes":  "README.md"
+}

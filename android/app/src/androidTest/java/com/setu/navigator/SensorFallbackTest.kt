@@ -69,10 +69,20 @@ class SensorFallbackTest {
                         3.0, timestamp, "Controlled synthetic GPS", altitudeMeters = 0.0,
                         verticalAccuracyMeters = 5.0, speedAccuracyMps = 0.2, bearingAccuracyDegrees = 1.0, mock = true), now)
                 }
-                if (index % 20 == 0) frames.add(Frame(seconds, point, latest))
+                if (index % 10 == 0) frames.add(Frame(seconds, point, latest))
             }
         }
         return frames
+    }
+
+    @Test
+    fun nativePositionsPublishAtTenHertzDuringGpsAndSensorOnlySegments() {
+        val frames = replay()
+        for (interval in listOf(2.0..4.9, 7.0..13.9, 17.0..21.9)) {
+            val timestamps = frames.filter { it.seconds in interval }.mapNotNull { it.estimate.pose?.timestampNs }.distinct()
+            assertTrue("Missing position updates in $interval", timestamps.size >= (interval.endInclusive - interval.start) * 9)
+            assertTrue(timestamps.zipWithNext().all { (previous, current) -> current - previous in 1..110_000_000L })
+        }
     }
 
     @Test

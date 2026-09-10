@@ -18,6 +18,48 @@ Start with **Track my position** for a live recorded session, or
 The presentation sequence, APK locations and exact boundaries are documented in
 `../docs/14-demo-mvp.md`. Native demo output is not a physical accuracy claim.
 
+## Reliability preview
+
+The latest build is `../dist/android/SETU-reliability-preview.apk`. It validates
+and repairs offline tiles in persistent app storage, accelerates road snapping,
+and publishes native estimates at 100 ms intervals when valid input is available.
+See `../docs/verification/android/phone-reliability/README.md` for exact hashes,
+device checks, failed tests and remaining acceptance work.
+
+The connected phone freezes background sensor capture even with a recording
+service active. Battery controls are explained in **Settings > Background recording**;
+allowing background use and disabling Battery saver did not resolve this phone's
+all-radios-off background test. Do not rely on screen-off recording or a complete
+GPS-free drive. Foreground sensor capture is not proof of navigation accuracy.
+
+## Earlier routing preview
+
+The earlier build is `../dist/android/SETU-routing-preview.apk` (202,214,737 bytes).
+It includes the model-integration work below, replaces repeated NCR JSON graph
+parsing with a verified, read-only compiled graph, and handles disconnected nearby
+destination spurs without inventing road links. NCR drawing tiles are unchanged.
+Verification: `../docs/verification/android/compiled-routing/README.md`.
+This is a development preview with emulator tests and phone smoke checks, not a
+field-validated navigation release. The stable MVP and earlier model preview are
+retained separately.
+
+## Model integration preview
+
+The production work ledger is `../docs/18-production-delivery.md`. In **Settings →
+Model integration**, save/check the supplied HTTPS endpoint, then explicitly enable
+**Share during recordings** if you want live IMU evaluation. Sharing starts only
+with a recording, stops when it ends, and is revoked when the endpoint changes.
+GPS coordinates and saved trips are not uploaded.
+
+The earlier model-only preview is `../dist/android/SETU-model-integration-preview.apk`.
+Its evidence is in `../docs/verification/android/model-integration/README.md`;
+the stable `SETU-demo-mvp.apk` is retained separately.
+
+The current server identifies its CNN-GRU as experimental and returns validity
+zero. Its speed/sigma are shown and logged for evaluation, not used for navigation.
+Internet is required for this remote path; offline model export and calibrated
+native fusion remain production requirements. Contract: `../docs/12-model-integration.md`.
+
 ## Build
 
 Prerequisites: JDK 17 or newer, Android SDK Platform 37.0, NDK 28.2.13676358

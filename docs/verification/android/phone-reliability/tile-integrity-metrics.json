@@ -1,0 +1,8 @@
+{
+  "scenario": "Full NCR tile extraction and deleted\/truncated\/same-size-corruption repair",
+  "totalMs": 39707,
+  "verifiedWarmOpenMs": 1539,
+  "tiles": 11159,
+  "persistentStorage": true,
+  "repairs": 3
+}

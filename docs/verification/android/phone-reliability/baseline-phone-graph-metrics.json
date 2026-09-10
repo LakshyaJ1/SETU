@@ -1,0 +1,13 @@
+{
+  "scenario": "Full NCR compiled graph cold\/warm\/corrupt-cache routes; emulator only",
+  "coldPreparationMs": 12197,
+  "warmOpenMs": 4429,
+  "routeMs": 12472,
+  "distanceMeters": 25796.291963023516,
+  "nodes": 3185592,
+  "edges": 7255057,
+  "sampledPssKiB": 666767,
+  "javaHeapUsedBytes": 54617616,
+  "peakMemoryMeasured": false,
+  "mapRendererLoaded": false
+}

@@ -1,0 +1,13 @@
+{
+    "environment":  "API 35 emulator; virtual sensor stream, not a physical drive",
+    "apkSha256":  "48253e32b47456cee853d0a211ff9b78668675354a338c162f26c62a62750a87",
+    "recordsBeforeBackground":  161,
+    "recordsAfterFiveSecondsBackground":  166,
+    "recordsAtRevocation":  170,
+    "recordsFiveSecondsAfterRevocation":  170,
+    "modelRecords":  170,
+    "allPredictionsValidityZero":  true,
+    "allPredictionsExcludedFromNavigation":  true,
+    "recordingStopped":  true,
+    "sharingDisabled":  true
+}

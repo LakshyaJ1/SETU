@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.setu.navigator.RoadSegmentIndexTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-09-08T22:06:48.616Z" hostname="LAPTOP-02I5BMKR" time="0.049">
+  <properties/>
+  <testcase name="localBlocksSkipRemoteSegmentsAndCancelledBuildCanBeRetried" classname="com.setu.navigator.RoadSegmentIndexTest" time="0.016"/>
+  <testcase name="longSegmentsAndPolarQueriesRetainAllPossibleCandidates" classname="com.setu.navigator.RoadSegmentIndexTest" time="0.033"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

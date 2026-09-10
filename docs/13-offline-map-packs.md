@@ -97,6 +97,37 @@ GeoJSON is not handed to MapLibre. Rendering of other legacy GeoJSON regions is
 capped at 32 MiB; a matching NCR payload can reuse the bundled tiles. The larger
 import/validation budgets do not imply unlimited whole-document rendering.
 
+The phone-reliability update adds an APK-bound per-tile inventory and prepares
+tiles in persistent private files rather than disposable cache storage. Every
+source open checks all required tile sizes and hashes; missing or corrupt tiles
+trigger verified re-extraction. See `20-phone-reliability.md` for the reproduced
+phone failure and repair contract. The drawing archive itself is unchanged.
+
+The routing preview additionally replaces NCR's `roads.json.gzip` with
+`roads.bin.gzip` plus `graph.json`. `python -m tools.build_road_graph <roads.json>
+<new-output-directory>` builds deterministic little-endian adjacency arrays from
+the same source, without fetching data. Pass `--compiled-graph <output-directory>`
+alongside `--vector-tiles` and `--android-assets` when bundling. Portable `.setumap`
+files retain the original JSON contract. Exact-checksum matching imported NCR
+packs may reuse the trusted bundled compiled graph; other imports still validate
+and load their JSON graph.
+
+Android expands and verifies the graph into private cache atomically, validates
+its structure, and maps read-only buffers instead of constructing millions of
+JSON objects and copying all graph arrays to Java heap. Warm loads still check
+the full SHA-256 and structure. Corrupt or cancelled preparation is not accepted.
+This is a versioned internal compiled cache, **not** the full FlatBuffers routing/
+curvature/turn-restriction format in the production architecture.
+
+Routing first tries the nearest directed road segments. Only if they are
+disconnected does it consider up to 256 alternative directed segments within
+250 metres, first at the destination, then at both endpoints. Access offsets
+participate in route selection but remain separate dashed links in the UI; they
+are not asserted to be drivable or used to invent a connecting road. Geometry,
+one-way directions and requested points are retained. This resolves disconnected
+destination spurs without changing the route's underlying road network. It does
+not add vehicle access rules, turn restrictions or live closures.
+
 Create a directory containing those three files; the packager fills in `sha256`.
 It uses only Python's standard library, performs no network request and refuses
 to overwrite an existing output. Android performs the semantic validation.

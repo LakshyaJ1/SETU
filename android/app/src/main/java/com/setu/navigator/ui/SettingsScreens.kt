@@ -2,6 +2,8 @@ package com.setu.navigator.ui
 
 import android.content.Intent
 import android.net.Uri
+import android.os.SystemClock
+import android.provider.Settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,17 +19,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.setu.navigator.BuildConfig
 import com.setu.navigator.SetuViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun SettingsScreen(model: SetuViewModel) {
+    val context = LocalContext.current
     val settings by model.settings.collectAsStateWithLifecycle()
     val maps by model.activeMap.collectAsStateWithLifecycle()
     var choice by remember { mutableStateOf<String?>(null) }
+    var showBackgroundHelp by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
         PageHeader("Make it yours", "A few preferences. A lot of open road.")
         Column(Modifier.padding(horizontal = 24.dp)) {
@@ -47,6 +54,7 @@ fun SettingsScreen(model: SetuViewModel) {
             PreferenceRow("Appearance", settings.theme, Icons.Outlined.Palette) { choice = "Appearance" }
             PreferenceRow("Speed units", settings.units, Icons.Outlined.Speed) { choice = "Speed units" }
             PreferenceRow("Vehicle", settings.vehicle, Icons.Outlined.DirectionsCar) { choice = "Vehicle" }
+            PreferenceRow("Background recording", "Prevent battery settings from pausing sensors", Icons.Outlined.BatteryChargingFull) { showBackgroundHelp = true }
             ListItem(headlineContent = { Text("Keep screen awake") }, supportingContent = { Text("During navigation and replay") },
                 leadingContent = { Icon(Icons.Outlined.WbSunny, null) },
                 trailingContent = { Switch(settings.keepScreenOn, { model.updateSettings(settings.copy(keepScreenOn = it)) }) },
@@ -60,6 +68,17 @@ fun SettingsScreen(model: SetuViewModel) {
             Spacer(Modifier.height(20.dp))
         }
     }
+    if (showBackgroundHelp) AlertDialog(
+        onDismissRequest = { showBackgroundHelp = false },
+        title = { Text("Keep recording in the background") },
+        text = { Text("Some phones pause SETU when you switch apps or lock the screen, even during recording. Open App info, then Battery usage, and enable Allow background activity or Unrestricted. Also turn off Battery saver in phone settings while recording; it can override app access. This uses more battery. Test a short recording before relying on screen-off capture. Battery access does not make GPS-free positioning accurate.") },
+        confirmButton = { TextButton(onClick = {
+            showBackgroundHelp = false
+            runCatching { context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${context.packageName}"))) }
+                .onFailure { model.repository.reportError("Open SETU's App info in phone settings, then check Battery usage.") }
+        }) { Text("Open app settings") } },
+        dismissButton = { TextButton(onClick = { showBackgroundHelp = false }) { Text("Not now") } }
+    )
     if (choice != null) {
         val options = when (choice) { "Appearance" -> listOf("System", "Light", "Dark"); "Speed units" -> listOf("km/h", "mph"); else -> listOf("Car", "Two-wheeler", "Heavy vehicle") }
         val current = when (choice) { "Appearance" -> settings.theme; "Speed units" -> settings.units; else -> settings.vehicle }
@@ -97,8 +116,22 @@ fun ModelSettingsScreen(model: SetuViewModel) {
     val settings by model.settings.collectAsStateWithLifecycle()
     var endpoint by remember(settings.modelEndpoint) { mutableStateOf(settings.modelEndpoint) }
     val connection = model.modelConnection
+    val inference by model.modelInference.collectAsStateWithLifecycle()
+    var confirmSharing by remember { mutableStateOf(false) }
+    var nowNs by remember { mutableLongStateOf(SystemClock.elapsedRealtimeNanos()) }
+    LaunchedEffect(Unit) { while (true) { nowNs = SystemClock.elapsedRealtimeNanos(); delay(500) } }
+    val measurement = inference.recentMeasurement(nowNs)
+    if (confirmSharing) AlertDialog(
+        onDismissRequest = { confirmSharing = false },
+        title = { Text("Share sensor windows with this server?") },
+        text = { Column(Modifier.verticalScroll(rememberScrollState())) {
+            Text("While recording, SETU sends accelerometer and gyroscope readings, monotonic timestamps and your vehicle type to ${settings.modelEndpoint}. This includes background recording. GPS coordinates and saved trips are not sent. The server can observe your IP address. Research results do not control navigation. Turn sharing off here to stop future requests; already-sent data cannot be recalled.")
+        } },
+        confirmButton = { TextButton(onClick = { confirmSharing = false; model.updateSettings(settings.copy(modelSharingAllowed = true)) }) { Text("Enable sharing") } },
+        dismissButton = { TextButton(onClick = { confirmSharing = false }) { Text("Keep on phone") } },
+    )
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding()) {
-        PageHeader("Model integration", "A clean handoff to your AI/ML teammate.", onBack = { model.overlay = null })
+        PageHeader("Model integration", "Connect, inspect, and evaluate learned speed.", onBack = { model.overlay = null })
         Column(Modifier.padding(horizontal = 24.dp)) {
             Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surfaceContainer) {
                 Column(Modifier.fillMaxWidth().padding(20.dp)) {
@@ -110,7 +143,7 @@ fun ModelSettingsScreen(model: SetuViewModel) {
                     connection.modelName?.let { Text(it, Modifier.padding(top = 8.dp), style = MaterialTheme.typography.labelMedium) }
                 }
             }
-            SectionTitle("Development server")
+            SectionTitle("Model server")
             Text("Connect a server that implements the SETU model v1 contract. Maps, recording and replay do not depend on it.",
                 style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             OutlinedTextField(endpoint, { endpoint = it }, label = { Text("Model-server URL") }, placeholder = { Text("https://your-model-server") },
@@ -122,11 +155,35 @@ fun ModelSettingsScreen(model: SetuViewModel) {
                 if (connection.checking) { CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp); Spacer(Modifier.width(10.dp)) }
                 Text(if (connection.checking) "Checking connection…" else "Save & check connection")
             }
+            SectionTitle("Sensor sharing")
+            ListItem(
+                headlineContent = { Text("Share during recordings") },
+                supportingContent = { Text("Off by default. Sends live IMU windows, never GPS coordinates or saved trips.") },
+                trailingContent = { Switch(settings.modelSharingAllowed, { enabled ->
+                    if (enabled) confirmSharing = true else model.updateSettings(settings.copy(modelSharingAllowed = false))
+                }, enabled = endpoint == settings.modelEndpoint && endpoint.isNotBlank(), modifier = Modifier
+                    .semantics { contentDescription = "Share sensor windows during recording" }.testTag("model-sharing")) },
+                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+            )
+            if (endpoint != settings.modelEndpoint) Text("Save the server address before enabling sharing. Changing servers turns sharing off.",
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            SectionTitle("Live evaluation")
+            Text(inference.status, style = MaterialTheme.typography.titleMedium, modifier = Modifier.testTag("model-inference-status"))
+            Text(inference.detail, Modifier.padding(top = 8.dp), style = MaterialTheme.typography.bodyMedium)
+            if (measurement != null) {
+                ReadingRow("Model speed · not navigation", "%.2f m/s".format(measurement.speedMps), Icons.Outlined.Speed)
+                ReadingRow("Reported sigma · unverified", "%.2f m/s".format(measurement.sigmaMps), Icons.Outlined.Science)
+                ReadingRow("Model validity", "%.2f".format(measurement.validity), Icons.Outlined.VerifiedUser)
+            } else if (inference.measurement != null) {
+                Text("Last model result is stale; no current prediction.", Modifier.padding(top = 8.dp), style = MaterialTheme.typography.bodySmall)
+            }
+            inference.latencyMs?.let { ReadingRow("Last request latency", "$it ms", Icons.Outlined.Schedule) }
+            inference.health?.reason?.let { InformationNote(it) }
             SectionTitle("What the handoff includes")
             ReadingRow("Protocol", "setu.model.v1", Icons.Outlined.DataObject)
             ReadingRow("Health endpoint", "GET /v1/health", Icons.Outlined.MonitorHeart)
             ReadingRow("Measurement endpoint", "POST /v1/measurements", Icons.Outlined.Sensors)
-            InformationNote("Connection checks send no sensor data. Inference remains disconnected until the team's provider is integrated with the navigation core. No trained model is bundled.")
+            InformationNote("Connection checks send no sensor data. Live results are recorded for evaluation, not fused into navigation. The remote model needs internet; GPS, local maps and recording do not. No on-device model is bundled.")
             if (BuildConfig.DEBUG) InformationNote("Emulator development: http://10.0.2.2:8765 reaches a server on your computer. Other servers require HTTPS.")
             Spacer(Modifier.height(24.dp))
         }

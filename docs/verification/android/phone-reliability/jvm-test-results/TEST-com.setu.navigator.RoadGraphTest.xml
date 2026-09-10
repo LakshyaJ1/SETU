@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.setu.navigator.RoadGraphTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-09-08T22:06:48.600Z" hostname="LAPTOP-02I5BMKR" time="0.015">
+  <properties/>
+  <testcase name="disconnectedRoadsDoNotGetJoinedWithAnInventedStraightLine" classname="com.setu.navigator.RoadGraphTest" time="0.001"/>
+  <testcase name="reverseOnlyEdgesAndZeroLengthJourneysRemainValid" classname="com.setu.navigator.RoadGraphTest" time="0.001"/>
+  <testcase name="disconnectedDestinationSpurUsesReachableNearbyRoadWithExplicitAccessGap" classname="com.setu.navigator.RoadGraphTest" time="0.0"/>
+  <testcase name="nearestConnectedRoadWinsEvenWhenAnAlternativeCouldShortenTheDrive" classname="com.setu.navigator.RoadGraphTest" time="0.005"/>
+  <testcase name="conflictingCoordinatesAreRejected" classname="com.setu.navigator.RoadGraphTest" time="0.001"/>
+  <testcase name="isolatedStartHasABoundedExplicitAccessGapAndQueriesRemainCancellable" classname="com.setu.navigator.RoadGraphTest" time="0.001"/>
+  <testcase name="oneWayRouteUsesTheConnectedDetourInsteadOfDrivingBackwards" classname="com.setu.navigator.RoadGraphTest" time="0.0"/>
+  <testcase name="aTurnIsNotSkippedHalfwayAlongTheApproachRoad" classname="com.setu.navigator.RoadGraphTest" time="0.002"/>
+  <testcase name="graphGrowsAcrossItsInitialCapacityWithoutLosingConnections" classname="com.setu.navigator.RoadGraphTest" time="0.003"/>
+  <testcase name="snapsToTheRoadSegmentRatherThanJumpingToADistantNode" classname="com.setu.navigator.RoadGraphTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

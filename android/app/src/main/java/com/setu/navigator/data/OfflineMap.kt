@@ -72,7 +72,8 @@ class OfflineMap(private val context: Context, val region: MapRegion, private va
 
     @Synchronized
     private fun loadGraph(checkpoint: () -> Unit): RoadGraph = graph
-        ?: MapJson.graph(open("roads.json", "bengaluru-roads.json"), checkpoint).also { graph = it }
+        ?: (CompiledRoadGraph.load(context, region, checkpoint)
+            ?: MapJson.graph(open("roads.json", "bengaluru-roads.json"), checkpoint)).also { graph = it }
 
     @Synchronized
     fun route(from: GeoPoint, to: GeoPoint, checkpoint: () -> Unit = {}): DriveRoute {

@@ -18,9 +18,11 @@
   expands once into private app cache with checksum, size and path validation.
   Low zooms generalize road detail; zoom in for local streets. Geographic coverage
   and the routing graph are unchanged. The initial map now opens at street level.
-- First tile preparation takes several seconds. Cold route calculation still
-  takes considerably longer because the separate large graph must be parsed;
-  prepare a route before presenting. These are different loading operations.
+- First tile preparation takes several seconds. The original JSON-graph builds
+  also needed a long first route parse. The routing preview instead prepares a
+  compiled, checksum-verified graph and maps it read-only; first extraction and
+  later checksum/validation still take time. Prepare a route before presenting.
+  Format and verification scope: `19-compiled-road-graphs.md`.
 
 The saved preview runs from a public **Naveen Shahdara area point** to **MAIT,
 Sector 22, Rohini**. It is not a verified Kirti Mandir entrance. For the actual

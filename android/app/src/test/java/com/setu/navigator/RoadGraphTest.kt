@@ -83,4 +83,48 @@ class RoadGraphTest {
         assertEquals(west.distanceTo(east) * 0.8, progress.distanceFromStart, 0.1)
         assertTrue(progress.distanceFromRoad < 0.1)
     }
+
+    @Test
+    fun disconnectedDestinationSpurUsesReachableNearbyRoadWithExplicitAccessGap() {
+        val spurStart = east.copy(latitude = east.latitude + 0.0005)
+        val spurEnd = spurStart.copy(longitude = spurStart.longitude + 0.001)
+        val graph = RoadGraph.Builder().apply {
+            road(longArrayOf(1, 2), listOf(west, east), "Public road", "no")
+            road(longArrayOf(3, 4), listOf(spurStart, spurEnd), "Isolated spur", "no")
+        }.build()
+        val destination = spurStart.interpolate(spurEnd, 0.1)
+        val route = graph.route(west, destination)
+        assertTrue(route.points.all { it.latitude == west.latitude })
+        assertTrue(route.destinationOffsetMeters in 50.0..80.0)
+        assertEquals(destination, route.requestedDestination)
+        assertEquals(0.0, route.startOffsetMeters, 0.001)
+    }
+
+    @Test
+    fun nearestConnectedRoadWinsEvenWhenAnAlternativeCouldShortenTheDrive() {
+        val northEast = east.copy(latitude = east.latitude + 0.0005)
+        val northWest = west.copy(latitude = northEast.latitude)
+        val graph = RoadGraph.Builder().apply {
+            road(longArrayOf(1, 2, 3, 4), listOf(west, east, northEast, northWest), "Connected", "yes")
+        }.build()
+        val route = graph.route(west, northWest)
+        assertEquals(northWest, route.points.last())
+        assertTrue(route.distanceMeters > west.distanceTo(east) * 2)
+        assertEquals(0.0, route.destinationOffsetMeters, 0.001)
+    }
+
+    @Test
+    fun isolatedStartHasABoundedExplicitAccessGapAndQueriesRemainCancellable() {
+        val isolated = west.copy(latitude = west.latitude + 0.0005)
+        val graph = RoadGraph.Builder().apply {
+            road(longArrayOf(1, 2), listOf(west, east), "Main", "yes")
+            road(longArrayOf(3, 4), listOf(isolated, isolated.copy(longitude = isolated.longitude + 0.0001)), "Spur", "no")
+        }.build()
+        val route = graph.route(isolated, east)
+        assertTrue(route.startOffsetMeters in 50.0..60.0)
+        assertTrue(route.points.all { it.latitude == west.latitude })
+        assertThrows(java.util.concurrent.CancellationException::class.java) {
+            graph.route(isolated, east) { throw java.util.concurrent.CancellationException() }
+        }
+    }
 }

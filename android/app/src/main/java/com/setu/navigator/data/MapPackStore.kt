@@ -22,7 +22,8 @@ data class MapRegion(val key: String, val id: String, val revision: Int, val nam
                      val places: List<Place>, val demoDestination: String, val source: String, val attribution: String,
                      val license: String, val sourceUrl: String, val dataTimestamp: String, val limitations: String,
                      val sizeBytes: Long, val directory: File? = null, val assetDirectory: String? = null,
-                     val compressedAssets: Boolean = false, val cityBytes: Long? = null, val cityChecksum: String? = null) {
+                     val compressedAssets: Boolean = false, val cityBytes: Long? = null, val cityChecksum: String? = null,
+                     val roadChecksum: String? = null) {
     val bundled: Boolean get() = directory == null
     fun contains(point: GeoPoint) = point.latitude in bounds[0]..bounds[2] && point.longitude in bounds[1]..bounds[3]
 }
@@ -134,7 +135,8 @@ class MapPackStore(private val context: Context) {
             require(mutableRegions.value.none { it.id == candidate.id && it.revision > candidate.revision }) { "A newer revision of this map is already installed." }
             verifyHashes(temporary)
             validateCity(File(temporary, "city.geojson"), candidate, checkpoint)
-            val graph = MapJson.graph(File(temporary, "roads.json").inputStream(), checkpoint)
+            val graph = CompiledRoadGraph.load(context, candidate, checkpoint)
+                ?: MapJson.graph(File(temporary, "roads.json").inputStream(), checkpoint)
             val map = OfflineMap(context, candidate, graph)
             val demo = map.route(candidate.previewStart, candidate.places.single { it.id == candidate.demoDestination }.point)
             require(demo.points.size >= 2 && demo.distanceMeters >= 20) { "The map needs a connected preview route of at least 20 metres." }
@@ -249,7 +251,8 @@ class MapPackStore(private val context: Context) {
         val timestamp = text("dataTimestamp", 40).also { Instant.parse(it) }
         return MapRegion(key, id, revision, text("name"), text("summary", 300), bounds, center, preview, text("previewLabel", 80),
             places, demo, text("source"), text("attribution", 80), text("license"), sourceUrl, timestamp, text("limitations", 500), size, directory,
-            cityBytes = directory?.resolve("city.geojson")?.length(), cityChecksum = document.optJSONObject("sha256")?.optString("city.geojson"))
+            cityBytes = directory?.resolve("city.geojson")?.length(), cityChecksum = document.optJSONObject("sha256")?.optString("city.geojson"),
+            roadChecksum = document.optJSONObject("sha256")?.optString("roads.json"))
     }
 
     private fun point(coordinates: JSONArray): GeoPoint {

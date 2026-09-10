@@ -73,6 +73,8 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
         private set
     var modelConnection by mutableStateOf(ModelConnection())
         private set
+    val modelInference = repository.modelInference
+    private var modelCheckJob: Job? = null
     var nativeCoreStatus by mutableStateOf(NativeCoreStatus())
         private set
     var hasLocationPermission by mutableStateOf(repository.hub.hasLocationPermission())
@@ -379,7 +381,10 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun updateSettings(updated: AppSettings) {
-        if (updated.modelEndpoint != settings.value.modelEndpoint) modelConnection = ModelConnection()
+        if (updated.modelEndpoint != settings.value.modelEndpoint) {
+            modelCheckJob?.cancel()
+            modelConnection = ModelConnection()
+        }
         repository.updateSettings(updated)
     }
     fun notify(message: String) { messages.tryEmit(message) }
@@ -387,12 +392,16 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
     fun checkModel() {
         val configuration = settings.value
         if (configuration.modelEndpoint.isBlank()) { notify("Enter your team's model-server URL first."); return }
+        modelCheckJob?.cancel()
         modelConnection = ModelConnection("Checking server", "Checking protocol and capabilities…", checking = true)
-        viewModelScope.launch {
+        modelCheckJob = viewModelScope.launch {
             modelConnection = try {
                 val health = HttpModelProvider(configuration.modelEndpoint).health()
                 ModelConnection(if (health.ready) "Server ready" else "Model unavailable",
-                    if (health.ready) "Protocol verified. Capabilities: ${health.capabilities.joinToString()}." else "The server is reachable but no model is loaded.", health.name)
+                    health.reason ?: if (health.ready) "Protocol verified. Capabilities: ${health.capabilities.joinToString()}. Availability does not establish navigation accuracy."
+                    else "The server is reachable but no model is loaded.", health.name)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (error: Exception) {
                 ModelConnection("Connection failed", error.message ?: "Check the URL and your network.")
             }

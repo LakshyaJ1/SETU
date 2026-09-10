@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.setu.navigator.ModelWindowBufferTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-09-08T22:06:48.557Z" hostname="LAPTOP-02I5BMKR" time="0.009">
+  <properties/>
+  <testcase name="longStreamsRemainBoundedAndDoNotMislabelTruncatedHighRateWindows" classname="com.setu.navigator.ModelWindowBufferTest" time="0.008"/>
+  <testcase name="windowsContainFourSecondsOfUnmodifiedSiSamplesAndAchievedRate" classname="com.setu.navigator.ModelWindowBufferTest" time="0.001"/>
+  <testcase name="gapsRequireANewContinuousWindowAndInvalidSamplesAreIgnored" classname="com.setu.navigator.ModelWindowBufferTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -84,7 +84,8 @@ fun RecordScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> U
             if (!recording) OutlinedTextField(name, { name = it.take(100) }, label = { Text("Drive name (optional)") },
                 placeholder = { Text("Evening loop, tunnel trial…") }, singleLine = true, shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth().padding(top = 16.dp).testTag("recording-name"))
-            InformationNote("Recordings stay on this phone. Secure the phone and start before driving. Export is always your choice.")
+            InformationNote("Recordings stay on this phone. If enabled in Model integration, live IMU windows are shared with your server. Secure the phone and start before driving. Export is always your choice.")
+            InformationNote("Recording with the screen off? Check Background recording in Settings first. Battery saver and background restrictions can pause sensor capture.")
             Spacer(Modifier.height(16.dp))
         }
       }
@@ -159,7 +160,11 @@ fun DiagnosticsScreen(model: SetuViewModel) {
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = 12.dp))
             SectionTitle("Estimation channels")
-            listOf("Spectral odometer (SVO)", "Turn speed (CTS)", "Learned speed", "GNSS trust model").forEach {
+            val inference by model.modelInference.collectAsStateWithLifecycle()
+            val learned = inference.recentMeasurement(observationNowNs)
+            ReadingRow("Learned speed · evaluation only", learned?.let { "%.2f m/s".format(it.speedMps) } ?: inference.status, Icons.Outlined.Science)
+            Text(inference.detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            listOf("Spectral odometer (SVO)", "Turn speed (CTS)", "GNSS trust model").forEach {
                 Row(Modifier.fillMaxWidth().padding(vertical = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(it, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
                     Text("Not connected", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

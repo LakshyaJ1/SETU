@@ -95,14 +95,14 @@ data class AppSettings(
     val units: String = "km/h",
     val vehicle: String = "Car",
     val keepScreenOn: Boolean = true,
-    val modelEndpoint: String = "",
+    val modelEndpoint: String = "https://setu-proj-sih.duckdns.org",
     val modelSharingAllowed: Boolean = false,
     val nativePositioning: Boolean = false,
 )
 
 data class ModelConnection(
     val status: String = "Not connected",
-    val detail: String = "GPS and recording work without an AI model.",
+    val detail: String = "Check the model server before enabling optional sensor sharing.",
     val modelName: String? = null,
     val checking: Boolean = false,
 )
