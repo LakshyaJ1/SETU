@@ -75,7 +75,12 @@ raising RAM limits or loading the whole country into the current city parser
 would not provide a dependable demo. Delhi is the immediate supported region;
 country-wide offline navigation is not claimed by this change.
 
-## Delivered build and phone verification
+## Delivered Delhi build and phone verification
+
+This section records the original Delhi build, preserved as
+`dist/android/SETU-delhi-86ae140.apk`. The mutable `SETU-demo-mvp.apk` alias now
+contains the later sensor-fallback update; see `16-sensor-fallback.md` and its
+APK-linked evidence rather than applying these older hashes to the new build.
 
 The Delhi build was installed on the authorized CPH2467 phone running Android 15
 on September 7, 2026. Delhi is selected, and the selection survives an app
@@ -85,7 +90,7 @@ observed over Delhi street detail, with 91 non-mock positions inside the map
 envelope in a saved 136.066-second recording. This stationary smoke test is not
 a field-accuracy or movement benchmark.
 
-- APK: `dist/android/SETU-demo-mvp.apk`, 62,228,039 bytes.
+- APK: `dist/android/SETU-delhi-86ae140.apk`, 62,228,039 bytes.
 - APK SHA-256: `86ae1405bc5f88c9acaf8d6c6b747f0244882fdd567f12c9a5ac04bcf2c7c562`.
 - Portable map: `dist/maps/delhi.setumap`, 8,727,331 bytes (about 8.3 MiB).
 - Pack SHA-256: `084ce38e69a5722eaf81f6f61c5eed062b10969e01b8b0ebbeb2adc6770dab13`.

@@ -19,6 +19,7 @@ import android.os.SystemClock
 import androidx.core.location.LocationCompat
 import com.setu.navigator.estimation.LiveEstimator
 import com.setu.navigator.estimation.NativeEstimate
+import com.setu.navigator.model.LiveModelSession
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -33,6 +34,7 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     private val pressure = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE)
     private val magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
     private val rotationVector = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
+    private val gameRotationVector = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR)
     private val mutableNative = MutableStateFlow(NativeEstimate())
     val nativeEstimate = mutableNative.asStateFlow()
     @Volatile private var liveEstimator: LiveEstimator? = null
@@ -44,7 +46,10 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     private val mutablePose = MutableStateFlow<Pose?>(null)
     val sensors = mutableSensors.asStateFlow()
     val pose = mutablePose.asStateFlow()
+    private val mutableLocationEnabled = MutableStateFlow(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+    val locationEnabled = mutableLocationEnabled.asStateFlow()
     @Volatile var record: ((JSONObject) -> Unit)? = null
+    @Volatile var modelSession: LiveModelSession? = null
     @Volatile private var thread: HandlerThread? = null
     private var lastPublishNs = 0L
     private var rateStartNs = 0L
@@ -86,6 +91,7 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
 
     @Synchronized
     fun start() {
+        mutableLocationEnabled.value = isLocationEnabled()
         if (thread == null) {
             val worker = HandlerThread("setu-sensors").apply { start() }
             thread = worker
@@ -107,7 +113,7 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
                     mutableNative.value = NativeEstimate("Native initialization failed", "Could not load the packaged geophysics data. GPS remains available.")
                 }
             }
-            listOfNotNull(accelerometer, gyroscope, pressure, magnetometer, rotationVector).forEach { sensor ->
+            listOfNotNull(accelerometer, gyroscope, pressure, magnetometer, rotationVector, gameRotationVector).forEach { sensor ->
                 sensorManager.registerListener(this, sensor, 5000, handler)
             }
         }
@@ -156,6 +162,7 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
         val kind = when (event.sensor.type) {
             Sensor.TYPE_ACCELEROMETER -> {
                 acceleration = event.values.take(3)
+                modelSession?.acceleration(event.timestamp, event.values.take(3).map(Float::toDouble).toDoubleArray())
                 if (rateStartNs == 0L) rateStartNs = event.timestamp
                 rateSamples++
                 val span = event.timestamp - rateStartNs
@@ -166,15 +173,20 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
                 }
                 "accelerometer"
             }
-            Sensor.TYPE_GYROSCOPE -> { angularRate = event.values.take(3); "gyroscope" }
+            Sensor.TYPE_GYROSCOPE -> {
+                angularRate = event.values.take(3)
+                modelSession?.gyroscope(event.timestamp, event.values.take(3).map(Float::toDouble).toDoubleArray())
+                "gyroscope"
+            }
             Sensor.TYPE_PRESSURE -> { pressureValue = event.values.firstOrNull(); "barometer" }
             Sensor.TYPE_MAGNETIC_FIELD -> "magnetometer"
             Sensor.TYPE_ROTATION_VECTOR -> "rotation_vector"
+            Sensor.TYPE_GAME_ROTATION_VECTOR -> "game_rotation_vector"
             else -> return
         }
         record?.invoke(JSONObject().put("type", kind).put("tNs", event.timestamp)
             .put("values", JSONArray(event.values.toList())).put("accuracy", event.accuracy))
-        if (event.timestamp - lastPublishNs >= 200_000_000L) {
+        if (event.timestamp - lastPublishNs >= 100_000_000L) {
             lastPublishNs = event.timestamp
             mutableSensors.update { previous -> previous.copy(
                 accelerometer = acceleration, gyroscope = angularRate, pressure = pressureValue,
@@ -192,7 +204,18 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     }
 
     override fun onProviderDisabled(provider: String) {
-        if (provider == LocationManager.GPS_PROVIDER) mutablePose.value = null
+        if (provider == LocationManager.GPS_PROVIDER) {
+            mutableLocationEnabled.value = false
+            mutablePose.value = null
+            record?.invoke(JSONObject().put("type", "location_state").put("tNs", SystemClock.elapsedRealtimeNanos()).put("enabled", false))
+        }
+    }
+
+    override fun onProviderEnabled(provider: String) {
+        if (provider == LocationManager.GPS_PROVIDER) {
+            mutableLocationEnabled.value = true
+            record?.invoke(JSONObject().put("type", "location_state").put("tNs", SystemClock.elapsedRealtimeNanos()).put("enabled", true))
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit

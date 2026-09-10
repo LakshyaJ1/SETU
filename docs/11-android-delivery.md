@@ -12,12 +12,26 @@ The immediate presentation-MVP delivery is described in `docs/14-demo-mvp.md`.
 The ledger below still records the full-product scope; a successful presentation
 does not close the remaining physical-validation or full-estimator requirements.
 
+The approved production continuation is tracked requirement-by-requirement in
+`docs/18-production-delivery.md`. Remote model inference is now connected to
+explicit-consent, recording-only IMU windows and evaluation diagnostics. The
+experimental server's validity-zero warning is preserved; calibrated native fusion
+and offline inference are still open. See `docs/12-model-integration.md`.
+
+The reliability increment reproduces and repairs a missing offline-tile failure
+on the physical phone and adds inventory/hash recovery tests. It also exposes an
+unresolved OEM background freeze; no complete GPS-free drive is accepted. See
+`docs/20-phone-reliability.md` and its linked APK-specific verification ledger.
+
 The September 7, 2026 Delhi update adds an included city-wide street extract and
 verifies actual non-mock GPS over its local streets on the USB-connected phone.
 Coverage and main-road-only preview routing are bounded in `docs/15-delhi-offline-map.md`;
-APK-linked checks are in `docs/verification/android/delhi/README.md`. The phone's
-missing heading accuracy still prevents native alignment. This map update does
-not close whole-India coverage or GPS-denied field validation.
+APK-linked checks are in `docs/verification/android/delhi/README.md`. The subsequent
+sensor-fallback update adds checked-compass initialization for missing numerical
+heading accuracy, midpoint propagation, callback-skew handling and preserved
+sensor-estimated trajectories. Its contract is `docs/16-sensor-fallback.md` and its
+separate checks are in `docs/verification/android/sensor-fallback/README.md`.
+Neither update closes whole-India coverage or GPS-denied field accuracy validation.
 
 ## Completion ledger
 
@@ -36,7 +50,7 @@ actual emulator/device screenshot requested by the user.
 | Local trip persistence, details, export/import and deletion | On-device storage tests pass, including malformed input and interrupted-record recovery. Document-picker export and retained reimport match the original SHA-256. Reimport inspected after emulator restart: `manual/22-imported-trip.png`. Broader lifecycle hardening continues. |
 | Timestamped replay, pause, scrub and provenance | Synthetic replay paused and seeked to 50% in device test (`verification/04-synthetic-replay.png`); saved GPS replay paused and inspected (`manual/23-recorded-replay.png`). This is not native-estimator replay or full lifecycle coverage. |
 | Diagnostics and degraded/missing-hardware states | Actual emulator readings and unavailable AI channels shown; screenshot `verification/05-diagnostics.png`. Hardware fault matrix pending. |
-| Versioned AI/ML provider boundary and error handling | Typed provider and v1 HTTP contract implemented. Model-free server checked in-app (`manual/16-model-unavailable.png`); inference-to-core connection remains pending. |
+| Versioned AI/ML provider boundary and error handling | Typed v1 HTTP provider now feeds a bounded, cancellable, opt-in live IMU evaluation session. Endpoint warnings, unavailable reasons and validity-zero research results stay visible and are logged separately from the trajectory. On-device model execution and calibrated inference-to-core fusion remain pending. The historical model-free check is `manual/16-model-unavailable.png`; current contract is `docs/12-model-integration.md`. |
 | Portable non-ML core / Android integration | The C++20/Eigen kernel now has a timestamped GNSS/IMU engine: GeographicLib WGS84, WMM2025 heading correction, bounded delayed-GPS repropagation and gap/uncertainty withholding. Actual emulator sensor callbacks reach it; explicit native-map opt-in and separate native_pose recording pass a UI/storage workflow (`verification/29-*`, `30-*`, `31-*`). Seven native-engine tests include 20 NOAA magnetic reference examples. The original 294-action Python fixture still covers its eight measurement families; a separate test covers added horizontal velocity. Mount constraints, signal frontends, road hypotheses, full architecture and physical validation remain open. |
 | Automated unit and on-device workflow checks | The Delhi APK passes 15 JVM tests, 13 focused physical-phone tests and 15 Python map-builder/packager tests; lint has zero errors and 16 warnings. The complete instrumentation stress suite is not rerun on this build. The earlier baseline had nine JVM, thirty-three device and three Python map-packaging passes; its Wi-Fi/data-disabled emulator checks do not verify the newer APK. Loopback downloads are explicitly local. The earlier emulator's 720 × 1600 / 280 dpi override is not a platform-crash fix. Logs and APK-linked metadata remain separated by build. This is not full product coverage. |
 | Verified screenshots of each implemented flow | Twenty-four automated captures match the installed-APK SHA-256, alongside current manual map-download, document-provider import and 200% map-form text checks (`manual/37-*` through `41-*`), plus earlier capture/export/model/large-text/landscape evidence. A blank preview observed after scrolling is corrected with texture-backed map composition and checked in `verification/35-map-pack-removed.png`; this is not a whole-device performance claim. Index: `docs/verification/android/README.md`. Remaining flows need further captures. |

@@ -56,10 +56,13 @@ usable phone orientation, synchronized acceleration/gyro and fresh GPS for
 alignment. GPS remains the fallback when native output is unavailable. The
 native 95% filter radius is not Android's GPS accuracy and is not field validation.
 
-If **Heading accuracy unavailable** appears, the phone is not supplying the
-heading-uncertainty input required for native alignment. GPS tracking and raw
-recording still work. Do not present the live view as GPS-denied fusion in that
-state; use the explicitly simulated demonstration for the native gap sequence.
+On phones that omit numerical heading accuracy, the new build checks calibrated
+compass/gravity data and two seconds of stability before using an explicitly
+model-derived heading prior. Wait for **Sensor fallback is initialized** before
+testing GPS loss, and keep the recording running while changing settings. If
+checks fail, GPS and raw recording remain available; do not claim inertial tracking
+unless an actual native estimate is present. The initial-fix requirement, ten-second
+outage bound and unverified compass accuracy are detailed in `16-sensor-fallback.md`.
 
 Tracking can continue outside the active offline area, but street detail cannot.
 Select the included Delhi map for a Delhi presentation, or use Bengaluru Central
@@ -105,7 +108,8 @@ download are covered in `docs/13-offline-map-packs.md`.
 
 ## Verification and release limits
 
-Current Delhi build evidence is indexed in
+Current sensor-fallback build evidence is indexed in
+`docs/verification/android/sensor-fallback/README.md`. The earlier Delhi build is in
 `docs/verification/android/delhi/README.md`: 13 focused phone tests, a rendered
 Delhi route, persisted region selection and real non-mock GPS over local streets.
 Earlier presentation captures and emulator workflows remain indexed separately in

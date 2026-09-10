@@ -14,6 +14,7 @@ int setu_engine_imu(SetuEngine* engine, int64_t timestamp_ns, const double accel
 int setu_engine_gnss(SetuEngine* engine, int64_t timestamp_ns, const double observation[10]);
 int setu_engine_poll(const SetuEngine* engine, double output[SETU_ESTIMATE_SIZE]);
 double setu_engine_declination(const SetuEngine* engine, double year, double latitude, double longitude, double altitude);
+int setu_engine_magnetic_field(const SetuEngine* engine, double year, double latitude, double longitude, double altitude, double output[3]);
 #ifdef __cplusplus
 }
 #endif

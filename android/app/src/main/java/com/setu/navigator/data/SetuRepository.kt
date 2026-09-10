@@ -2,6 +2,10 @@ package com.setu.navigator.data
 
 import android.content.Context
 import android.os.SystemClock
+import com.setu.navigator.estimation.navigationPose
+import com.setu.navigator.model.HttpModelProvider
+import com.setu.navigator.model.LiveModelSession
+import com.setu.navigator.model.ModelInferenceState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -29,6 +33,9 @@ class SetuRepository(private val context: Context) {
     val recordCount = mutableRecordCount.asStateFlow()
     private val mutableError = MutableStateFlow<String?>(null)
     val error = mutableError.asStateFlow()
+    private val mutableModelInference = MutableStateFlow(ModelInferenceState())
+    val modelInference = mutableModelInference.asStateFlow()
+    private var modelGeneration = 0L
     var recordingStartedNs = 0L
         private set
     private var recordingStartedMs = 0L
@@ -41,6 +48,7 @@ class SetuRepository(private val context: Context) {
     private val storageScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     init {
+        refreshModelSession()
         storageScope.launch {
             mapPacks.restore()
             val count = tripStore.recoverIncomplete { recordingId }
@@ -49,13 +57,19 @@ class SetuRepository(private val context: Context) {
         }
     }
 
-    fun updateSettings(updated: AppSettings) {
+    @Synchronized
+    fun updateSettings(requested: AppSettings) {
+        val previous = mutableSettings.value
+        val updated = if (requested.modelEndpoint != previous.modelEndpoint) requested.copy(modelSharingAllowed = false) else requested
         preferences.edit().putString("theme", updated.theme).putString("units", updated.units)
             .putString("vehicle", updated.vehicle).putBoolean("keepScreenOn", updated.keepScreenOn)
             .putString("modelEndpoint", updated.modelEndpoint)
-            .putBoolean("modelSharingAllowed", updated.modelSharingAllowed).apply()
+            .putBoolean("modelSharingAllowed", updated.modelSharingAllowed)
+            .putInt("modelSharingConsentVersion", if (updated.modelSharingAllowed) 1 else 0).apply()
         preferences.edit().putBoolean("nativePositioning", updated.nativePositioning).apply()
         mutableSettings.value = updated
+        if (previous.modelEndpoint != updated.modelEndpoint || previous.vehicle != updated.vehicle ||
+            previous.modelSharingAllowed != updated.modelSharingAllowed) refreshModelSession()
     }
 
     private fun readSettings() = AppSettings(
@@ -63,8 +77,8 @@ class SetuRepository(private val context: Context) {
         preferences.getString("units", "km/h") ?: "km/h",
         preferences.getString("vehicle", "Car") ?: "Car",
         preferences.getBoolean("keepScreenOn", true),
-        preferences.getString("modelEndpoint", "") ?: "",
-        preferences.getBoolean("modelSharingAllowed", false),
+        preferences.getString("modelEndpoint", AppSettings().modelEndpoint) ?: AppSettings().modelEndpoint,
+        preferences.getInt("modelSharingConsentVersion", 0) == 1 && preferences.getBoolean("modelSharingAllowed", false),
         preferences.getBoolean("nativePositioning", false),
     )
 
@@ -83,12 +97,49 @@ class SetuRepository(private val context: Context) {
         writer = tripStore.logFile(recordingId).bufferedWriter()
         writer!!.appendLine(JSONObject().put("schema", "setu.log.v1").put("name", recordingName)
             .put("startedAtMs", recordingStartedMs).put("startedAtNs", recordingStartedNs).put("synthetic", false)
+            .put("trajectoryStream", "track_pose")
             .put("device", "${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}")
             .put("clock", "elapsedRealtimeNanos").put("units", "SI").toString())
         writer!!.flush()
         mutableRecording.value = true
         hub.record = ::appendRecord
+        refreshModelSession()
         hub.start()
+    }
+
+    private fun refreshModelSession() {
+        val generation = ++modelGeneration
+        hub.modelSession?.close()
+        hub.modelSession = null
+        val configuration = settings.value
+        if (!configuration.modelSharingAllowed) {
+            mutableModelInference.value = ModelInferenceState()
+            return
+        }
+        if (!recording.value) {
+            mutableModelInference.value = ModelInferenceState("Ready for recording", "Sensor sharing runs only during an active recording or recorded drive.")
+            return
+        }
+        try {
+            mutableModelInference.value = ModelInferenceState("Collecting sensor window", "Waiting for four continuous seconds of accelerometer and gyroscope data.")
+            hub.modelSession = LiveModelSession(HttpModelProvider(configuration.modelEndpoint), configuration.vehicle,
+                SystemClock::elapsedRealtimeNanos,
+                { state -> synchronized(this) { if (generation == modelGeneration) mutableModelInference.value = state } },
+                { state -> synchronized(this) {
+                    if (generation == modelGeneration && recording.value) {
+                        val measurement = state.measurement
+                        appendRecord(JSONObject().put("type", "model_measurement").put("tNs", state.receivedAtNs)
+                            .put("model", state.health?.name).put("status", state.status).put("detail", state.detail)
+                            .put("measurementTimestampNs", measurement?.timestampNs ?: JSONObject.NULL)
+                            .put("speedMps", measurement?.speedMps ?: JSONObject.NULL)
+                            .put("sigmaMps", measurement?.sigmaMps ?: JSONObject.NULL)
+                            .put("validity", measurement?.validity ?: JSONObject.NULL)
+                            .put("latencyMs", state.latencyMs ?: JSONObject.NULL).put("navigationApplied", false))
+                    }
+                } })
+        } catch (error: Exception) {
+            mutableModelInference.value = ModelInferenceState("Model configuration needs attention", error.message ?: "Check the server URL.")
+        }
     }
 
     @Synchronized
@@ -97,9 +148,16 @@ class SetuRepository(private val context: Context) {
         try {
             output.appendLine(record.toString())
             records++
-            if (record.optString("type") == "pose") {
-                val pose = TripStore.decodePose(record)
-                if (recordedPoses.isEmpty() || pose.timestampNs > recordedPoses.last().timestampNs) recordedPoses.add(pose)
+            if (record.optString("type") in listOf("pose", "native_pose")) {
+                val now = SystemClock.elapsedRealtimeNanos()
+                val pose = navigationPose(hub.pose.value, hub.nativeEstimate.value, settings.value.nativePositioning, now)
+                    ?.takeIf { it.isFresh(now) && it.timestampNs >= recordingStartedNs }
+                val previous = recordedPoses.lastOrNull()
+                if (pose != null && (previous == null || pose.timestampNs > previous.timestampNs)) {
+                    output.appendLine(TripStore.encodePose(pose).put("type", "track_pose").toString())
+                    records++
+                    recordedPoses.add(pose)
+                }
             }
             val now = SystemClock.elapsedRealtimeNanos()
             if (now - lastFlushNs > 1_000_000_000L) {
@@ -128,7 +186,7 @@ class SetuRepository(private val context: Context) {
             writer?.flush()
             writer?.close()
             writer = null
-            val distance = recordedPoses.zipWithNext().sumOf { (previous, current) -> previous.point.distanceTo(current.point) }
+            val distance = trajectoryDistance(recordedPoses)
             val trip = Trip(recordingId, recordingName, recordingStartedMs,
                 (finishedAtNs - recordingStartedNs) / 1_000_000,
                 distance, records, recordedPoses.toList())
@@ -142,6 +200,7 @@ class SetuRepository(private val context: Context) {
             runCatching { writer?.close() }
             writer = null
             mutableRecording.value = false
+            refreshModelSession()
         }
     }
 

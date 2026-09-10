@@ -37,6 +37,7 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
     private var routeVersion = 0L
     val sensors = repository.hub.sensors
     val livePose = repository.hub.pose
+    val locationEnabled = repository.hub.locationEnabled
     val nativeEstimate = repository.hub.nativeEstimate
     fun navigationFix(nowNs: Long = SystemClock.elapsedRealtimeNanos()) =
         navigationPose(livePose.value, nativeEstimate.value, settings.value.nativePositioning, nowNs)
@@ -72,6 +73,8 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
         private set
     var modelConnection by mutableStateOf(ModelConnection())
         private set
+    val modelInference = repository.modelInference
+    private var modelCheckJob: Job? = null
     var nativeCoreStatus by mutableStateOf(NativeCoreStatus())
         private set
     var hasLocationPermission by mutableStateOf(repository.hub.hasLocationPermission())
@@ -154,7 +157,10 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
                 }
                 val start = fresh?.point ?: maps.demonstrationStart
                 routeOriginLabel = if (fresh == null) maps.region.previewLabel else if (fresh.filterRadius95Meters != null) "Native estimate start" else "GPS start"
-                route = withContext(Dispatchers.Default) { maps.route(start, place.point) }
+                route = withContext(Dispatchers.Default) {
+                    val operation = currentCoroutineContext()
+                    maps.route(start, place.point) { operation.ensureActive() }
+                }
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (error: Exception) {
@@ -184,7 +190,10 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
         routeJob?.cancel()
         routeJob = viewModelScope.launch {
             try {
-                route = withContext(Dispatchers.Default) { maps.route(fix.point, target.point) }
+                route = withContext(Dispatchers.Default) {
+                    val operation = currentCoroutineContext()
+                    maps.route(fix.point, target.point) { operation.ensureActive() }
+                }
                 routeOriginLabel = if (fix.filterRadius95Meters != null) "Native estimate start" else "GPS start"
                 if (route!!.distanceMeters < 20) {
                     messages.emit("You are already near this destination.")
@@ -277,7 +286,8 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
         routeJob = viewModelScope.launch {
             try {
                 val demonstration = withContext(Dispatchers.Default) {
-                    maps.route(maps.demonstrationStart, maps.places.first { it.id == maps.region.demoDestination }.point)
+                    val operation = currentCoroutineContext()
+                    maps.route(maps.demonstrationStart, maps.places.first { it.id == maps.region.demoDestination }.point) { operation.ensureActive() }
                 }
                 val velocity = 8.33
                 val duration = ceil(demonstration.distanceMeters / velocity).toInt()
@@ -296,7 +306,11 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
                 route = demonstration
                 routeOriginLabel = "Demo start"
                 destination = null
-                playTrip(Trip("demo", if (maps.region.id == "bengaluru-central") "A little Bengaluru loop" else "Explore ${maps.region.name}", 0, duration * 1000L,
+                playTrip(Trip("demo", when {
+                    maps.region.id == "bengaluru-central" -> "A little Bengaluru loop"
+                    maps.region.demoDestination == "mait-rohini" -> "Shahdara to MAIT · area preview"
+                    else -> "Explore ${maps.region.name}"
+                }, 0, duration * 1000L,
                     demonstration.distanceMeters, samples.size.toLong(), samples, synthetic = true))
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (error: Exception) { messages.emit(error.message ?: "The sample route could not be loaded.") }
@@ -306,7 +320,7 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
 
     fun playTrip(trip: Trip) {
         if (mapBusy || navigating) { notify("Finish the current map operation or navigation before replaying a trip."); return }
-        if (trip.points.size < 2) { notify("This recording has fewer than two GPS positions. Raw sensor data can still be exported."); return }
+        if (trip.points.size < 2) { notify("This recording has fewer than two trajectory positions. Raw sensor data can still be exported."); return }
         if (recording.value) { notify("Stop recording before opening a replay."); return }
         replayJob?.cancel()
         positioningDemo = null
@@ -342,13 +356,9 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
             return
         }
         val target = trip.points.first().timestampNs + (replayPositionMs * 1_000_000).toLong()
-        val insertion = trip.points.binarySearchBy(target) { it.timestampNs }
-        val index = (if (insertion >= 0) insertion else -insertion - 2).coerceIn(0, trip.points.lastIndex - 1)
-        val previous = trip.points[index]
-        val next = trip.points[index + 1]
-        val fraction = (target - previous.timestampNs).toDouble() / (next.timestampNs - previous.timestampNs).coerceAtLeast(1)
-        replayPose = previous.copy(point = previous.point.interpolate(next.point, fraction), timestampNs = target,
-            source = if (trip.synthetic) "Synthetic replay" else "Recorded GPS")
+        replayPose = recordedPoseAt(trip.points, target)?.let { pose ->
+            pose.copy(source = if (trip.synthetic) "Synthetic replay" else "Recorded · ${pose.source}")
+        }
     }
 
     fun seekReplay(fraction: Float) {
@@ -371,7 +381,10 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun updateSettings(updated: AppSettings) {
-        if (updated.modelEndpoint != settings.value.modelEndpoint) modelConnection = ModelConnection()
+        if (updated.modelEndpoint != settings.value.modelEndpoint) {
+            modelCheckJob?.cancel()
+            modelConnection = ModelConnection()
+        }
         repository.updateSettings(updated)
     }
     fun notify(message: String) { messages.tryEmit(message) }
@@ -379,12 +392,16 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
     fun checkModel() {
         val configuration = settings.value
         if (configuration.modelEndpoint.isBlank()) { notify("Enter your team's model-server URL first."); return }
+        modelCheckJob?.cancel()
         modelConnection = ModelConnection("Checking server", "Checking protocol and capabilities…", checking = true)
-        viewModelScope.launch {
+        modelCheckJob = viewModelScope.launch {
             modelConnection = try {
                 val health = HttpModelProvider(configuration.modelEndpoint).health()
                 ModelConnection(if (health.ready) "Server ready" else "Model unavailable",
-                    if (health.ready) "Protocol verified. Capabilities: ${health.capabilities.joinToString()}." else "The server is reachable but no model is loaded.", health.name)
+                    health.reason ?: if (health.ready) "Protocol verified. Capabilities: ${health.capabilities.joinToString()}. Availability does not establish navigation accuracy."
+                    else "The server is reachable but no model is loaded.", health.name)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (error: Exception) {
                 ModelConnection("Connection failed", error.message ?: "Check the URL and your network.")
             }

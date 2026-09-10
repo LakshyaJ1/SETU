@@ -1,0 +1,106 @@
+{
+    "branch":  "demo-mvp/position-tracking",
+    "baseCommit":  "ab84894a4ee5cf31716673bc4b70d26ee53e8ffe",
+    "workingTreeIncludesUncommittedChanges":  true,
+    "fullProductionGoalComplete":  false,
+    "apk":  {
+                "path":  "dist/android/SETU-routing-preview.apk",
+                "bytes":  202214737,
+                "sha256":  "080c738b059da3da653f1d05c86e39fe31e5a9357349ae190ac3121b7e835cd3",
+                "emulatorInstalledHashMatches":  true,
+                "phoneInstalledHashMatches":  true,
+                "signatureVerified":  true,
+                "zipalign16KiBPassed":  true,
+                "obsoleteZipBytesRemoved":  56224480,
+                "identicalRuntimeArchiveEntries":  219
+            },
+    "testApkSha256":  "c65cd7c9cdf4f5f63e4d2dfa8f45053cb5cc8f79819e27950973ac7f536e8911",
+    "verification":  {
+                         "jvm":  {
+                                     "failures":  0,
+                                     "passed":  47
+                                 },
+                         "android":  {
+                                         "passed":  50,
+                                         "skipReason":  "Private physical recording fixture absent",
+                                         "environment":  "API 35 emulator",
+                                         "failures":  0,
+                                         "skipped":  1,
+                                         "skippedTest":  "SensorFallbackTest.capturedPhysicalSensorsCanBeReplayedWithoutLeakingCoordinates"
+                                     },
+                         "python":  {
+                                        "scope":  "tests/test_road_graph.py tests/test_map_pack.py tests/test_map_tiles.py tests/test_osm_region.py",
+                                        "skipped":  2,
+                                        "failures":  0,
+                                        "passed":  34
+                                    },
+                         "lint":  {
+                                      "errors":  0,
+                                      "warnings":  16
+                                  },
+                         "ruffChangedPythonFilesPassed":  true,
+                         "compiledGraphMetrics":  "compiled-graph-metrics.json",
+                         "rendererMetrics":  "map-rendering-stability.json",
+                         "screenshots":  [
+                                             {
+                                                 "image":  "01-ncr-offline-route.png",
+                                                 "sidecar":  "01-ncr-offline-route.json",
+                                                 "sha256":  "e008aed259ac0d925d8903ff0d2b068c3e79cdaa414c89422ade7001329bd317"
+                                             },
+                                             {
+                                                 "image":  "02-route-after-tab-return.png",
+                                                 "sidecar":  "02-route-after-tab-return.json",
+                                                 "sha256":  "626467fa6044cdfb35eca0396372b3c1b075e48ec4710249ffe36a05d36a1df7"
+                                             },
+                                             {
+                                                 "image":  "03-offline-destination-search.png",
+                                                 "sidecar":  "03-offline-destination-search.json",
+                                                 "sha256":  "8106b31970ecf67f531dddaa3b42bc10573e5540bea490e9e8bda353c58f4c7f"
+                                             },
+                                             {
+                                                 "image":  "04-phone-ncr-replay.png",
+                                                 "sidecar":  "04-phone-ncr-replay.json",
+                                                 "sha256":  "8541e8d00432d7ba0d1df6790bcdd86eb22589a083d29c0fa54b1cf8a3ffd9a5"
+                                             },
+                                             {
+                                                 "image":  "05-phone-route-after-tab-return.png",
+                                                 "sidecar":  "05-phone-route-after-tab-return.json",
+                                                 "sha256":  "cd9c3d923ba020ea61f29a3731f6067583390e68374d659683c2855b053e5c8e"
+                                             },
+                                             {
+                                                 "image":  "06-phone-route-return-ready.png",
+                                                 "sidecar":  "06-phone-route-return-ready.json",
+                                                 "sha256":  "7cefe3e77ac910c88b3c7b8134c1c2714af0e60141127342fbd7b312cc993281"
+                                             }
+                                         ]
+                     },
+    "phone":  {
+                  "model":  "CPH2467",
+                  "sdk":  35,
+                  "syntheticReplayAndTabReturnChecked":  true,
+                  "recordingFilesPreserved":  20,
+                  "recordingHashesUnchanged":  true,
+                  "noActiveRecording":  true,
+                  "radiosChanged":  false,
+                  "wifiEnabled":  false,
+                  "mobileDataEnabled":  true,
+                  "locationMode":  3,
+                  "physicalInstrumentationRun":  false,
+                  "realDriveRun":  false,
+                  "gpsOffAccuracyVerified":  false
+              },
+    "emulator":  {
+                     "mobileDataEnabled":  false,
+                     "wifiEnabled":  false
+                 },
+    "preservedBuilds":  {
+                            "modelPreviewSha256":  "48253e32b47456cee853d0a211ff9b78668675354a338c162f26c62a62750a87",
+                            "stableMvpSha256":  "91c7840a99ad4ade9cf63700fd0627a0670e9d1638ce5fbd94032553cc480e84"
+                        },
+    "limitations":  [
+                        "No real-drive accuracy or GPS-off physical validation in this increment.",
+                        "Research model predictions are not navigation measurements; offline artifacts and calibrated fusion remain open.",
+                        "Turn restrictions, complete access rules, spatial indexing and field acceptance remain open.",
+                        "Whole Python suite not rerun; prior unrelated HTML-report failure not claimed fixed."
+                    ]
+}

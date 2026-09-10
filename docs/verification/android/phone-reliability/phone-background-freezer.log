@@ -1,0 +1,4 @@
+09-09 03:24:34.276  2043  3169 I OplusHansManager : unfreeze uid: 10528 com.setu.navigator pids: [23561] reason: Activity scene: |airPlane|LcdOn
+09-09 03:24:34.276  2043  3998 I OplusHansManager : uid=10528, pkg=com.setu.navigator F exit(), F stay=842, reason=Activity
+09-09 03:31:07.550  2043  3998 I OplusHansManager : freeze uid: 10528 com.setu.navigator pids: [27548] scene: |airPlane|LcdOn
+09-09 03:40:55.681  2043  3998 I OplusHansManager : freeze uid: 10528 com.setu.navigator pids: [2458] scene: |airPlane|LcdOn

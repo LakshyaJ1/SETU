@@ -42,6 +42,7 @@ import java.util.Locale
 fun DriveScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Unit, dark: Boolean, onFinish: () -> Unit) {
     val gps by model.livePose.collectAsStateWithLifecycle()
     val native by model.nativeEstimate.collectAsStateWithLifecycle()
+    val locationEnabled by model.locationEnabled.collectAsStateWithLifecycle()
     val settings by model.settings.collectAsStateWithLifecycle()
     val maps by model.activeMap.collectAsStateWithLifecycle()
     val recording by model.recording.collectAsStateWithLifecycle()
@@ -63,15 +64,18 @@ fun DriveScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Un
     val trail = model.positioningDemo?.trailAt(model.replayPositionMs.toLong()) ?: if (recording) model.trackingTrail else emptyList()
     val status = when {
         demoFrame != null -> "Simulated sensors"
+        fresh && fix?.filterRadius95Meters != null && !locationEnabled -> "Sensor estimate"
         model.replayTrip != null -> "Replay"
         !model.hasLocationPermission -> "Location off"
         fresh && usingNative && fix?.mock == true -> "Test estimate"
-        fresh && usingNative -> if (native.gpsAgeSeconds!! > 2) "Inertial estimate" else "GPS + IMU"
+        fresh && usingNative -> if (!locationEnabled || native.gpsAgeSeconds!! > 2) "Inertial estimate" else "GPS + IMU"
         fresh && fix?.mock == true -> "Test location"
-        fresh && settings.nativePositioning -> "GPS fallback"
+        fresh && settings.nativePositioning -> "GPS · calibrating"
         fresh -> "GPS ready"
         fix?.mock == true -> "Last test fix"
         fix != null -> "Last GPS fix"
+        !locationEnabled -> "Location off"
+        settings.nativePositioning && native.status == "Estimate withheld" -> "Reacquire GPS"
         else -> "Finding GPS"
     }
     Row(Modifier.fillMaxSize()) {
@@ -81,7 +85,8 @@ fun DriveScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Un
             NavigationMap(model.route, pose, if (landscape) 0 else sheetHeight, dark,
                 Modifier.fillMaxSize(), maps = maps, reserveControls = true, originLabel = model.routeOriginLabel, onReady = { map = it },
                 trail = trail, comparisonPose = demoFrame?.lastGps,
-                followPosition = following && (fresh || model.replayTrip != null), onFollowInterrupted = { following = false })
+                recordedPath = model.replayTrip?.takeUnless { it.synthetic }?.points,
+                followPosition = following, onFollowInterrupted = { following = false })
             Row(Modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 20.dp, vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
                 Surface(shape = RoundedCornerShape(18.dp), color = MaterialTheme.colorScheme.surface) {
@@ -181,17 +186,22 @@ private fun DriveTaskPanel(model: SetuViewModel, withLocationPermission: (() -> 
                 model.replayTrip != null -> ReplayControls(model)
                 model.navigating -> {
                     val active = model.route
-                    val closest = active?.points?.indices?.minByOrNull { active.points[it].distanceTo(fix?.point ?: active.points.first()) } ?: 0
-                    val maneuver = active?.maneuvers?.firstOrNull { it.index > closest }
+                    val progress = active?.let { route -> fix?.let { routeProgress(route, it.point) } }
+                    val maneuver = active?.maneuvers?.firstOrNull { it.index > (progress?.segment ?: 0) }
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         Icon(when (maneuver?.direction) { "left" -> Icons.Outlined.TurnLeft; "right" -> Icons.Outlined.TurnRight; else -> Icons.Outlined.Straight },
                             null, Modifier.size(40.dp), tint = MaterialTheme.colorScheme.primary)
-                        Text(if (fresh) maneuver?.text ?: "Follow the highlighted route" else "GPS is unavailable",
+                        Text(when {
+                            !fresh -> "Position unavailable"
+                            (progress?.distanceFromRoad ?: 0.0) > 40 -> "Join the blue route"
+                            else -> maneuver?.text ?: "Follow the blue route"
+                        },
                             style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
                     }
-                    Text(if (fresh) "${if (fix?.filterRadius95Meters != null) "Experimental native guidance" else "GPS guidance"} · recording locally" else "Position is stale. No current native estimate is available.",
+                    Text(if (fresh) "${if (fix?.filterRadius95Meters != null) "Estimated sensor position" else "GPS guidance"} · recording locally" else "The route stays available offline. No reliable current position is available.",
                         Modifier.padding(top = 12.dp), style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    SensorFallbackReadiness(model)
                     FilledTonalButton(onClick = onFinish, Modifier.fillMaxWidth().padding(top = 20.dp).heightIn(min = 52.dp)) {
                         Icon(Icons.Outlined.Flag, null, Modifier.size(20.dp)); Spacer(Modifier.width(8.dp)); Text("Finish drive")
                     }
@@ -224,6 +234,10 @@ private fun DriveTaskPanel(model: SetuViewModel, withLocationPermission: (() -> 
                         })
                     }
                     if (outsideArea) InformationNote("Your last position is outside ${maps.region.name}. You can browse this preview, but cannot start a drive here.")
+                    if (model.route!!.startOffsetMeters > 10 || model.route!!.destinationOffsetMeters > 10) {
+                        InformationNote("Dashed links connect your pins to mapped roads, not verified driving lanes. Start gap: ${distanceLabel(model.route!!.startOffsetMeters)}; destination gap: ${distanceLabel(model.route!!.destinationOffsetMeters)}.")
+                    }
+                    SensorFallbackReadiness(model)
                     InformationNote("Origin: ${model.routeOriginLabel}. Time assumes 30 km/h, not live traffic. Starting recalculates from fresh GPS. Check road signs; turn restrictions are not included yet.")
                 }
                 else -> {
@@ -256,35 +270,70 @@ private fun DriveTaskPanel(model: SetuViewModel, withLocationPermission: (() -> 
 }
 
 @Composable
+private fun SensorFallbackReadiness(model: SetuViewModel) {
+    val settings by model.settings.collectAsStateWithLifecycle()
+    val native by model.nativeEstimate.collectAsStateWithLifecycle()
+    val locationEnabled by model.locationEnabled.collectAsStateWithLifecycle()
+    val now = SystemClock.elapsedRealtimeNanos()
+    val estimate = native.currentPose(now)
+    val ready = settings.nativePositioning && estimate != null && locationEnabled &&
+        (native.gpsAgeSeconds ?: Double.POSITIVE_INFINITY) <= 1.5 && (native.radius95Meters ?: 150.0) < 50.0
+    Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f).padding(end = 12.dp)) {
+            Text(when {
+                !settings.nativePositioning -> "Sensor fallback is off"
+                ready -> "Sensor fallback initialized"
+                estimate != null -> "Sensor estimate active"
+                native.status == "Estimate withheld" -> "Sensor prediction limit reached"
+                !locationEnabled -> "GPS off · no initialized sensor position"
+                else -> "Keep GPS on · calibration needed"
+            }, style = MaterialTheme.typography.titleSmall, modifier = Modifier.testTag("fallback-readiness"))
+            Text(when {
+                !settings.nativePositioning -> "Enable to use phone motion when calibrated."
+                ready -> "Keep recording when testing GPS loss. Ten seconds is a ceiling, not a guaranteed duration."
+                estimate != null -> "Prediction stops at the uncertainty or sampling limit, never beyond 10 seconds without GPS."
+                !locationEnabled -> "Re-enable Location to align or recover. Internet is not needed."
+                else -> native.calibrationHint ?: native.detail
+            }, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        Switch(settings.nativePositioning, { model.updateSettings(settings.copy(nativePositioning = it)) },
+            modifier = Modifier.semantics { contentDescription = "Sensor fallback" }.testTag("drive-fusion-toggle"))
+    }
+    if (settings.nativePositioning && !ready && estimate == null && locationEnabled) {
+        TextButton(onClick = { model.overlay = "diagnostics" }, modifier = Modifier.heightIn(min = 48.dp)) { Text("Check calibration details") }
+    }
+}
+
+@Composable
 private fun LiveTrackingPanel(model: SetuViewModel, fix: Pose?, fresh: Boolean, outsideArea: Boolean) {
     val settings by model.settings.collectAsStateWithLifecycle()
     val native by model.nativeEstimate.collectAsStateWithLifecycle()
+    val locationEnabled by model.locationEnabled.collectAsStateWithLifecycle()
     Text("Live positioning", style = MaterialTheme.typography.headlineSmall)
     Text(when {
+        !fresh && !locationEnabled -> "Location is off · sensors are still recording"
         !fresh -> "Waiting for a fresh position"
         fix?.mock == true -> "Test location · recording locally"
         fix?.filterRadius95Meters != null -> "Sensor fusion · recording locally"
         else -> "GPS tracking · recording locally"
     }, Modifier.padding(top = 6.dp).testTag("tracking-source"), color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium)
-    ReadingRow("Position", fix?.let { "%.5f, %.5f".format(Locale.US, it.point.latitude, it.point.longitude) } ?: "Waiting for GPS", Icons.Outlined.MyLocation)
+    ReadingRow("Position", fix?.let { "%.5f, %.5f".format(Locale.US, it.point.latitude, it.point.longitude) } ?: "Not initialized", Icons.Outlined.MyLocation)
     ReadingRow("Speed", if (fresh) fix?.speedMps?.let {
         "%.1f %s".format(it * if (settings.units == "mph") 2.236936 else 3.6, settings.units)
     } ?: "Not provided" else "Unavailable", Icons.Outlined.Speed)
     val radius = fix?.filterRadius95Meters ?: fix?.accuracyMeters
     ReadingRow(if (fix?.filterRadius95Meters != null) "95% filter radius" else "GPS accuracy",
         if (fresh && radius != null) "%.1f m".format(radius) else "Unavailable", Icons.Outlined.GpsFixed)
-    Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Column(Modifier.weight(1f).padding(end = 12.dp)) {
-            Text("Sensor fusion preview", style = MaterialTheme.typography.titleSmall)
-            Text(if (settings.nativePositioning) native.status else "Use GPS + phone motion when aligned",
-                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        Switch(settings.nativePositioning, { model.updateSettings(settings.copy(nativePositioning = it)) },
-            modifier = Modifier.testTag("tracking-fusion-toggle").semantics { contentDescription = "Sensor fusion preview" })
-    }
+    SensorFallbackReadiness(model)
     if (outsideArea) InformationNote("Position tracking continues here. Street detail is only available inside your downloaded offline area.")
-    if (settings.nativePositioning) Text("Prototype fusion, with GPS fallback. The ring shows the filter's uncertainty, not verified road accuracy.",
+    if (settings.nativePositioning) Text(when {
+        !fresh && !locationEnabled -> "Turn Location on for a starting fix or to realign. Internet is not required. Keep this recording running when testing GPS loss."
+        !fresh -> native.detail
+        fix?.filterRadius95Meters == null -> native.detail
+        native.gpsAgeSeconds?.let { it > 2 } == true || !locationEnabled -> "Sensors are predicting this path. Prediction stops after 10 seconds without GPS or excessive uncertainty; turn Location on to recover."
+        else -> "Sensor fallback is initialized. Keep recording while testing GPS loss. The uncertainty ring is a model estimate, not verified road accuracy."
+    },
         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     Button(onClick = model::stopTracking, modifier = Modifier.fillMaxWidth().padding(top = 12.dp)
         .heightIn(min = 52.dp).testTag("stop-tracking"), shape = RoundedCornerShape(16.dp)) {
@@ -341,7 +390,11 @@ private fun ReplayControls(model: SetuViewModel) {
     if (demonstration != null) {
         Text("Green: reference · Blue: estimate · Amber: last GPS", Modifier.padding(top = 10.dp), style = MaterialTheme.typography.bodySmall)
         InformationNote("Simulated GPS + IMU; on-device native-engine output. An 8-second GPS gap, not a field-accuracy result.")
-    } else InformationNote(if (trip.synthetic) "Synthetic journey on real map data. Not a live drive or an accuracy benchmark." else "Recorded GPS replay. Not live navigation.")
+    } else InformationNote(when {
+        trip.synthetic -> "Synthetic journey on real map data. Not a live drive or an accuracy benchmark."
+        trip.points.any { it.filterRadius95Meters != null } -> "Recorded GPS + sensor estimates. Unobserved gaps stay blank; this is not live navigation or verified ground truth."
+        else -> "Recorded GPS replay. Unobserved gaps stay blank. Not live navigation."
+    })
 }
 
 @Composable

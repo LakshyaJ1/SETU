@@ -1,0 +1,11 @@
+{
+  "scenario": "Controlled turning sensor arrays through LiveEstimator and ARM64 JNI; not measured physical accuracy",
+  "reportedHeadingAccuracy": -1,
+  "compassModelPriorDegrees": 30,
+  "gpsWithheldSeconds": 8,
+  "maximumSyntheticErrorMeters": 0.23473258521788293,
+  "gyroAblationDifferenceMeters": 1.8496309133657198,
+  "accelerationAblationDifferenceMeters": 3.5634905024724413,
+  "acceptedGpsDuringGap": 0,
+  "recoveryAccepted": true
+}

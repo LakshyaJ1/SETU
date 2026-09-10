@@ -35,15 +35,20 @@ bool optional(double value, double minimum, double maximum) {
     return std::isnan(value) || (std::isfinite(value) && value >= minimum && value <= maximum);
 }
 double position_sigma(const Fix& fix) { return std::max(2.0, fix.values[3] / std::sqrt(-2 * std::log(0.32))); }
+bool near_zero_speed(const Fix& fix) {
+    return std::isfinite(fix.values[5]) && std::isfinite(fix.values[7]) && fix.values[5] + 2 * fix.values[7] <= 1;
+}
 bool velocity_available(const Fix& fix) {
-    return std::isfinite(fix.values[5]) && std::isfinite(fix.values[6]) &&
-        std::isfinite(fix.values[7]) && std::isfinite(fix.values[8]) && fix.values[8] < 45;
+    return near_zero_speed(fix) || (std::isfinite(fix.values[5]) && std::isfinite(fix.values[6]) &&
+        std::isfinite(fix.values[7]) && std::isfinite(fix.values[8]) && fix.values[8] < 45);
 }
 Vector3 velocity(const Fix& fix) {
+    if (near_zero_speed(fix)) return Vector3::Zero();
     const double course = fix.values[6] * radians;
     return {fix.values[5] * std::sin(course), fix.values[5] * std::cos(course), 0};
 }
 double velocity_sigma(const Fix& fix) {
+    if (near_zero_speed(fix)) return std::max(0.5, fix.values[5] + 2 * fix.values[7]);
     return std::max(0.5, std::hypot(fix.values[7], fix.values[5] * fix.values[8] * radians));
 }
 double radius(const SetuFilter& state) {
@@ -136,7 +141,8 @@ bool initialize(SetuEngine& engine) {
     const double alignment_lag = (current.timestamp - engine.attitude_ns) * 1e-9;
     RowMatrix3 aligned = engine.attitude;
     if (current.gyro.norm() > 1e-10) aligned = engine.attitude * Eigen::AngleAxisd(current.gyro.norm() * alignment_lag, current.gyro.normalized()).toRotationMatrix();
-    const double deviations[6] = {std::hypot(std::max(0.15, engine.attitude_sigma), current.gyro.norm() * alignment_lag), 10.0,
+    const double deviations[6] = {std::hypot(std::max(0.15, engine.attitude_sigma), current.gyro.norm() * alignment_lag),
+        has_velocity ? std::max(1.0, velocity_sigma(fix)) : 10.0,
         std::hypot(position_sigma(fix), 30.0 * lag), 0.03, 0.15, 0.05};
     if (setu_filter_reset(&current.state, aligned.data(), initial_position.data(), initial_velocity.data(), deviations, 1.7467) != 1) return false;
     current.state.covariance(8, 8) = engine.altitude_known ? std::pow(std::max(5.0, fix.values[4]), 2) : 10000;
@@ -299,13 +305,21 @@ int setu_engine_poll(const SetuEngine* engine, double output[SETU_ESTIMATE_SIZE]
 }
 
 double setu_engine_declination(const SetuEngine* engine, double year, double latitude, double longitude, double altitude) {
-    const double invalid = std::numeric_limits<double>::quiet_NaN();
-    if (!engine || !std::isfinite(year) || year < 2025 || year >= 2030 || !std::isfinite(latitude) || std::abs(latitude) > 89 ||
-        !std::isfinite(longitude) || std::abs(longitude) > 180 || !std::isfinite(altitude) || altitude < -1000 || altitude > 20000) return invalid;
+    double field[3];
+    if (setu_engine_magnetic_field(engine, year, latitude, longitude, altitude, field) != 1) return std::numeric_limits<double>::quiet_NaN();
+    return std::atan2(field[0], field[1]);
+}
+
+int setu_engine_magnetic_field(const SetuEngine* engine, double year, double latitude, double longitude, double altitude, double output[3]) {
+    if (!engine || !output || !std::isfinite(year) || year < 2025 || year >= 2030 || !std::isfinite(latitude) || std::abs(latitude) > 89 ||
+        !std::isfinite(longitude) || std::abs(longitude) > 180 || !std::isfinite(altitude) || altitude < -1000 || altitude > 20000) return -1;
     try {
         double east, north, up;
         engine->magnetic(year, latitude, longitude, altitude, east, north, up);
-        if (std::hypot(east, north) < 2000) return invalid;
-        return std::atan2(east, north);
-    } catch (...) { return invalid; }
+        if (!std::isfinite(east) || !std::isfinite(north) || !std::isfinite(up) || std::hypot(east, north) < 2000) return -1;
+        output[0] = east / 1000;
+        output[1] = north / 1000;
+        output[2] = up / 1000;
+        return 1;
+    } catch (...) { return -1; }
 }

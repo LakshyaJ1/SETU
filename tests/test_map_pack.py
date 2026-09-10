@@ -1,12 +1,13 @@
+import gzip
 import hashlib
 import json
-from pathlib import Path
 import zipfile
+from pathlib import Path
 
 import pytest
 
-from tools.build_map_pack import build
-
+from tools.build_map_pack import build, bundle_android
+from tools.build_road_graph import compile_graph
 
 FIXTURE = Path(__file__).resolve().parents[1] / "android/app/src/androidTest/assets/map-fixture"
 
@@ -41,3 +42,68 @@ def test_bad_manifest_creates_no_output(tmp_path):
     with pytest.raises(ValueError, match="Expected setu.map.v1"):
         build(source, output)
     assert not output.exists()
+
+
+def test_bundled_assets_are_reproducible_and_match_the_source(tmp_path):
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+    bundle_android(FIXTURE, first)
+    bundle_android(FIXTURE, second)
+    manifest = json.loads((first / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["compressedAssets"] is True
+    for name in ("city.geojson", "roads.json"):
+        original = (FIXTURE / name).read_bytes()
+        compressed = (first / f"{name}.gzip").read_bytes()
+        assert compressed == (second / f"{name}.gzip").read_bytes()
+        assert gzip.decompress(compressed) == original
+        assert manifest["uncompressedBytes"][name] == len(original)
+        assert manifest["sha256"][name] == hashlib.sha256(original).hexdigest()
+        assert not (first / name).exists()
+
+
+def test_vector_bundle_omits_the_whole_region_geojson(tmp_path):
+    tiles = tmp_path / "tiles"
+    tiles.mkdir()
+    archive = tiles / "city-tiles.zip"
+    with zipfile.ZipFile(archive, "w") as output:
+        output.writestr("6/32/32.pbf", b"test tile")
+    metadata = {
+        "sourceSha256": hashlib.sha256((FIXTURE / "city.geojson").read_bytes()).hexdigest(),
+        "sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+        "tileCount": 1,
+        "uncompressedBytes": 9,
+    }
+    (tiles / "tiles.json").write_text(json.dumps(metadata), encoding="utf-8")
+    destination = tmp_path / "assets"
+    bundle_android(FIXTURE, destination, tiles)
+    assert not (destination / "city.geojson.gzip").exists()
+    assert (destination / "roads.json.gzip").is_file()
+    assert (destination / "city-tiles.zip").read_bytes() == archive.read_bytes()
+    index = json.loads((destination / "tile-index.json").read_bytes())
+    assert index["tiles"] == [["6/32/32.pbf", 9, hashlib.sha256(b"test tile").hexdigest()]]
+    bundled = json.loads((destination / "tiles.json").read_bytes())
+    assert (
+        bundled["indexSha256"]
+        == hashlib.sha256((destination / "tile-index.json").read_bytes()).hexdigest()
+    )
+    metadata["sourceSha256"] = "0" * 64
+    (tiles / "tiles.json").write_text(json.dumps(metadata), encoding="utf-8")
+    with pytest.raises(ValueError, match="do not match"):
+        bundle_android(FIXTURE, tmp_path / "wrong", tiles)
+
+
+def test_compiled_bundle_replaces_json_graph_only_when_source_and_archive_match(tmp_path):
+    compiled = tmp_path / "compiled"
+    metadata = compile_graph(FIXTURE / "roads.json", compiled)
+    assets = tmp_path / "assets"
+    bundle_android(FIXTURE, assets, compiled_graph=compiled)
+    assert not (assets / "roads.json.gzip").exists()
+    assert (assets / "roads.bin.gzip").read_bytes() == (compiled / "roads.bin.gzip").read_bytes()
+    metadata["sourceSha256"] = "0" * 64
+    (compiled / "graph.json").write_text(json.dumps(metadata))
+    with pytest.raises(ValueError, match="does not match"):
+        bundle_android(FIXTURE, tmp_path / "wrong", compiled_graph=compiled)
+    bundle_android(FIXTURE, assets)
+    assert (assets / "roads.json.gzip").exists()
+    assert not (assets / "roads.bin.gzip").exists()
+    assert not (assets / "graph.json").exists()

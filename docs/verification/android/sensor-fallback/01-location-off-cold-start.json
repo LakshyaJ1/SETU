@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "lock 0",
+    "capture":  "01-location-off-cold-start.png",
+    "apkSha256":  "90b16bb594f6db8c5b5e6ea4c88d2cda4e06ad59fe80fd57e783cba2edbf1d86",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788806250,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "db7df91da61bed99c1074e86bfbd1b9da0f820be7d96291cc3c8d25f5536c1e8"
+}

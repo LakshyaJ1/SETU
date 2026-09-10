@@ -7,11 +7,18 @@ model evaluation. Android owns permissions, timestamped acquisition, local logs,
 UI state and the provider boundary in
 `android/app/src/main/java/com/setu/navigator/model/ModelProvider.kt`.
 
-No trained model or fabricated prediction ships here. The included local server
-implements the protocol and returns **unavailable**. The development UI checks
-connectivity and protocol compatibility. Connecting the measurement provider to
-the portable estimation core remains an explicit delivery item, not a hidden
-assumption of a green health check.
+No trained model or fabricated prediction ships in the APK. The supplied HTTPS
+endpoint now advertises an experimental CNN-GRU speed provider. Its health reason
+explicitly states that phone axes and sigma are unverified, validity is always
+zero, and predictions must not drive navigation. The app preserves that warning.
+The local contract server still deliberately returns **unavailable**.
+
+Android now streams real, timestamp-paired accelerometer/gyroscope windows to the
+configured provider only after explicit sharing consent and only while recording.
+Results are displayed and logged as **evaluation-only**, never substituted for a
+position or fused into the native filter. Validity zero cannot become zero speed
+or an accepted observation. Calibrated model-to-core fusion and on-device inference
+remain required production work, not consequences of a green health check.
 
 ## Transport
 
@@ -23,6 +30,21 @@ localhost, 127.0.0.1 and the Android emulator's host alias 10.0.2.2.
 
 Connections time out after five seconds. Redirects are not followed. Credentials
 in the URL are rejected. A connection check does not send sensor data.
+
+The default endpoint is `https://setu-proj-sih.duckdns.org`. Changing it revokes
+sharing consent. A legacy stored sharing flag does not count as approval for the
+new upload behavior; a versioned consent is required. Stopping a recording or
+revoking consent cancels the session and prevents late results from being logged.
+No saved recording is uploaded. An in-flight request already delivered to the
+server cannot be recalled; the consent dialog states that boundary.
+
+The live collector retains four continuous seconds of raw phone-body SI samples,
+uses their measured rate, caps a window at 2,048 samples, and resets across paired
+sample gaps above 50 ms. It emits at most once per second. Exactly one request is
+in flight; only the latest waiting window is kept. Windows older than 500 ms are
+not sent, responses older than two seconds are withheld, and transport failures
+back off without stopping GPS or local recording. This remote transport is not
+the offline production inference path required by REQ-F2/F9.
 
 ## GET /v1/health
 
@@ -71,6 +93,8 @@ Unavailable is a first-class response:
 {"schema":"setu.model.v1","status":"unavailable","reason":"No model loaded"}
 ```
 
+`ModelResult` preserves an unavailable response's reason separately from an
+optional measurement. Health reasons and zero validity remain visible in the UI.
 Never send a zero-speed prediction to represent absence. Future measurement
 types need a schema revision and explicit capability advertisement.
 
@@ -133,6 +157,13 @@ adding `experimental`, `radius95Meters`, `gpsAgeSeconds` and provenance fields.
 `rotation_vector` records retain Android's values and accuracy for seed analysis.
 These are not AI inference results or reference ground truth. Details and the
 remaining model-consumption boundary are in `core/STREAMING.md`.
+
+With model sharing enabled, new `model_measurement` records carry receive time in
+`tNs`, the source measurement time separately in `measurementTimestampNs`, model
+name, status, speed, reported sigma, validity, and latency. Missing predictions
+have null values, not fabricated zeros. `navigationApplied` is false for this
+research integration. These records never become the trip's trajectory stream.
+They survive raw export/import, with the same privacy protections as the log.
 
 When the latest GPS position is outside the included Bengaluru map, destination
 browsing still produces an explicitly labelled MG Road preview. Drive start is

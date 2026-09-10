@@ -172,7 +172,8 @@ class InvariantEkf:
         a = accel_mid - s.b_a
 
         R, v, p = s.X.R, s.X.v, s.X.p
-        acc_n = R @ a + GRAVITY_N
+        rotation_mid = R @ so3.exp(w * (0.5 * dt))
+        acc_n = rotation_mid @ a + GRAVITY_N
 
         # -- mean: standard strapdown, exact on the manifold ---------------
         R_new = so3.normalize(R @ so3.exp(w * dt))

@@ -3,8 +3,9 @@
   "branch": "demo-mvp/position-tracking",
   "checkpointCommit": "d4aceca",
   "workingTreeIncludesUncommittedChanges": true,
+  "supersededBy": "../sensor-fallback/build-evidence.json",
   "apk": {
-    "path": "dist/android/SETU-demo-mvp.apk",
+    "path": "dist/android/SETU-delhi-86ae140.apk",
     "sha256": "86ae1405bc5f88c9acaf8d6c6b747f0244882fdd567f12c9a5ac04bcf2c7c562",
     "bytes": 62228039,
     "installedHashMatches": true,

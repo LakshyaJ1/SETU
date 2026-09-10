@@ -1,0 +1,88 @@
+{
+  "source": "northern-zone-2026-09-06.osm.pbf",
+  "sources": [
+    {
+      "file": "northern-zone-2026-09-06.osm.pbf",
+      "dataTimestamp": "2026-09-06T20:21:35Z",
+      "sha256": "42cf5b71f0acfab938f3af70a68fc594e5b10828ed400563da68eca5704c06ab"
+    },
+    {
+      "file": "western-zone-2026-09-06.osm.pbf",
+      "dataTimestamp": "2026-09-06T20:21:35Z",
+      "sha256": "f46e810204be040e734fa6e9f625ae650abb284ce155f6baea5b3e48110f47f3"
+    },
+    {
+      "file": "central-zone-2026-09-06.osm.pbf",
+      "dataTimestamp": "2026-09-06T20:21:35Z",
+      "sha256": "dcff0b64a0181c0db3155d0acbd59e322553aa7c321680797bc68e7acfa0f4c2"
+    }
+  ],
+  "dataTimestamp": "2026-09-06T20:21:35Z",
+  "features": 35490,
+  "sourceFeatures": 1238319,
+  "sourceDrivableWays": 1039544,
+  "roadClasses": {
+    "trunk": 12000,
+    "service": 140620,
+    "motorway_link": 1375,
+    "primary": 5969,
+    "secondary": 10153,
+    "tertiary": 37102,
+    "unclassified": 84589,
+    "residential": 776473,
+    "path": 5551,
+    "living_street": 9873,
+    "secondary_link": 1970,
+    "pedestrian": 614,
+    "trunk_link": 3640,
+    "footway": 15101,
+    "motorway": 7061,
+    "cycleway": 278,
+    "steps": 2403,
+    "primary_link": 1261,
+    "tertiary_link": 1777,
+    "track": 95287,
+    "construction": 1228,
+    "services": 34,
+    "rest_area": 14,
+    "bridleway": 16,
+    "corridor": 461,
+    "busway": 39,
+    "road": 71,
+    "bus_stop": 16,
+    "proposed": 26,
+    "elevator": 6,
+    "traffic_sign": 1,
+    "raceway": 17,
+    "crossing": 1
+  },
+  "geometryToleranceMeters": 3.0,
+  "routingToleranceMeters": 5.0,
+  "routingClasses": [
+    "living_street",
+    "motorway",
+    "motorway_link",
+    "primary",
+    "primary_link",
+    "residential",
+    "secondary",
+    "secondary_link",
+    "service",
+    "tertiary",
+    "tertiary_link",
+    "trunk",
+    "trunk_link",
+    "unclassified"
+  ],
+  "routableWays": 1039544,
+  "nodeReferences": 4775651,
+  "places": 300,
+  "visualCoordinates": 5486225,
+  "visualRoadSegments": 1215027,
+  "bytes": {
+    "manifest.json": 30533,
+    "city.geojson": 137490172,
+    "roads.json": 253213662
+  },
+  "sourceSha256": "42cf5b71f0acfab938f3af70a68fc594e5b10828ed400563da68eca5704c06ab"
+}

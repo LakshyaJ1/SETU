@@ -1,0 +1,18 @@
+{
+  "scenario": "Replay of captured physical sensors with an artificial eight-second GPS omission; not a live outage or surveyed accuracy",
+  "pairedSamples": 12041,
+  "nativeSamples": 0,
+  "inertialSamples": 0,
+  "gpsObservationsWithheld": 8,
+  "firstAlignmentSeconds": null,
+  "statuses": {
+    "Checking compass alignment": 302
+  },
+  "details": {
+    "Get a GPS fix first; keep the phone still briefly to check its compass.": 2,
+    "Checking compass stability. Keep the phone still for two seconds.": 14,
+    "Waiting for fresh accelerometer, gyroscope and calibrated magnetometer samples.": 271,
+    "Keep the phone still for two seconds to check compass alignment.": 10,
+    "Magnetic interference detected. Move away from metal or magnetic mounts.": 5
+  }
+}

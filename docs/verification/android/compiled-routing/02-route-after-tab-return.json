@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "free",
+    "capture":  "02-route-after-tab-return.png",
+    "apkSha256":  "080c738b059da3da653f1d05c86e39fe31e5a9357349ae190ac3121b7e835cd3",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788898474,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "626467fa6044cdfb35eca0396372b3c1b075e48ec4710249ffe36a05d36a1df7"
+}

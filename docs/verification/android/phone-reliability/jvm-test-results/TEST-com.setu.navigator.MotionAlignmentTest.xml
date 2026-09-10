@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.setu.navigator.MotionAlignmentTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-09-08T22:06:48.568Z" hostname="LAPTOP-02I5BMKR" time="0.017">
+  <properties/>
+  <testcase name="constantSpeedCannotInventAnAbsoluteHeading" classname="com.setu.navigator.MotionAlignmentTest" time="0.006"/>
+  <testcase name="noGpsCannotCalibrateAnAbsoluteHeading" classname="com.setu.navigator.MotionAlignmentTest" time="0.0"/>
+  <testcase name="delayedGpsUsesTheMatchingSensorInterval" classname="com.setu.navigator.MotionAlignmentTest" time="0.006"/>
+  <testcase name="gpsAndChangingMotionAlignTheRelativeFrameWithoutAnyMagnetometer" classname="com.setu.navigator.MotionAlignmentTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

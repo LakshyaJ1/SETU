@@ -37,6 +37,19 @@ def run_open_loop(d, ideal: bool, R0=None):
 
 
 class TestPropagation:
+    def test_rotating_phone_does_not_turn_gravity_into_travel(self):
+        interval = 0.005
+        rate = 1.2
+        engine = InvariantEkf.initialise(np.zeros(3), np.zeros(3), np.eye(3))
+        engine._prev_accel = np.array([0.0, 0.0, 9.80665])
+        engine._prev_gyro = np.array([rate, 0.0, 0.0])
+        for index in range(1, 1601):
+            rotation = so3.exp(np.array([rate * index * interval, 0.0, 0.0]))
+            acceleration = rotation.T @ np.array([0.0, 0.0, 9.80665])
+            engine.propagate(acceleration, np.array([rate, 0.0, 0.0]), interval)
+        assert np.linalg.norm(engine.s.velocity[:2]) < 0.002
+        assert np.linalg.norm(engine.s.position[:2]) < 0.01
+
     def test_ideal_imu_reproduces_the_trajectory(self, drive):
         """With a perfect IMU the strapdown is arithmetic, and must be accurate."""
         ekf = run_open_loop(drive, ideal=True)

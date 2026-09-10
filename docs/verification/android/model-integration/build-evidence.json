@@ -1,0 +1,58 @@
+﻿{
+    "branch":  "demo-mvp/position-tracking",
+    "baseCommit":  "ab84894a4ee5cf31716673bc4b70d26ee53e8ffe",
+    "workingTreeIncludesUncommittedChanges":  true,
+    "fullProductionGoalComplete":  false,
+    "apk":  {
+                "path":  "dist/android/SETU-model-integration-preview.apk",
+                "sha256":  "48253e32b47456cee853d0a211ff9b78668675354a338c162f26c62a62750a87",
+                "bytes":  155517282,
+                "installedEmulatorHashMatches":  true,
+                "signatureVerified":  true,
+                "zipalign16KiBPassed":  true
+            },
+    "testApkSha256":  "adc8d31ee81c61bd7661ffbce2645ee8542434a590c9d1d8942ed5a648766712",
+    "stableMvpApkSha256":  "91c7840a99ad4ade9cf63700fd0627a0670e9d1638ce5fbd94032553cc480e84",
+    "physicalPhoneInstalled":  false,
+    "verification":  {
+                         "jvm":  {
+                                     "passed":  41,
+                                     "failures":  0,
+                                     "errors":  0
+                                 },
+                         "android":  {
+                                         "passed":  26,
+                                         "failures":  0,
+                                         "seconds":  1.633,
+                                         "environment":  "API 35 emulator"
+                                     },
+                         "lint":  {
+                                      "errors":  0,
+                                      "warnings":  16
+                                  },
+                         "pythonBaseline":  {
+                                                "passed":  191,
+                                                "failed":  1,
+                                                "skipped":  2,
+                                                "failure":  "tests/test_eval_and_report.py::TestReport::test_renders_valid_standalone_html"
+                                            },
+                         "liveEvaluation":  "live-evaluation.json"
+                     },
+    "model":  {
+                  "protocol":  "setu.model.v1",
+                  "endpoint":  "https://setu-proj-sih.duckdns.org",
+                  "provider":  "SETU CNN-GRU (experimental CPU)",
+                  "observedValidity":  0,
+                  "navigationFusionEnabled":  false,
+                  "offlineModelBundled":  false,
+                  "sharingRequiresExplicitConsent":  true,
+                  "requestsOnlyWhileRecording":  true,
+                  "gpsAndSavedTripUploads":  false
+              },
+    "limitations":  [
+                        "Remote model currently reports uncalibrated sigma, unverified Android axes, and validity zero.",
+                        "Offline model artifacts and calibrated native fusion remain required.",
+                        "Physical-device and full-navigation acceptance remain unverified.",
+                        "Existing Python HTML report failure and Bengaluru route-connectivity regression remain unresolved."
+                    ]
+}

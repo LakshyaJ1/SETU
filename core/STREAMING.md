@@ -24,7 +24,7 @@ an experimental safety boundary, not a claim of validated driving accuracy.
 ## Initialization and frames
 
 - Requires a paired IMU sample, a GPS fix with horizontal accuracy no older than
-  250 ms, and a rotation-vector orientation with reported heading uncertainty
+  250 ms, and a rotation-vector orientation with usable heading uncertainty
   no greater than 0.6 radians, also within 250 ms.
 - Android's rotation vector supplies phone-to-magnetic-ENU orientation. Native
   WMM2025 declination corrects it to true ENU. A short angular-rate correction
@@ -36,12 +36,18 @@ an experimental safety boundary, not a claim of validated driving accuracy.
   Missing sensor accuracy does not become known north. A heading sample is not
   proof of a rigid vehicle mount, so NHC, forward-speed and SVO constraints are
   deliberately not enabled by this adapter.
-- A missing rotation-vector heading-accuracy value, including Android's `-1`
-  sentinel, is shown as **Heading accuracy unavailable** while awaiting initial
-  alignment. A high sensor calibration code alone does not supply a numerical
-  uncertainty. GPS tracking remains available; the adapter does not invent a
-  heading variance to force initialization. This message does not replace an
-  already running native estimate or hide a sensor-gap/withheld state.
+- Hardware-reported heading uncertainty remains preferred. A missing fifth
+  rotation-vector value, including Android's `-1` sentinel, now enters a separate
+  checked-compass initialization path rather than permanently blocking fusion.
+  It requires calibrated, fresh accelerometer/gyro/magnetometer observations,
+  two seconds of little motion, agreement with the local WMM2025 field strength
+  and direction, and agreement with gravity. A high calibration code alone is
+  insufficient. Poor hardware-reported accuracy is not replaced by this fallback.
+- The checked-compass path uses a **model prior of at least 30 degrees**, increased
+  by observed field/rotation disagreement, subject to the same 0.6-radian gate.
+  This is explicitly not a device-reported accuracy or a proven absolute-error
+  bound: correlated magnetic disturbance can escape these checks. Its provenance
+  appears in Diagnostics and `native_pose` records. See `docs/16-sensor-fallback.md`.
 - GeographicLib 2.5 implements WGS84 local Cartesian conversion. No ellipsoid
   is hand-implemented. Optional altitude is ellipsoid height; it is not MSL.
   Without initial altitude and vertical uncertainty, altitude output remains
@@ -53,6 +59,12 @@ an experimental safety boundary, not a claim of validated driving accuracy.
   otherwise zero is a broad initial prior (10 m/s standard deviation), not a
   measured stop. Initial horizontal position uncertainty includes the GPS/IMU
   age using a 30 m/s timing bound. No stationarity claim or ZUPT is manufactured.
+- A measured near-zero speed with `speed + 2 × speedAccuracy <= 1 m/s` also permits
+  a bounded horizontal zero-velocity observation without course; Android commonly
+  omits course at a stop. Its standard deviation is at least 0.5 m/s and includes
+  the measured speed and uncertainty. This is not an IMU-only standstill detector
+  and does not impose zero vertical speed. A supplied velocity starts with at
+  least 1 m/s initial standard deviation rather than the unknown-velocity prior.
 - Horizontal velocity updates do not impose zero vertical speed. A conservative
   isotropic deviation combines speed and angular-course uncertainty, with a
   0.5 m/s floor. Course uncertainty of 45 degrees or more disables that update.
@@ -113,9 +125,21 @@ input ordering and rewind operations retain integer nanoseconds internally.
 Raw GPS `pose` records remain unchanged as observations. `rotation_vector` and
 separately named `native_pose` records are added during capture; native output
 includes `experimental: true`, provenance and radius. It must not be relabelled
-as GPS ground truth. Saved replay still uses recorded GPS, not an estimator rerun.
+as GPS ground truth. New recordings declare `trajectoryStream: track_pose` and
+retain the selected GPS/native path separately, including source and filter
+radius. Save/import/export/recovery and replay preserve this path. Legacy logs
+without that header still replay their GPS stream; they are not silently upgraded
+to fused evidence. Replay and distance do not bridge gaps above three seconds or
+source changes. Replay is recorded output, not a retrospective estimator rerun.
 Once an accepted mock fix contributes to a session, native output stays marked
 mock until a full reinitialization; a later non-mock fix cannot erase its influence.
+
+The strapdown mean now rotates interval-averaged acceleration with the interval's
+midpoint attitude, not its initial attitude. The previous combination turned
+gravity into spurious horizontal acceleration during handset rotation. Python
+and C++ share the correction, with an in-place rotation regression and regenerated
+294-action cross-language parity fixture. This numerical fix does not remove
+sensor bias, magnetic interference or motion-model mismatch.
 
 ## Verification and remaining work
 

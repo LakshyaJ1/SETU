@@ -16,6 +16,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.lifecycle.ViewModelProvider
 import com.setu.navigator.data.Trip
+import com.setu.navigator.data.AppSettings
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,6 +31,34 @@ import java.security.MessageDigest
 class AndroidWorkflowTest {
     @get:Rule
     val compose = createAndroidComposeRule<MainActivity>()
+    private var originalSettings: AppSettings? = null
+    private var originalMap: String? = null
+
+    @Before
+    fun prepareIsolatedPreferences() {
+        val model = ViewModelProvider(compose.activity)[SetuViewModel::class.java]
+        check(!model.recording.value) { "Do not interrupt an existing recording." }
+        model.repository.mapPacks.restore()
+        originalMap = model.repository.mapPacks.activeMap.value.region.key
+        originalSettings = model.settings.value
+        model.repository.mapPacks.activate("bundled")
+        compose.runOnIdle {
+            model.updateSettings(checkNotNull(originalSettings).copy(modelSharingAllowed = false))
+            compose.activity.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+        compose.waitUntil(20000) { model.activeMap.value.region.key == "bundled" }
+    }
+
+    @After
+    fun restoreOriginalPreferences() {
+        val model = ViewModelProvider(compose.activity)[SetuViewModel::class.java]
+        if (!model.recording.value) {
+            compose.runOnIdle { model.cancelMapOperation(); model.closeReplay(); model.clearRoute() }
+            compose.waitUntil(20000) { !model.mapBusy }
+            originalMap?.let(model.repository.mapPacks::activate)
+            originalSettings?.let { settings -> compose.runOnIdle { model.updateSettings(settings) } }
+        }
+    }
     private val apkSha256 by lazy {
         val digest = MessageDigest.getInstance("SHA-256")
         DigestInputStream(File(compose.activity.packageCodePath).inputStream(), digest).use { input ->
@@ -40,6 +71,10 @@ class AndroidWorkflowTest {
     @Test
     fun offlineJourneyAndSettingsRemainUsable() {
         compose.onNodeWithTag("tab-Settings").performClick()
+        compose.onNodeWithText("Background recording").performScrollTo().performClick()
+        compose.onNodeWithText("Keep recording in the background").assertIsDisplayed()
+        compose.onNodeWithText("Open app settings").assertIsDisplayed()
+        compose.onNodeWithText("Not now").performClick()
         compose.onNodeWithText("Appearance").performScrollTo().performClick()
         compose.onNodeWithTag("preference-option-Light").performClick()
         compose.onNodeWithTag("tab-Drive").performClick()
@@ -106,9 +141,8 @@ class AndroidWorkflowTest {
 
     @Test
     fun missingMeasuredAndStaleGpsStayDistinct() {
-        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
-        automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.ACCESS_COARSE_LOCATION)
-        automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        grantIfMissing(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        grantIfMissing(android.Manifest.permission.ACCESS_FINE_LOCATION)
         val model = ViewModelProvider(compose.activity)[SetuViewModel::class.java]
         val previousSettings = model.settings.value
         val hub = model.repository.hub
@@ -174,9 +208,8 @@ class AndroidWorkflowTest {
 
     @Test
     fun liveNativePositioningConsumesAndroidSensorsAndRecordsSeparateOutput() {
-        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
-        automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.ACCESS_COARSE_LOCATION)
-        automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        grantIfMissing(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        grantIfMissing(android.Manifest.permission.ACCESS_FINE_LOCATION)
         val model = ViewModelProvider(compose.activity)[SetuViewModel::class.java]
         val previousSettings = model.settings.value
         var recording: Trip? = null
@@ -338,10 +371,9 @@ class AndroidWorkflowTest {
 
     @Test
     fun liveTrackingFollowsMockFixesRecordsAndSavesWithoutADestination() {
-        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
-        automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.ACCESS_COARSE_LOCATION)
-        automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.ACCESS_FINE_LOCATION)
-        if (Build.VERSION.SDK_INT >= 33) automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.POST_NOTIFICATIONS)
+        grantIfMissing(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        grantIfMissing(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if (Build.VERSION.SDK_INT >= 33) grantIfMissing(android.Manifest.permission.POST_NOTIFICATIONS)
         val model = ViewModelProvider(compose.activity)[SetuViewModel::class.java]
         val previousSettings = model.settings.value
         val previousTrips = model.repository.tripStore.all().map { it.id }.toSet()
@@ -437,9 +469,8 @@ class AndroidWorkflowTest {
 
     @Test
     fun sensorSubscriptionsCanBeRepeatedlyStoppedAndRestarted() {
-        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
-        automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.ACCESS_COARSE_LOCATION)
-        automation.grantRuntimePermission(BuildConfig.APPLICATION_ID, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        grantIfMissing(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        grantIfMissing(android.Manifest.permission.ACCESS_FINE_LOCATION)
         val model = ViewModelProvider(compose.activity)[SetuViewModel::class.java]
         check(!model.recording.value)
         try {
@@ -453,7 +484,14 @@ class AndroidWorkflowTest {
         }
     }
 
-    private fun capture(name: String, scenario: String = "Application workflow on API 35 emulator") {
+    private fun grantIfMissing(permission: String) {
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        if (instrumentation.targetContext.checkSelfPermission(permission) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            instrumentation.uiAutomation.grantRuntimePermission(BuildConfig.APPLICATION_ID, permission)
+        }
+    }
+
+    private fun capture(name: String, scenario: String = "Application workflow on ${Build.MODEL}, API ${Build.VERSION.SDK_INT}; not a driving accuracy test") {
         compose.waitForIdle()
         compose.waitUntil(30000) { compose.onAllNodesWithTag("offline-map-loading").fetchSemanticsNodes().isEmpty() }
         Thread.sleep(1800)

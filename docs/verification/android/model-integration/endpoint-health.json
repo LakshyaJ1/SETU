@@ -1,0 +1,1 @@
+{"schema":"setu.model.v1","status":"ready","model":"SETU CNN-GRU (experimental CPU)","capabilities":["speed"],"reason":"Experimental; supported vehicles: car. Android sensor axes are unverified; sigma is uncalibrated. Validity is always 0. Predictions must not drive navigation."}

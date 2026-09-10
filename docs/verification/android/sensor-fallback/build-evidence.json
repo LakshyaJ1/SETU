@@ -1,0 +1,84 @@
+{
+  "branch": "demo-mvp/position-tracking",
+  "baseCommit": "d566585",
+  "workingTreeIncludesUncommittedChanges": true,
+  "apk": {
+    "path": "dist/android/SETU-sensor-fallback-9df37ec.apk",
+    "sha256": "9df37ec6b9a57fbd9af5d3725873d1068bce8549ecfcf7858f4ef917d4a78c95",
+    "bytes": 63399459,
+    "installedHashMatches": true,
+    "signatureVerified": true,
+    "zipalign16KiBPassed": true
+  },
+  "testApkSha256": "a8c6d4b1e1e6f0656aafe15d97ef795ff6b4d8542b58f690bd6ec16b08413745",
+  "phone": {
+    "model": "CPH2467",
+    "androidVersion": "15",
+    "sdk": 35,
+    "abi": "arm64-v8a",
+    "connection": "authorized USB ADB",
+    "fontScale": 1,
+    "viewportPixels": [1080, 2400]
+  },
+  "validation": {
+    "assembleDebug": "passed",
+    "assembleDebugAndroidTest": "passed",
+    "jvmTests": {"tests": 21, "failures": 0, "errors": 0},
+    "pythonEstimationTests": {"tests": 27, "failures": 0},
+    "nativePythonParityActions": 294,
+    "lint": {"errors": 0, "warnings": 16},
+    "phoneInstrumentation": {
+      "classes": [
+        "com.setu.navigator.SensorFallbackTest",
+        "com.setu.navigator.NativeEngineTest",
+        "com.setu.navigator.NativeFilterTest",
+        "com.setu.navigator.TripStoreTest",
+        "com.setu.navigator.PositioningDemoTest"
+      ],
+      "tests": 23,
+      "failures": 0,
+      "seconds": 2.646,
+      "log": "phone-regression-tests.log"
+    },
+    "controlledTurningMetrics": "sensor-fallback-metrics.json",
+    "capturedPhysicalSensorReplay": "captured-sensor-replay-metrics.json",
+    "liveGpsOffPredictionVerified": false,
+    "complexPathFieldAccuracyValidated": false,
+    "completeInstrumentationStressSuite": "not rerun"
+  },
+  "livePhoneCheck": {
+    "gpsTemporarilyEnabledForInitialization": true,
+    "internetEnabledDuringCheck": false,
+    "wifiSettingBeforeAndAfter": 0,
+    "mobileDataSettingBeforeAndAfter": 0,
+    "locationRestoredToOriginalOffState": true,
+    "durationMs": 25535,
+    "sampleCount": 17909,
+    "gpsPositions": 10,
+    "selectedTrajectoryPositions": 10,
+    "allGpsMockFlagsFalse": true,
+    "nativePositions": 0,
+    "magnetometerAccuracyCodes": {"0": 2554},
+    "initialization": "withheld due to unreliable magnetometer calibration",
+    "gpsOffPhaseAfterInitialization": "not performed because initialization did not pass",
+    "endedCleanly": true,
+    "privateCapture": ".shots/fallback-review/02-live-initialization.png"
+  },
+  "dataProtection": {
+    "preExistingRecordingsChecked": 7,
+    "preExistingRawRecordingHashesUnchanged": true,
+    "newRecordingsRetained": true,
+    "additionalInterruptedRecordingRecovered": true,
+    "appDataCleared": false,
+    "androidMockLocationProviderConfigured": false,
+    "preciseUserCoordinatesInTrackedEvidence": false,
+    "recordingActiveAtVerificationEnd": false
+  },
+  "remainingLimits": [
+    "Current live phone magnetometer calibration is unreliable; calibration and another live blackout rehearsal remain necessary.",
+    "Sensors cannot provide an absolute cold-start position without a starting fix.",
+    "Prediction still stops after ten seconds without accepted GPS, excessive uncertainty or an IMU gap.",
+    "Checked compass uncertainty is a model prior, not measured or validated absolute heading accuracy.",
+    "Captured-data GPS omission and synthetic turning tests do not validate physical GPS-denied driving accuracy."
+  ]
+}

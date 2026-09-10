@@ -1,0 +1,10 @@
+{
+    "rotationSetting":  "free",
+    "capture":  "09-final-sharing-revoked.png",
+    "apkSha256":  "48253e32b47456cee853d0a211ff9b78668675354a338c162f26c62a62750a87",
+    "source":  "adb shell screencap; unaltered PNG",
+    "deviceClockSeconds":  1788874434,
+    "fontScale":  1,
+    "sdk":  35,
+    "screenshotSha256":  "2ee97eab4b18c8ef859271698b46a2fee3bf8befb5d3987357823cd78f282a7d"
+}

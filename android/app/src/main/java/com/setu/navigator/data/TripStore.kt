@@ -113,6 +113,7 @@ class TripStore(context: Context) {
                 }
                 if (number == 1) {
                     require(record.optString("schema") == "setu.log.v1") { "Unsupported recording format. Expected SETU log v1." }
+                    require(record.optString("trajectoryStream", "pose") in listOf("pose", "track_pose")) { "Unsupported trajectory stream." }
                     metadata = record
                     if (record.has("startedAtNs")) firstNs = record.getLong("startedAtNs").also { require(it >= 0) }
                     continue
@@ -123,17 +124,17 @@ class TripStore(context: Context) {
                 if (firstNs == null) firstNs = timestamp
                 lastNs = maxOf(lastNs, timestamp)
                 if (record.optString("type") != "end") samples++
-                if (record.optString("type") == "pose") {
+                if (record.optString("type") == metadata?.optString("trajectoryStream", "pose")) {
                     val pose = decodePose(record)
                     val previous = points.lastOrNull()
-                    require(previous == null || pose.timestampNs >= previous.timestampNs) { "GPS positions must be in timestamp order." }
+                    require(previous == null || pose.timestampNs >= previous.timestampNs) { "Trajectory positions must be in timestamp order." }
                     if (previous == null || pose.timestampNs > previous.timestampNs) points.add(pose)
-                    else require(pose.point == previous.point) { "Two different GPS positions share a timestamp." }
+                    else require(pose.point == previous.point) { "Two different trajectory positions share a timestamp." }
                 }
             }
         }
         val header = requireNotNull(metadata) { "The selected recording is empty." }
-        val distance = points.zipWithNext().sumOf { (previous, current) -> previous.point.distanceTo(current.point) }
+        val distance = trajectoryDistance(points)
         return Trip(id, header.optString("name", "Imported drive").take(100),
             header.optLong("startedAtMs", System.currentTimeMillis()),
             (lastNs - (firstNs ?: lastNs)).coerceAtLeast(0) / 1_000_000,
@@ -170,6 +171,7 @@ class TripStore(context: Context) {
             .put("speedAccuracyMps", pose.speedAccuracyMps ?: JSONObject.NULL)
             .put("bearingAccuracyDegrees", pose.bearingAccuracyDegrees ?: JSONObject.NULL)
             .put("mock", pose.mock ?: JSONObject.NULL)
+            .put("filterRadius95Meters", pose.filterRadius95Meters ?: JSONObject.NULL)
 
         fun decodePose(document: JSONObject): Pose {
             val version = if (document.has("measurementVersion")) document.get("measurementVersion") else 0
@@ -198,6 +200,7 @@ class TripStore(context: Context) {
                 speedAccuracyMps = optional("speedAccuracyMps", 0.0..Double.MAX_VALUE)?.takeIf { speed != null },
                 bearingAccuracyDegrees = optional("bearingAccuracyDegrees", 0.0..Double.MAX_VALUE)?.takeIf { bearing != null },
                 mock = mock,
+                filterRadius95Meters = optional("filterRadius95Meters", 0.0..Double.MAX_VALUE),
             )
         }
     }

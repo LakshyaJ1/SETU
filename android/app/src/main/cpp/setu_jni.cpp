@@ -117,3 +117,13 @@ Java_com_setu_navigator_estimation_NativeEngine_nativeDeclination(JNIEnv*, jobje
     jdouble year, jdouble latitude, jdouble longitude, jdouble altitude) {
     return setu_engine_declination(reinterpret_cast<SetuEngine*>(handle), year, latitude, longitude, altitude);
 }
+
+extern "C" JNIEXPORT jdoubleArray JNICALL
+Java_com_setu_navigator_estimation_NativeEngine_nativeMagneticField(JNIEnv* environment, jobject, jlong handle,
+    jdouble year, jdouble latitude, jdouble longitude, jdouble altitude) {
+    double values[3];
+    if (setu_engine_magnetic_field(reinterpret_cast<SetuEngine*>(handle), year, latitude, longitude, altitude, values) != 1) return nullptr;
+    jdoubleArray output = environment->NewDoubleArray(3);
+    if (output) environment->SetDoubleArrayRegion(output, 0, 3, values);
+    return output;
+}

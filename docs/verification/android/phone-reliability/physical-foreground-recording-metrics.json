@@ -1,0 +1,29 @@
+{
+  "scenario": "Actual Android IMU callbacks during foreground recording; no driving accuracy claim",
+  "mode": "foreground",
+  "requestedDurationMs": 30000,
+  "device": "CPH2467",
+  "locationEnabled": false,
+  "batterySaverEnabled": true,
+  "backgroundMs": 30000,
+  "backgroundSensorEvents": 27004,
+  "backgroundLastSampleAgeNs": 67049621,
+  "nativePairedSamples": 6461,
+  "pairingDrops": 0,
+  "records": {
+    "game_rotation_vector": 6214,
+    "accelerometer": 6215,
+    "gyroscope": 6214,
+    "rotation_vector": 6215,
+    "magnetometer": 3110,
+    "native_state": 31,
+    "end": 1
+  },
+  "maximumImuGapNs": {
+    "accelerometer": 5005625,
+    "gyroscope": 5005625
+  },
+  "modelSharingEnabled": false,
+  "recordingSaved": true,
+  "existingTripCount": 20
+}

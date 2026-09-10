@@ -2,20 +2,25 @@ package com.setu.navigator.model
 
 import com.setu.navigator.BuildConfig
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URI
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 data class ImuSample(val timestampNs: Long, val accelerationMps2: List<Double>, val angularRateRps: List<Double>)
 data class ModelWindow(val samples: List<ImuSample>, val rateHz: Double, val vehicle: String)
 data class ModelMeasurement(val timestampNs: Long, val speedMps: Double, val sigmaMps: Double, val validity: Double)
-data class ModelHealth(val ready: Boolean, val name: String, val capabilities: List<String>)
+data class ModelHealth(val ready: Boolean, val name: String, val capabilities: List<String>, val reason: String? = null)
+data class ModelResult(val measurement: ModelMeasurement? = null, val reason: String? = null)
 
 interface ModelProvider {
     suspend fun health(): ModelHealth
-    suspend fun infer(window: ModelWindow): ModelMeasurement?
+    suspend fun infer(window: ModelWindow): ModelResult
 }
 
 class HttpModelProvider(endpoint: String) : ModelProvider {
@@ -35,13 +40,17 @@ class HttpModelProvider(endpoint: String) : ModelProvider {
         val response = request("/v1/health")
         require(response.optString("schema") == "setu.model.v1") { "The server uses an incompatible model protocol." }
         val capabilities = response.optJSONArray("capabilities") ?: JSONArray()
+        require(response.optString("status") in setOf("ready", "unavailable")) { "Unknown model availability status." }
         return ModelHealth(response.optString("status") == "ready", response.optString("model", "Unnamed model"),
-            (0 until capabilities.length()).map { capabilities.getString(it) })
+            (0 until capabilities.length()).map { capabilities.getString(it) },
+            response.optString("reason").takeIf { it.isNotBlank() })
     }
 
-    override suspend fun infer(window: ModelWindow): ModelMeasurement? {
+    override suspend fun infer(window: ModelWindow): ModelResult {
         require(window.samples.isNotEmpty() && window.samples.size <= 2048)
         require(window.rateHz.isFinite() && window.rateHz > 0)
+        require(window.vehicle.isNotBlank() && window.vehicle.length <= 64)
+        require(window.samples.first().timestampNs > 0)
         require(window.samples.zipWithNext().all { (previous, current) -> current.timestampNs > previous.timestampNs })
         val payload = JSONObject().put("schema", "setu.model.v1").put("rateHz", window.rateHz)
             .put("vehicle", window.vehicle).put("samples", JSONArray().apply {
@@ -54,18 +63,26 @@ class HttpModelProvider(endpoint: String) : ModelProvider {
             })
         val response = request("/v1/measurements", payload)
         require(response.optString("schema") == "setu.model.v1") { "Incompatible model response." }
-        if (response.optString("status") == "unavailable") return null
+        if (response.optString("status") == "unavailable") return ModelResult(reason = response.optString("reason", "No measurement available."))
+        require(!response.has("status")) { "Unknown model measurement status." }
+        require(response.get("tNs") is Long || response.get("tNs") is Int) { "Model timestamps must be integer nanoseconds." }
+        listOf("speedMps", "sigmaMps", "validity").forEach { field ->
+            require(response.get(field) is Number) { "Model $field must be a number." }
+        }
         val measurement = ModelMeasurement(response.getLong("tNs"), response.getDouble("speedMps"),
             response.getDouble("sigmaMps"), response.getDouble("validity"))
         require(measurement.speedMps.isFinite() && measurement.speedMps in 0.0..100.0)
         require(measurement.sigmaMps.isFinite() && measurement.sigmaMps > 0.0)
         require(measurement.validity.isFinite() && measurement.validity in 0.0..1.0)
         require(measurement.timestampNs in window.samples.first().timestampNs..window.samples.last().timestampNs)
-        return measurement
+        return ModelResult(measurement)
     }
 
-    private suspend fun request(path: String, payload: JSONObject? = null): JSONObject = withContext(Dispatchers.IO) {
+    private suspend fun request(path: String, payload: JSONObject? = null): JSONObject = coroutineScope {
+      suspendCancellableCoroutine { continuation ->
         val connection = URI(base + path).toURL().openConnection() as HttpURLConnection
+        continuation.invokeOnCancellation { connection.disconnect() }
+        launch(Dispatchers.IO) {
         try {
             connection.connectTimeout = 5000
             connection.readTimeout = 5000
@@ -89,9 +106,13 @@ class HttpModelProvider(endpoint: String) : ModelProvider {
                 }
                 output.toByteArray()
             }
-            JSONObject(response.toString(Charsets.UTF_8))
+            if (continuation.isActive) continuation.resume(JSONObject(response.toString(Charsets.UTF_8)))
+        } catch (error: Exception) {
+            if (continuation.isActive) continuation.resumeWithException(error)
         } finally {
             connection.disconnect()
         }
+        }
+      }
     }
 }

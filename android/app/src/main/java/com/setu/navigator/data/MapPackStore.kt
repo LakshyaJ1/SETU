@@ -21,7 +21,9 @@ data class MapRegion(val key: String, val id: String, val revision: Int, val nam
                      val bounds: List<Double>, val center: GeoPoint, val previewStart: GeoPoint, val previewLabel: String,
                      val places: List<Place>, val demoDestination: String, val source: String, val attribution: String,
                      val license: String, val sourceUrl: String, val dataTimestamp: String, val limitations: String,
-                     val sizeBytes: Long, val directory: File? = null, val assetDirectory: String? = null) {
+                     val sizeBytes: Long, val directory: File? = null, val assetDirectory: String? = null,
+                     val compressedAssets: Boolean = false, val cityBytes: Long? = null, val cityChecksum: String? = null,
+                     val roadChecksum: String? = null) {
     val bundled: Boolean get() = directory == null
     fun contains(point: GeoPoint) = point.latitude in bounds[0]..bounds[2] && point.longitude in bounds[1]..bounds[3]
 }
@@ -31,15 +33,27 @@ class MapPackStore(private val context: Context) {
     private val preferences = context.getSharedPreferences("setu-maps", Context.MODE_PRIVATE)
     val bundled = decode(JSONObject(context.assets.open("bundled-region.json").bufferedReader().use { it.readText() }), "bundled", null,
         context.assets.open("bengaluru.geojson").use { it.available().toLong() } + context.assets.open("bengaluru-roads.json").use { it.available().toLong() })
-    private val included = listOf(bundled, decode(
-        JSONObject(context.assets.open("regions/delhi/manifest.json").bufferedReader().use { it.readText() }), "bundled-delhi", null,
-        listOf("city.geojson", "roads.json").sumOf { name -> context.assets.open("regions/delhi/$name").use { it.available().toLong() } }
-    ).copy(assetDirectory = "regions/delhi"))
+    private val included = listOf(bundled, includedDelhi())
     private val mutableRegions = MutableStateFlow(included)
     val regions = mutableRegions.asStateFlow()
     private val mutableMap = MutableStateFlow(OfflineMap(context, bundled))
     val activeMap = mutableMap.asStateFlow()
-    private val fileLimits = mapOf("manifest.json" to 65_536L, "city.geojson" to 24L * 1024 * 1024, "roads.json" to 8L * 1024 * 1024)
+    private val fileLimits = mapOf("manifest.json" to 65_536L, "city.geojson" to 160L * 1024 * 1024, "roads.json" to 256L * 1024 * 1024)
+
+    private fun includedDelhi(): MapRegion {
+        val document = JSONObject(context.assets.open("regions/delhi/manifest.json").bufferedReader().use { it.readText() })
+        val compressed = document.optBoolean("compressedAssets")
+        val sizes = document.optJSONObject("uncompressedBytes")
+        val size = listOf("city.geojson", "roads.json").sumOf { name ->
+            if (compressed) requireNotNull(sizes).getLong(name) else context.assets.open("regions/delhi/$name").use { it.available().toLong() }
+        }
+        val cityBytes = if (compressed) requireNotNull(sizes).getLong("city.geojson") else null
+        val checksum = if (compressed) document.getJSONObject("sha256").getString("city.geojson") else null
+        require(cityBytes == null || cityBytes in 1..160L * 1024 * 1024)
+        require(checksum == null || checksum.matches(Regex("[a-f0-9]{64}")))
+        return decode(document, "bundled-delhi", null, size).copy(assetDirectory = "regions/delhi", compressedAssets = compressed,
+            cityBytes = cityBytes, cityChecksum = checksum)
+    }
 
     @Synchronized
     fun restore() {
@@ -84,7 +98,7 @@ class MapPackStore(private val context: Context) {
                     val count = source.read(buffer)
                     if (count < 0) break
                     size += count
-                    require(size <= 40L * 1024 * 1024) { "The map pack exceeds 40 MB." }
+                    require(size <= 200L * 1024 * 1024) { "The map pack exceeds 200 MB." }
                     output.write(buffer, 0, count)
                 }
             } }
@@ -121,8 +135,9 @@ class MapPackStore(private val context: Context) {
             require(mutableRegions.value.none { it.id == candidate.id && it.revision > candidate.revision }) { "A newer revision of this map is already installed." }
             verifyHashes(temporary)
             validateCity(File(temporary, "city.geojson"), candidate, checkpoint)
-            validateRoads(File(temporary, "roads.json"), checkpoint)
-            val map = OfflineMap(context, candidate)
+            val graph = CompiledRoadGraph.load(context, candidate, checkpoint)
+                ?: MapJson.graph(File(temporary, "roads.json").inputStream(), checkpoint)
+            val map = OfflineMap(context, candidate, graph)
             val demo = map.route(candidate.previewStart, candidate.places.single { it.id == candidate.demoDestination }.point)
             require(demo.points.size >= 2 && demo.distanceMeters >= 20) { "The map needs a connected preview route of at least 20 metres." }
             checkpoint()
@@ -155,7 +170,7 @@ class MapPackStore(private val context: Context) {
             connection.setRequestProperty("Accept-Encoding", "identity")
             require(connection.responseCode == 200) { "Download returned HTTP ${connection.responseCode}. Use a direct file URL." }
             val total = connection.contentLengthLong
-            require(total <= 40L * 1024 * 1024) { "The download exceeds 40 MB." }
+            require(total <= 200L * 1024 * 1024) { "The download exceeds 200 MB." }
             val digest = MessageDigest.getInstance("SHA-256")
             var received = 0L
             connection.inputStream.use { input -> file.outputStream().use { output ->
@@ -165,7 +180,7 @@ class MapPackStore(private val context: Context) {
                     val count = input.read(buffer)
                     if (count < 0) break
                     received += count
-                    require(received <= 40L * 1024 * 1024) { "The download exceeds 40 MB." }
+                    require(received <= 200L * 1024 * 1024) { "The download exceeds 200 MB." }
                     digest.update(buffer, 0, count)
                     output.write(buffer, 0, count)
                     progress(received, total)
@@ -214,7 +229,7 @@ class MapPackStore(private val context: Context) {
         require((0..3).all { coordinates.get(it) is Number }) { "Map bounds must be numbers." }
         val bounds = (0..3).map { coordinates.getDouble(it) }
         GeoPoint(bounds[0], bounds[1]); GeoPoint(bounds[2], bounds[3])
-        require(bounds[2] > bounds[0] && bounds[3] > bounds[1] && bounds[2] - bounds[0] <= 2 && bounds[3] - bounds[1] <= 2) { "Use a local region spanning at most two degrees." }
+        require(bounds[2] > bounds[0] && bounds[3] > bounds[1] && bounds[2] - bounds[0] <= 4 && bounds[3] - bounds[1] <= 4) { "Use a regional map spanning at most four degrees." }
         fun included(point: GeoPoint) = point.latitude in bounds[0]..bounds[2] && point.longitude in bounds[1]..bounds[3]
         val center = point(document.getJSONArray("center")).also { require(included(it)) }
         val preview = point(document.getJSONArray("previewStart")).also { require(included(it)) }
@@ -235,7 +250,9 @@ class MapPackStore(private val context: Context) {
         }
         val timestamp = text("dataTimestamp", 40).also { Instant.parse(it) }
         return MapRegion(key, id, revision, text("name"), text("summary", 300), bounds, center, preview, text("previewLabel", 80),
-            places, demo, text("source"), text("attribution", 80), text("license"), sourceUrl, timestamp, text("limitations", 500), size, directory)
+            places, demo, text("source"), text("attribution", 80), text("license"), sourceUrl, timestamp, text("limitations", 500), size, directory,
+            cityBytes = directory?.resolve("city.geojson")?.length(), cityChecksum = document.optJSONObject("sha256")?.optString("city.geojson"),
+            roadChecksum = document.optJSONObject("sha256")?.optString("roads.json"))
     }
 
     private fun point(coordinates: JSONArray): GeoPoint {
@@ -245,22 +262,20 @@ class MapPackStore(private val context: Context) {
     }
 
     private fun validateCity(file: File, region: MapRegion, checkpoint: () -> Unit) {
-        val document = document(file)
-        require(document.getString("type") == "FeatureCollection")
-        val features = document.getJSONArray("features")
-        require(features.length() in 1..80000) { "Unsupported number of map features." }
+        var featureCount = 0
+        var collectionType = ""
         val glyphRanges = context.assets.list("fonts/Noto Sans Regular").orEmpty().map { it.substringBefore('-').toInt() }.toSet()
         var points = 0
         var inside = false
         fun coordinates(values: JSONArray, depth: Int) {
             require(depth in 0..3)
-            if (depth == 0) { inside = region.contains(point(values)) || inside; points++; require(points <= 1000000); return }
+            if (depth == 0) { inside = region.contains(point(values)) || inside; points++; require(points <= 6_000_000); return }
             require(values.length() > 0) { "Map geometry cannot be empty." }
             for (index in 0 until values.length()) coordinates(values.getJSONArray(index), depth - 1)
         }
-        repeat(features.length()) { index ->
-            if (index % 100 == 0) checkpoint()
-            val feature = features.getJSONObject(index)
+        fun validate(feature: JSONObject) {
+            require(++featureCount <= 150_000) { "Unsupported number of map features." }
+            if (featureCount % 100 == 0) checkpoint()
             require(feature.getString("type") == "Feature")
             val properties = feature.getJSONObject("properties")
             val kind = properties.getString("kind")
@@ -281,37 +296,27 @@ class MapPackStore(private val context: Context) {
             }
             segments(values, depth)
         }
-        require(inside) { "The visual map has no coordinates inside its stated coverage." }
-    }
-
-    private fun validateRoads(file: File, checkpoint: () -> Unit) {
-        val roads = document(file).getJSONArray("roads")
-        require(roads.length() in 1..25000)
-        val nodes = mutableMapOf<Long, GeoPoint>()
-        val ways = mutableSetOf<Long>()
-        var count = 0
-        repeat(roads.length()) { index ->
-            if (index % 100 == 0) checkpoint()
-            val road = roads.getJSONObject(index)
-            require(ways.add(identifier(road.get("id")))) { "Duplicate road ID." }
-            require(road.optString("oneway", "no") in setOf("no", "yes", "1", "true", "-1")) { "Unsupported one-way value." }
-            require(road.optString("name", "Local road").length <= 200)
-            val ids = road.getJSONArray("nodes")
-            val coordinates = road.getJSONArray("coordinates")
-            require(ids.length() in 2..10000 && ids.length() == coordinates.length())
-            count += ids.length(); require(count <= 200000)
-            repeat(ids.length()) { position ->
-                val id = identifier(ids.get(position))
-                val point = point(coordinates.getJSONArray(position))
-                val previous = nodes.put(id, point)
-                require(previous == null || previous == point) { "A road node has conflicting coordinates." }
+        JsonReader(file.reader()).use { reader ->
+            val fields = mutableSetOf<String>()
+            reader.beginObject()
+            while (reader.hasNext()) {
+                val field = reader.nextName()
+                require(fields.add(field)) { "Duplicate map JSON field." }
+                when (field) {
+                    "type" -> collectionType = reader.nextString()
+                    "features" -> {
+                        reader.beginArray()
+                        while (reader.hasNext()) validate(MapJson.objectValue(reader))
+                        reader.endArray()
+                    }
+                    else -> MapJson.skip(reader)
+                }
             }
+            reader.endObject()
+            require(reader.peek() == JsonToken.END_DOCUMENT) { "Unexpected data after map JSON." }
         }
-    }
-
-    private fun identifier(value: Any): Long {
-        require(value is Int || value is Long) { "Road and node IDs must be integers." }
-        return (value as Number).toLong()
+        require(collectionType == "FeatureCollection" && featureCount > 0) { "The visual map needs a feature collection." }
+        require(inside) { "The visual map has no coordinates inside its stated coverage." }
     }
 
     private fun document(file: File): JSONObject {

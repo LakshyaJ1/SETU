@@ -1,0 +1,8 @@
+{
+  "scenario": "Synthetic acceleration, braking and turns through LiveEstimator\/JNI with disturbed compass; not measured road accuracy",
+  "gpsWithheldSeconds": 8,
+  "firstAlignmentSeconds": 6.2,
+  "maximumSyntheticErrorMeters": 0.31937680675305175,
+  "acceptedGpsDuringGap": 0,
+  "recoveryAccepted": true
+}

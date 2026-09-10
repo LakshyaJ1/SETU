@@ -1,5 +1,9 @@
 # Delhi map phone verification
 
+This is the original Delhi build, preserved as `dist/android/SETU-delhi-86ae140.apk`.
+The later sensor-fallback build has separate evidence in `../sensor-fallback/README.md`;
+the older screenshots and hashes below have not been relabelled.
+
 Verified on September 7, 2026, on an authorized USB-connected CPH2467 running
 Android 15 / API 35 / arm64-v8a, at 1080 × 2400 and font scale 1.
 `build-evidence.json` identifies the installed APK, map archive and actual checks.

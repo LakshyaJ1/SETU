@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.setu.navigator.LiveModelSessionTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-08T22:06:48.373Z" hostname="LAPTOP-02I5BMKR" time="0.182">
+  <properties/>
+  <testcase name="missingCapabilityAndUnavailableMeasurementKeepTheirReasons" classname="com.setu.navigator.LiveModelSessionTest" time="0.115"/>
+  <testcase name="delayedResponsesAreWithheldAndOnlyTheLatestWaitingWindowIsRetained" classname="com.setu.navigator.LiveModelSessionTest" time="0.008"/>
+  <testcase name="connectionFailuresDoNotEndTheStream" classname="com.setu.navigator.LiveModelSessionTest" time="0.01"/>
+  <testcase name="unavailableHealthNeverSendsSensorPayloads" classname="com.setu.navigator.LiveModelSessionTest" time="0.004"/>
+  <testcase name="closingCancelsInFlightWorkAndIgnoresLateResults" classname="com.setu.navigator.LiveModelSessionTest" time="0.041"/>
+  <testcase name="realAlignedWindowsReachProviderAndZeroValidityRemainsResearchOnly" classname="com.setu.navigator.LiveModelSessionTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -4,6 +4,8 @@ import com.setu.navigator.data.GeoPoint
 import com.setu.navigator.data.Pose
 import com.setu.navigator.data.appendTrackingPose
 import com.setu.navigator.data.positionSegments
+import com.setu.navigator.data.recordedPoseAt
+import com.setu.navigator.data.trajectoryDistance
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -48,5 +50,21 @@ class PositionTrackingTest {
             pose(7_500_000_000L, "Native inertial"), pose(8_000_000_000L, "Native inertial"))
         assertEquals(listOf(2, 2, 2), positionSegments(history).map { it.size })
         assertTrue(positionSegments(history.take(1)).isEmpty())
+    }
+
+    @Test
+    fun replayPreservesSensorProvenanceAndDoesNotInventAcrossGaps() {
+        val first = pose(1_000_000_000, "Native inertial").copy(filterRadius95Meters = 8.0)
+        val second = first.copy(point = GeoPoint(12.9754, 77.6068), timestampNs = 2_000_000_000, filterRadius95Meters = 12.0)
+        val recovered = second.copy(timestampNs = 7_000_000_000, source = "GPS", filterRadius95Meters = null)
+        val history = listOf(first, second, recovered)
+        val interpolated = requireNotNull(recordedPoseAt(history, 1_500_000_000))
+        assertEquals("Native inertial", interpolated.source)
+        assertEquals(12.0, interpolated.filterRadius95Meters!!, 0.0)
+        assertNull(recordedPoseAt(history, 3_000_000_000))
+        assertNull(recordedPoseAt(history, 0))
+        assertEquals(recovered, recordedPoseAt(history, recovered.timestampNs))
+        assertEquals(first.point.distanceTo(second.point), trajectoryDistance(history), 1e-9)
+        assertNull(recordedPoseAt(listOf(first, recovered.copy(timestampNs = 2_000_000_000)), 1_500_000_000))
     }
 }

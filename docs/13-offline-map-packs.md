@@ -24,12 +24,13 @@ A `.setumap` is a ZIP containing exactly three root-level regular files:
 | File | Maximum uncompressed size | Contents |
 |---|---|---|
 | `manifest.json` | 65,536 bytes | Metadata, named places and payload hashes |
-| `city.geojson` | 24 MiB | Local GeoJSON FeatureCollection |
-| `roads.json` | 8 MiB | Connected road-node graph |
+| `city.geojson` | 160 MiB | Local GeoJSON FeatureCollection |
+| `roads.json` | 256 MiB | Connected road-node graph |
 
-Imports and downloads are capped at 40 MiB compressed. Directories, extra files,
+Imports and downloads are capped at 200 MiB compressed. Directories, extra files,
 duplicate names, absolute paths and traversal names are rejected rather than
-normalised. JSON nesting is capped at 16 before constructing the object tree.
+normalised. JSON nesting is capped at 16; geometry and roads are read incrementally
+instead of constructing an object tree for the complete regional graph.
 Imports stage in app-private cache, validate before installation and atomically
 rename into an app-generated UUID directory. Failure or cancellation cleans
 that operation's staging data without replacing the selected map. Process-death
@@ -43,7 +44,7 @@ The manifest fields are shown in
   integer from 1 to 1,000,000.
 - `name`, `summary`, `previewLabel`: user-facing area and route-origin labels.
 - `bounds`: **south, west, north, east**. Latitude/longitude are degrees. A local
-  region spans no more than two degrees on either axis and cannot cross the
+  region spans no more than four degrees on either axis and cannot cross the
   antimeridian in this version.
 - `center`, `previewStart`: **longitude, latitude** pairs inside the bounds.
 - `places`: 2–2,000 entries with unique slug `id`, `name`, `detail` and `point`
@@ -58,9 +59,8 @@ The manifest fields are shown in
   digests. The bundled manifest is trusted as an application asset and does not
   need these payload fields; imported manifests do.
 
-`city.geojson` supports 1–80,000 features and at most 1,000,000 coordinate pairs.
-The Delhi-capable build raises this point budget from 600,000 without increasing
-the 24 MiB file limit; older APKs can reject the new Delhi distribution pack.
+`city.geojson` supports 1–150,000 features and at most 6,000,000 coordinate pairs.
+These are the NCR build's budgets; older APKs can reject its larger distribution pack.
 Feature properties use `kind` (`road`, `park`, `water`, `building`), optional
 `name` and optional `class`. Roads use LineString or MultiLineString; park, water
 and building areas use Polygon or MultiPolygon. Coordinates must be numeric,
@@ -74,14 +74,59 @@ Map labels must use the offline glyph ranges shipped in
 rejected; publishers can supply transliterated names. Full script coverage and
 per-pack glyph delivery remain open. Android UI text is separate from map glyphs.
 
-`roads.json` contains `roads`, an array of 1–25,000 ways. Each has a unique numeric
+`roads.json` contains `roads`, an array of 1–1,200,000 ways. Each has a unique numeric
 `id`, `nodes` (2–10,000 IDs), matching longitude/latitude `coordinates`, optional
 `name` and `oneway` (`no`, `yes`, `1`, `true`, `-1`). Shared node IDs must refer to
-identical coordinates. Total node references are capped at 200,000. The graph
+identical coordinates. Total node references are capped at 6,000,000; graph storage
+allows up to 4,000,000 nodes and 8,000,000 directed edges. Optional `nodeCount` and
+`edgeCount` metadata must precede `roads`; indexed node IDs are dense, starting at 1.
+The graph
 does not implement turn-restriction relations, live closures or full vehicle
 access rules. Publishers must not describe it as safety-validated driving data.
 
 ## Build a pack
+
+The NCR bundle uses deterministic `.gzip` source assets, `compressedAssets`,
+payload hashes and `uncompressedBytes` metadata. The suffix deliberately differs
+from `.gz`, which Android's asset merger expands and renames. The portable ZIP
+still contains the three ordinary JSON files described above.
+
+The map-stability update instead supplies drawing tiles in `city-tiles.zip` with
+`tiles.json` metadata; only roads retain the `.gzip` encoding. The full regional
+GeoJSON is not handed to MapLibre. Rendering of other legacy GeoJSON regions is
+capped at 32 MiB; a matching NCR payload can reuse the bundled tiles. The larger
+import/validation budgets do not imply unlimited whole-document rendering.
+
+The phone-reliability update adds an APK-bound per-tile inventory and prepares
+tiles in persistent private files rather than disposable cache storage. Every
+source open checks all required tile sizes and hashes; missing or corrupt tiles
+trigger verified re-extraction. See `20-phone-reliability.md` for the reproduced
+phone failure and repair contract. The drawing archive itself is unchanged.
+
+The routing preview additionally replaces NCR's `roads.json.gzip` with
+`roads.bin.gzip` plus `graph.json`. `python -m tools.build_road_graph <roads.json>
+<new-output-directory>` builds deterministic little-endian adjacency arrays from
+the same source, without fetching data. Pass `--compiled-graph <output-directory>`
+alongside `--vector-tiles` and `--android-assets` when bundling. Portable `.setumap`
+files retain the original JSON contract. Exact-checksum matching imported NCR
+packs may reuse the trusted bundled compiled graph; other imports still validate
+and load their JSON graph.
+
+Android expands and verifies the graph into private cache atomically, validates
+its structure, and maps read-only buffers instead of constructing millions of
+JSON objects and copying all graph arrays to Java heap. Warm loads still check
+the full SHA-256 and structure. Corrupt or cancelled preparation is not accepted.
+This is a versioned internal compiled cache, **not** the full FlatBuffers routing/
+curvature/turn-restriction format in the production architecture.
+
+Routing first tries the nearest directed road segments. Only if they are
+disconnected does it consider up to 256 alternative directed segments within
+250 metres, first at the destination, then at both endpoints. Access offsets
+participate in route selection but remain separate dashed links in the UI; they
+are not asserted to be drivable or used to invent a connecting road. Geometry,
+one-way directions and requested points are retained. This resolves disconnected
+destination spurs without changing the route's underlying road network. It does
+not add vehicle access rules, turn restrictions or live closures.
 
 Create a directory containing those three files; the packager fills in `sha256`.
 It uses only Python's standard library, performs no network request and refuses

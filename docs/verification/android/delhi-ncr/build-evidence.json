@@ -1,0 +1,96 @@
+{
+  "branch": "demo-mvp/position-tracking",
+  "baseCommit": "d566585",
+  "workingTreeIncludesUncommittedChanges": true,
+  "apk": {
+    "path": "dist/android/SETU-ncr-6780e53.apk",
+    "sha256": "6780e534c4e7fede7f597a8605e4b1db6424e01352fe8890e6231f966a7dabb2",
+    "bytes": 162702254,
+    "installedHashMatches": true,
+    "signatureVerified": true,
+    "zipalign16KiBPassed": true
+  },
+  "testApkSha256": "f4d7949d47ece343a50ec22988eb8c15f6da0c0d577f5761935eea905a1c4b0f",
+  "phone": {
+    "model": "CPH2467",
+    "androidVersion": "15",
+    "sdk": 35,
+    "abi": "arm64-v8a",
+    "connection": "authorized USB ADB",
+    "finalWifiEnabled": false,
+    "finalMobileDataEnabled": false,
+    "finalLocationEnabled": false,
+    "inspectedOriginalRecordingsUnchanged": 2,
+    "userDataCleared": false
+  },
+  "map": {
+    "name": "Delhi & NCR",
+    "revision": 2,
+    "boundsSouthWestNorthEast": [26.5, 75.25, 30.2, 78.75],
+    "administrativeBoundary": false,
+    "wholeIndiaIncluded": false,
+    "dataTimestamp": "2026-09-06T20:21:35Z",
+    "sourceBuild": "source-build.json",
+    "portablePack": "dist/maps/delhi-ncr-v2.setumap",
+    "portablePackBytes": 99345602,
+    "portablePackSha256": "e356a61ffc08b728c06ca82163d69a8c2d2654be90421e68a8dcf5d7594236ec",
+    "routableWays": 1039544,
+    "nodes": 3185592,
+    "directedEdges": 7255057,
+    "visualCoordinates": 5486225,
+    "places": 300,
+    "previewOrigin": "Public Naveen Shahdara area point, not a verified Kirti Mandir entrance",
+    "previewDestination": "Maharaja Agrasen Institute of Technology, Sector 22 Rohini",
+    "coldRoutePreparation": "Can take several minutes on the test phone; warm before presenting"
+  },
+  "validation": {
+    "assembleDebug": "passed",
+    "assembleDebugAndroidTest": "passed",
+    "jvmTests": {"tests": 32, "failures": 0, "errors": 0},
+    "pythonTests": {"tests": 46, "failures": 0},
+    "lint": {"errors": 0, "warnings": 16},
+    "pythonFormattingAndLint": "passed",
+    "finalPhoneInstrumentation": {
+      "reportedTests": 33,
+      "passed": 32,
+      "assumptionSkipped": 1,
+      "failures": 0,
+      "seconds": 5.294,
+      "log": "phone-regression-tests.log",
+      "skip": "Opt-in captured physical-sensor replay was not requested",
+      "scope": "Native/sensor, filter parity, storage, map validation and native file URI; excludes the previously passed large-graph test"
+    },
+    "ncrGraphRegression": {
+      "apkPath": "dist/android/SETU-ncr-routing-adcf28a.apk",
+      "apkSha256": "adcf28afc5de9d34d003afc579f262f8481f31c9ca63af7b33a53242924df669",
+      "testApkSha256": "2085b4bbe52f7f449cb9dd41f2ea0f713b5a2c7d64b090202cf1b9adc9b509f5",
+      "reportedTests": 33,
+      "passed": 32,
+      "assumptionSkipped": 1,
+      "failures": 0,
+      "seconds": 340.137,
+      "destinationsFromShahdara": ["MAIT", "Noida", "Ghaziabad", "Meerut"],
+      "log": "ncr-routing-adcf28a.log",
+      "note": "Same dataset and routing implementation as delivery; final application change corrects the native map URI"
+    },
+    "syntheticGpsMotionTest": {
+      "metrics": "gps-motion-alignment.json",
+      "gpsWithheldSeconds": 8,
+      "realRoadAccuracyClaim": false
+    },
+    "finalOfflineBasemapVisuallyObserved": true,
+    "blueRouteVisuallyObservedOnPreservedRoutingBuild": true,
+    "completeGpsFreeRoadJourneyVerified": false
+  },
+  "remainingLimits": {
+    "maximumGpsAgeSeconds": 10,
+    "maximumModeled95PercentRadiusMeters": 150,
+    "maximumImuGapMilliseconds": 100,
+    "limitsAreAccuracyGuarantees": false,
+    "requiresInitialGpsAndHeadingAlignment": true
+  },
+  "previousSensorFallbackApk": {
+    "path": "dist/android/SETU-sensor-fallback-9df37ec.apk",
+    "sha256": "9df37ec6b9a57fbd9af5d3725873d1068bce8549ecfcf7858f4ef917d4a78c95"
+  }
+}

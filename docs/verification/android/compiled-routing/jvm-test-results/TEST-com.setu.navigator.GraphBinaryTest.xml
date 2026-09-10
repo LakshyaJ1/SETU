@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.setu.navigator.GraphBinaryTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-09-08T19:46:08.138Z" hostname="LAPTOP-02I5BMKR" time="0.116">
+  <properties/>
+  <testcase name="mappedGraphPreservesGeometryDirectionsAndPartialSegmentRoutes" classname="com.setu.navigator.GraphBinaryTest" time="0.052"/>
+  <testcase name="invalidCountsCoordinatesLinksTargetsLengthsNamesAndTrailingDataFailClosed" classname="com.setu.navigator.GraphBinaryTest" time="0.055"/>
+  <testcase name="cancellationLeavesTheValidatedFileUntouched" classname="com.setu.navigator.GraphBinaryTest" time="0.008"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
