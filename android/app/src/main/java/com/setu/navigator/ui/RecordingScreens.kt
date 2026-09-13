@@ -51,11 +51,11 @@ fun RecordScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> U
     }
     Column(Modifier.fillMaxSize().imePadding()) {
       Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
-        PageHeader("Capture the road.", "Good navigation starts with real-world evidence.", action = {
+        PageHeader("Capture the road.", "Save a drive to replay it later, or to check how SETU held your position.", action = {
             IconButton(onClick = { model.overlay = "diagnostics" }) { Icon(Icons.Outlined.GraphicEq, "Open diagnostics") }
         })
         Column(Modifier.padding(horizontal = 24.dp)) {
-            Surface(shape = RoundedCornerShape(24.dp), color = MaterialTheme.colorScheme.primaryContainer) {
+            Surface(shape = SetuShape.card, color = MaterialTheme.colorScheme.primaryContainer) {
                 Column(Modifier.fillMaxWidth().padding(24.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Icon(if (recording) Icons.Outlined.FiberManualRecord else Icons.Outlined.RadioButtonChecked, null, Modifier.size(20.dp))
@@ -82,7 +82,7 @@ fun RecordScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> U
                 context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${context.packageName}")))
             }) { Text("Manage app permissions") }
             if (!recording) OutlinedTextField(name, { name = it.take(100) }, label = { Text("Drive name (optional)") },
-                placeholder = { Text("Evening loop, tunnel trial…") }, singleLine = true, shape = RoundedCornerShape(16.dp),
+                placeholder = { Text("Evening loop, tunnel trial…") }, singleLine = true, shape = SetuShape.action,
                 modifier = Modifier.fillMaxWidth().padding(top = 16.dp).testTag("recording-name"))
             InformationNote("Recordings stay on this phone. If enabled in Model integration, live IMU windows are shared with your server. Secure the phone and start before driving. Export is always your choice.")
             InformationNote("Recording with the screen off? Check Background recording in Settings first. Battery saver and background restrictions can pause sensor capture.")
@@ -94,7 +94,7 @@ fun RecordScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> U
             Button(onClick = {
                 if (recording) model.stopRecording() else withLocationPermission { model.startRecording(name.ifBlank { "My drive" }) }
             }, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag("record-toggle"),
-                shape = RoundedCornerShape(16.dp)) {
+                shape = SetuShape.action) {
                 Icon(if (recording) Icons.Outlined.Stop else Icons.Outlined.FiberManualRecord, null, Modifier.size(20.dp))
                 Spacer(Modifier.width(10.dp)); Text(if (recording) "Stop & save recording" else "Start recording")
             }
@@ -120,7 +120,7 @@ fun DiagnosticsScreen(model: SetuViewModel) {
     Column(Modifier.fillMaxSize()) {
         PageHeader("Under the hood", "The measurements behind your position.", onBack = { model.overlay = null })
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding().padding(horizontal = 24.dp)) {
-            Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.primaryContainer) {
+            Surface(shape = SetuShape.card, color = MaterialTheme.colorScheme.primaryContainer) {
                 Row(Modifier.fillMaxWidth().padding(22.dp), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
                         Text("CAPABILITY TIER", style = MaterialTheme.typography.labelMedium)
@@ -171,7 +171,7 @@ fun DiagnosticsScreen(model: SetuViewModel) {
                 }
             }
             OutlinedButton(onClick = { model.overlay = "models" }, modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
-                Text("Model integration")
+                Text("Research model server")
             }
             SectionTitle("Native estimator")
             val native by model.nativeEstimate.collectAsStateWithLifecycle()

@@ -1,0 +1,7 @@
+__pycache__/
+.venv*/
+download_requests.json
+data/
+setu-speed-v1/
+baseline-v3/
+*.zip

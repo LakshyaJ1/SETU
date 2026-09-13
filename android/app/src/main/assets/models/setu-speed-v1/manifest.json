@@ -1,0 +1,172 @@
+{
+  "schema": "setu.model-bundle.v1",
+  "version": "speed-real-20260914",
+  "created_utc": "2026-09-13T21:15:41Z",
+  "capabilities": [
+    "speed"
+  ],
+  "vehicles": [
+    "Car"
+  ],
+  "tier_min": "C",
+  "input_spec": {
+    "channels": [
+      "accel_x",
+      "accel_y",
+      "accel_z",
+      "gyro_x",
+      "gyro_y",
+      "gyro_z"
+    ],
+    "frame": "phone_body",
+    "units": {
+      "accel": "m/s^2 including gravity",
+      "gyro": "rad/s"
+    },
+    "window_samples": 400,
+    "canonical_rate_hz": 100.0,
+    "window_seconds": 4.0,
+    "conditioning": "Linear timestamp interpolation before model; PhysicalFeatures with exact first-sample EMA seed inside graph.",
+    "validated_source_rate_hz": 10.0,
+    "outputs": [
+      "nonnegative_speed_mps",
+      "log_variance_clipped_to_minus6_plus6_for_sigma"
+    ]
+  },
+  "input_spec_sha256": "d958083130405f23d159efe8d48edd29d0398cf1b8d9d1d7884f2c0a6b2f9e6e",
+  "sigma_scale": 1.3077728748321533,
+  "deployment_approved": false,
+  "evaluation": {
+    "trained_on": {
+      "source": "IO-VNBD",
+      "real_runs": 19,
+      "dataset_accepted_runs": 24,
+      "training_windows": 7471,
+      "synthetic_runs": 0
+    },
+    "test": {
+      "windows": 15902,
+      "mae_mps": 2.910102128982544,
+      "rmse_mps": 3.9047443866729736,
+      "p90_absolute_error_mps": 6.539746284484863,
+      "bias_mps": 0.4189532697200775,
+      "median_relative_error_moving": 0.3203684091567993,
+      "coverage": {
+        "1_sigma": 0.7431769588730978,
+        "2_sigma": 0.932712866306125,
+        "3_sigma": 0.9632750597409131
+      },
+      "mean_sigma_mps": 4.228586196899414,
+      "std_sigma_mps": 2.069762945175171
+    },
+    "validation_uncalibrated": {
+      "windows": 4716,
+      "mae_mps": 2.549466848373413,
+      "rmse_mps": 3.4892094135284424,
+      "p90_absolute_error_mps": 5.605525493621826,
+      "bias_mps": -0.7434957027435303,
+      "median_relative_error_moving": 0.2422943413257599,
+      "coverage": {
+        "1_sigma": 0.7449109414758269,
+        "2_sigma": 0.9378710771840543,
+        "3_sigma": 0.981340118744699
+      },
+      "mean_sigma_mps": 3.4444241523742676,
+      "std_sigma_mps": 1.5264748334884644
+    },
+    "constant_training_median_baseline": {
+      "windows": 15902,
+      "mae_mps": 3.746013641357422,
+      "rmse_mps": 4.716281414031982,
+      "p90_absolute_error_mps": 8.342607498168945,
+      "bias_mps": 1.6141645908355713,
+      "median_relative_error_moving": 0.2515796422958374
+    },
+    "beats_constant_baseline_mae": true,
+    "epochs_completed": 13,
+    "best_epoch": 4,
+    "training_seconds": 57.7941997051239,
+    "parameter_count": 84359,
+    "deployment_approved": false,
+    "limits": [
+      "Real input is approximately 10 Hz; interpolation to 100 Hz does not restore lost bandwidth.",
+      "One held-out driver, same car and country. No phone latency, two-wheeler, or navigation validation.",
+      "Wheel labels use a per-run GPS-calibrated radius; this calibrates evaluation labels, not model input."
+    ],
+    "synthetic_diagnostics": {
+      "rates": [
+        [
+          50.0,
+          4.630361557006836,
+          7.26301908493042
+        ],
+        [
+          100.0,
+          5.151001453399658,
+          7.26301908493042
+        ],
+        [
+          200.0,
+          5.151001453399658,
+          7.26301908493042
+        ],
+        [
+          400.0,
+          5.151001453399658,
+          7.26301908493042
+        ]
+      ],
+      "turns": {
+        "0.0": 4.592503070831299,
+        "0.05": 4.717344760894775,
+        "0.1": 4.2739739418029785,
+        "0.2": 4.348213195800781
+      },
+      "rate_spread": 0.10369574473505558,
+      "turn_worst_deviation": 0.06935850104301888,
+      "note": "Different sampling bandwidth from real 10 Hz training; diagnostic only."
+    },
+    "previous_export_error": "Traceback (most recent call last):\n  File \"/tmp/ipykernel_24/3979521347.py\", line 672, in <cell line: 0>\n    quant_out = lite_predict(quant_blob, sample)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ipykernel_24/3979521347.py\", line 636, in lite_predict\n    interpreter.invoke()\n  File \"/usr/local/lib/python3.12/dist-packages/tensorflow/lite/python/interpreter.py\", line 985, in invoke\n    self._interpreter.Invoke()\nRuntimeError: tensorflow/lite/kernels/div.cc:226 data[i] != 0 was not true.Node number 28 (DIV) failed to invoke.\n",
+    "export": {
+      "float_bytes": 435348,
+      "int8_bytes": 206848,
+      "keras_float_max_speed_difference_mps": 4.0531158447265625e-05,
+      "int8_parity_mean_mps": 0.026046868413686752,
+      "int8_parity_max_mps": 0.13091468811035156,
+      "int8_parity_p99_mps": 0.08737315982580185,
+      "int8_bias_mps": 0.025211120024323463,
+      "int8_log_variance_max_difference": 0.1596527099609375,
+      "notebook_parity_pass": true,
+      "project_parity_pass": false,
+      "local_cpu_single_thread_latency_ms": 0.7436649999908695,
+      "quantized_tensor_count": 6,
+      "quantisation": "dynamic-range int8 weights; float activations, feature preprocessing, input and output",
+      "runtime": {
+        "tensorflow": "2.21.0",
+        "numpy": "2.5.3",
+        "python": "3.12.9"
+      },
+      "source_checkpoint_sha256": "c6f81596a47722330c56561dba1dc2d59c0769700b901e24761e134f59b1d577",
+      "retrained": false
+    }
+  },
+  "files": {
+    "best.weights.h5": "d0fbb8f5d5aedbd8ece4ac2f366027117edf92457a4a5845c7c231c06b18df06",
+    "calibration.json": "bd233edd24d399ad26667c6cc996ca0c82b6970000a71a256ba75bf3d2761237",
+    "data_audit.json": "e3f0f01665ed04e348c35ae5164d0e9ca6202249bdd3de71979267fa1081873e",
+    "data_provenance.json": "a22473d66d6f14aede08d936811654ec21e945c63bb50e5a28633676736a6a6b",
+    "environment-freeze.txt": "ecdc6ea75835d585a669d3fd8397479fd7d53844d3c8c86a2c6c5e1d57883657",
+    "environment.json": "aaae11a38131115b29a7db37ea6e5ade9da03bdfbd40842ec38f863810fa9e5e",
+    "eval_report.json": "67a1d800196746276ca0fc920743e2e1d78ca3fc0af4784192488e0b6157bc57",
+    "export_parity.npz": "ffbcd04ed02b68bd697bdc4026ac12ecaa9bd7003e4e61fd9a7e794daeda9c4e",
+    "heldout_predictions.npz": "404afa0bd16158fcba8aac51876c00aba9a03264e15fe27a6a0f0d620651c820",
+    "speed_float.tflite": "01510d6a28505ec6ae00f41090792dbde1aa4fd29bed0dc71259bd34c6fa969a",
+    "speed_int8.tflite": "6e967f90ba4ee7c8e1570d32ec11e5406b37426c94580f599ac25f5f9af8b8aa",
+    "speed_model.keras": "c6f81596a47722330c56561dba1dc2d59c0769700b901e24761e134f59b1d577",
+    "splits.json": "b5184fc5782a0fa71af685434295ebd66f096e3af608e617a2e0d76e04b8e160",
+    "training_history.csv": "fae5f45a06807c19b347d49c06f5aca094634b9c24da8948a04abb84e0813757",
+    "training_history.json": "67fad3586ef3a1d50f91a888f08cd31b70fa9c3d229635926935e773d0886157",
+    "verification_windows.npz": "13b5f687d1f74f8d7d8687c4fc779ea1932abcd226586e32e80e7bba85180ad9"
+  },
+  "quantisation": "dynamic-range int8 weights; float activations, feature preprocessing, input and output"
+}

@@ -237,22 +237,35 @@ fun NavigationMap(
                 ((if (reserveControls) 112 else 72) * density).roundToInt(), bottomInset + (64 * density).roundToInt()), 700)
         }
     }
+    // The position sources update at the estimator's 10 Hz. Building their GeoJSON on the main
+    // thread put a marker document and a confidence ring through JSON assembly on every frame; the
+    // work now happens on Dispatchers.Default and only the source hand-off stays on main.
     LaunchedEffect(pose, nativeMap, styleReady) {
         val map = nativeMap ?: return@LaunchedEffect
         if (!styleReady) return@LaunchedEffect
-        map.style?.getSourceAs<GeoJsonSource>("vehicle")?.setGeoJson(pose?.let { pointFeature(it) } ?: emptyFeatures())
-        map.style?.getSourceAs<GeoJsonSource>("uncertainty")?.setGeoJson(pose?.takeIf { (it.filterRadius95Meters ?: it.accuracyMeters ?: 0.0) > 0 }?.let { confidenceFeature(it) } ?: emptyFeatures())
-    }
-    LaunchedEffect(trail, comparisonPose, nativeMap, styleReady) {
-        if (!styleReady) return@LaunchedEffect
-        val segments = JSONArray()
-        positionSegments(trail).forEach { segment ->
-            segments.put(JSONArray().apply { segment.forEach { put(JSONArray().put(it.longitude).put(it.latitude)) } })
+        val (vehicle, uncertainty) = withContext(Dispatchers.Default) {
+            (pose?.let { pointFeature(it) } ?: emptyFeatures()) to
+                (pose?.takeIf { (it.filterRadius95Meters ?: it.accuracyMeters ?: 0.0) > 0 }?.let { confidenceFeature(it) } ?: emptyFeatures())
         }
-        nativeMap?.style?.getSourceAs<GeoJsonSource>("tracked-path")?.setGeoJson(
+        map.style?.getSourceAs<GeoJsonSource>("vehicle")?.setGeoJson(vehicle)
+        map.style?.getSourceAs<GeoJsonSource>("uncertainty")?.setGeoJson(uncertainty)
+    }
+    // The trail carries up to 1,200 samples, so serialising it inline stalled a frame every time a
+    // new position was retained.
+    LaunchedEffect(trail, comparisonPose, nativeMap, styleReady) {
+        val map = nativeMap ?: return@LaunchedEffect
+        if (!styleReady) return@LaunchedEffect
+        val (path, reference) = withContext(Dispatchers.Default) {
+            val segments = JSONArray()
+            positionSegments(trail).forEach { segment ->
+                segments.put(JSONArray().apply { segment.forEach { put(JSONArray().put(it.longitude).put(it.latitude)) } })
+            }
             JSONObject().put("type", "Feature").put("properties", JSONObject()).put("geometry",
-                JSONObject().put("type", "MultiLineString").put("coordinates", segments)).toString())
-        nativeMap?.style?.getSourceAs<GeoJsonSource>("gps-reference")?.setGeoJson(comparisonPose?.let(::pointFeature) ?: emptyFeatures())
+                JSONObject().put("type", "MultiLineString").put("coordinates", segments)).toString() to
+                (comparisonPose?.let(::pointFeature) ?: emptyFeatures())
+        }
+        map.style?.getSourceAs<GeoJsonSource>("tracked-path")?.setGeoJson(path)
+        map.style?.getSourceAs<GeoJsonSource>("gps-reference")?.setGeoJson(reference)
     }
     LaunchedEffect(pose, followPosition, bottomInset, nativeMap, styleReady) {
         val map = nativeMap ?: return@LaunchedEffect

@@ -6,8 +6,15 @@ plugins {
 providers.gradleProperty("setuBuildDirectory").orNull?.let { layout.buildDirectory.set(file(it)) }
 
 android {
+    // The .tflite bundle is memory-mapped at load; compressing it in the APK would force a copy to
+    // the heap first.
+    androidResources { noCompress += "tflite" }
     namespace = "com.setu.navigator"
-    ndkVersion = "28.2.13676358"
+    // Normally resolved from the SDK by version. `-PsetuNdkPath=<dir>` points at an NDK installed
+    // outside the SDK, which is how this workspace builds when the SDK drive is short of space.
+    providers.gradleProperty("setuNdkPath").orNull
+        ?.let { ndkPath = it }
+        ?: run { ndkVersion = "28.2.13676358" }
     compileSdk {
         version = release(37) { minorApiLevel = 0 }
     }
@@ -54,9 +61,16 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation("org.maplibre.gl:android-sdk:13.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+    // On-device speed inference. REQ-F9 requires the model to run on the phone: a tunnel has no
+    // connectivity, so a remote endpoint cannot be the inference path.
+    implementation("org.tensorflow:tensorflow-lite:2.17.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     testImplementation("junit:junit:4.13.2")
+    // android.jar ships org.json as stubs that return null, so anything touching JSON silently
+    // degrades in a JVM unit test rather than failing. A real implementation on the test classpath
+    // lets those paths actually be tested.
+    testImplementation("org.json:json:20240303")
     androidTestImplementation(platform("androidx.compose:compose-bom:2026.08.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")

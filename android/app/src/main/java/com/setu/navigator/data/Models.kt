@@ -98,6 +98,15 @@ data class AppSettings(
     val modelEndpoint: String = "https://setu-proj-sih.duckdns.org",
     val modelSharingAllowed: Boolean = false,
     val nativePositioning: Boolean = false,
+    /**
+     * Run the bundled speed model on this phone.
+     *
+     * On by default, and deliberately not behind the sharing consent that guards the research
+     * server: nothing leaves the device, so there is nothing to consent to. REQ-F9 requires this
+     * path anyway - a tunnel has no connectivity, so a remote endpoint cannot be what carries a
+     * GNSS blackout.
+     */
+    val onDeviceSpeedModel: Boolean = true,
 )
 
 data class ModelConnection(
@@ -112,4 +121,21 @@ fun durationLabel(milliseconds: Long): String {
     val seconds = milliseconds / 1000
     return if (seconds >= 3600) "%d:%02d:%02d".format(seconds / 3600, seconds / 60 % 60, seconds % 60)
     else "%02d:%02d".format(seconds / 60, seconds % 60)
+}
+
+/**
+ * Default name for a new recording.
+ *
+ * Every recording used to be called "Position tracking", so Trips showed four identical rows and
+ * the list could not be read at a glance. Naming by time of day is what a person would write down
+ * themselves, and it stays distinguishable without asking them to type anything.
+ */
+fun defaultDriveName(atMs: Long = System.currentTimeMillis()): String {
+    val calendar = java.util.Calendar.getInstance().apply { timeInMillis = atMs }
+    return when (calendar.get(java.util.Calendar.HOUR_OF_DAY)) {
+        in 5..11 -> "Morning drive"
+        in 12..16 -> "Afternoon drive"
+        in 17..20 -> "Evening drive"
+        else -> "Night drive"
+    }
 }

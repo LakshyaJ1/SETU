@@ -3,7 +3,6 @@
 #include <Eigen/Core>
 #include <Eigen/Cholesky>
 #include <Eigen/LU>
-#include <Eigen/SVD>
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -34,11 +33,30 @@ Matrix3 left_jacobian(const Vector3& vector) {
     return Matrix3::Identity() + second * skew + third * skew * skew;
 }
 
+// Re-orthonormalisation of an attitude matrix.
+//
+// This previously ran a JacobiSVD, on every propagate and every update, so at 200 Hz the filter paid
+// a full Jacobi sweep per IMU sample. What that SVD actually computed was U*V^T: the orthogonal
+// polar factor of the input. Newton-Schulz iteration converges to the same factor quadratically,
+// costing two 3x3 products per step, and the residual test below skips the work entirely in the
+// common case where the input is already orthonormal to machine precision - which it is, because a
+// product of rotations stays orthonormal to ~1e-16 and drift only accumulates over many steps.
+//
+// The iteration preserves the sign of the determinant, and every entry point that can supply an
+// arbitrary matrix (setu_filter_reset) has already checked that the input is a rotation, so the
+// explicit determinant correction the SVD form needed has no work left to do. A non-finite input
+// fails the `error > kTolerance` test and is returned unchanged, for the caller's finiteness
+// checks to reject.
 Matrix3 normalize(const Matrix3& rotation) {
-    const Eigen::JacobiSVD<Matrix3> decomposition(rotation, Eigen::ComputeFullU | Eigen::ComputeFullV);
-    Matrix3 correction = Matrix3::Identity();
-    correction(2, 2) = (decomposition.matrixU() * decomposition.matrixV().transpose()).determinant();
-    return decomposition.matrixU() * correction * decomposition.matrixV().transpose();
+    constexpr double kTolerance = 1e-14;
+    Matrix3 result = rotation;
+    for (int iteration = 0; iteration < 8; ++iteration) {
+        const Matrix3 residual = result.transpose() * result - Matrix3::Identity();
+        const double error = residual.cwiseAbs().maxCoeff();
+        if (!(error > kTolerance)) break;
+        result = result * (Matrix3::Identity() - 0.5 * residual);
+    }
+    return result;
 }
 
 bool finite(const double* values, int count) {
@@ -47,12 +65,6 @@ bool finite(const double* values, int count) {
         if (!std::isfinite(values[index])) return false;
     }
     return true;
-}
-
-bool valid(const SetuFilter& filter) {
-    return filter.rotation.allFinite() && filter.position.allFinite() && filter.velocity.allFinite()
-        && filter.gyro_bias.allFinite() && filter.accel_bias.allFinite()
-        && filter.covariance.allFinite() && std::isfinite(filter.scale) && std::isfinite(filter.seconds);
 }
 
 template<int Dimension>
@@ -70,20 +82,29 @@ int apply(SetuFilter& filter, const Eigen::Matrix<double, Dimension, 1>& residua
     if (*nis > 16.0 * Dimension) return 0;
     const Eigen::Matrix<double, 16, Dimension> gain = decomposition.solve(jacobian * filter.covariance).transpose();
     const Vector16 correction = gain * residual;
-    SetuFilter updated = filter;
     const Matrix3 rotation_delta = exponential(correction.head<3>());
     const Matrix3 translation_delta = left_jacobian(correction.head<3>());
-    updated.rotation = normalize(rotation_delta * filter.rotation);
-    updated.velocity = rotation_delta * filter.velocity + translation_delta * correction.segment<3>(3);
-    updated.position = rotation_delta * filter.position + translation_delta * correction.segment<3>(6);
-    updated.gyro_bias += correction.segment<3>(9);
-    updated.accel_bias += correction.segment<3>(12);
-    updated.scale = std::clamp(updated.scale + correction(15), 0.5, 6.0);
+    // As in propagate: compute into locals, validate, then commit, so a rejected update costs no
+    // copy of the filter and an accepted one costs no second copy.
+    const Matrix3 next_rotation = normalize(rotation_delta * filter.rotation);
+    const Vector3 next_velocity = rotation_delta * filter.velocity + translation_delta * correction.segment<3>(3);
+    const Vector3 next_position = rotation_delta * filter.position + translation_delta * correction.segment<3>(6);
+    const Vector3 next_gyro_bias = filter.gyro_bias + correction.segment<3>(9);
+    const Vector3 next_accel_bias = filter.accel_bias + correction.segment<3>(12);
+    const double next_scale = std::clamp(filter.scale + correction(15), 0.5, 6.0);
     const Matrix16 projection = Matrix16::Identity() - gain * jacobian;
-    updated.covariance = projection * filter.covariance * projection.transpose() + gain * noise * gain.transpose();
-    updated.covariance = (0.5 * (updated.covariance + updated.covariance.transpose())).eval();
-    if (!valid(updated)) return -1;
-    filter = updated;
+    const Matrix16 corrected = projection * filter.covariance * projection.transpose() + gain * noise * gain.transpose();
+    const Matrix16 next_covariance = 0.5 * (corrected + corrected.transpose());
+    if (!next_rotation.allFinite() || !next_velocity.allFinite() || !next_position.allFinite()
+        || !next_gyro_bias.allFinite() || !next_accel_bias.allFinite() || !next_covariance.allFinite()
+        || !std::isfinite(next_scale)) return -1;
+    filter.rotation = next_rotation;
+    filter.velocity = next_velocity;
+    filter.position = next_position;
+    filter.gyro_bias = next_gyro_bias;
+    filter.accel_bias = next_accel_bias;
+    filter.scale = next_scale;
+    filter.covariance = next_covariance;
     return 1;
 }
 }
@@ -132,10 +153,12 @@ int setu_filter_propagate(SetuFilter* filter, const double acceleration[3], cons
     const Vector3 position = filter->position;
     const Matrix3 rotation_mid = rotation * exponential((gyro_mid - filter->gyro_bias) * (0.5 * seconds));
     const Vector3 acceleration_nav = rotation_mid * (accel_mid - filter->accel_bias) + gravity;
-    SetuFilter propagated = *filter;
-    propagated.rotation = normalize(rotation * exponential((gyro_mid - filter->gyro_bias) * seconds));
-    propagated.velocity += acceleration_nav * seconds;
-    propagated.position += velocity * seconds + 0.5 * acceleration_nav * seconds * seconds;
+    // Everything is computed into locals and committed only after validation, so a rejected sample
+    // still leaves the filter untouched without copying the whole 16x16 covariance twice per IMU
+    // sample the way the previous copy-mutate-assign form did.
+    const Matrix3 next_rotation = normalize(rotation * exponential((gyro_mid - filter->gyro_bias) * seconds));
+    const Vector3 next_velocity = velocity + acceleration_nav * seconds;
+    const Vector3 next_position = position + velocity * seconds + 0.5 * acceleration_nav * seconds * seconds;
     Matrix16 dynamics = Matrix16::Zero();
     dynamics.block<3, 3>(3, 0) = hat(gravity);
     dynamics.block<3, 3>(6, 3) = Matrix3::Identity();
@@ -153,14 +176,19 @@ int setu_filter_propagate(SetuFilter* filter, const double acceleration[3], cons
     noise.block<3, 3>(9, 9) = 5e-5 * 5e-5 * seconds * Matrix3::Identity();
     noise.block<3, 3>(12, 12) = 1.6e-3 * 1.6e-3 * seconds * Matrix3::Identity();
     noise(15, 15) = 2e-5 * 2e-5 * seconds;
-    propagated.covariance = transition * filter->covariance * transition.transpose() + noise;
-    propagated.covariance = (0.5 * (propagated.covariance + propagated.covariance.transpose())).eval();
-    propagated.seconds += seconds;
-    propagated.previous_accel = accel;
-    propagated.previous_gyro = gyro;
-    propagated.has_previous = true;
-    if (!valid(propagated)) return -1;
-    *filter = propagated;
+    const Matrix16 propagated_covariance = transition * filter->covariance * transition.transpose() + noise;
+    const Matrix16 next_covariance = 0.5 * (propagated_covariance + propagated_covariance.transpose());
+    const double next_seconds = filter->seconds + seconds;
+    if (!next_rotation.allFinite() || !next_velocity.allFinite() || !next_position.allFinite()
+        || !next_covariance.allFinite() || !std::isfinite(next_seconds)) return -1;
+    filter->rotation = next_rotation;
+    filter->velocity = next_velocity;
+    filter->position = next_position;
+    filter->covariance = next_covariance;
+    filter->seconds = next_seconds;
+    filter->previous_accel = accel;
+    filter->previous_gyro = gyro;
+    filter->has_previous = true;
     return 1;
 }
 
@@ -204,7 +232,36 @@ int setu_filter_update(SetuFilter* filter, int kind, const double* measurement,
             jacobian(0, 15) = -body_velocity.x() / (filter->scale * filter->scale);
             residual(0) = measurement[0] - body_velocity.x() / filter->scale;
         }
+    } else if (kind == SETU_BODY_AXIS) {
+        // Velocity along one arbitrary body axis. h(x) = a' * (R' * v).
+        //
+        // Under the right-invariant error this filter uses, the attitude terms of a body-frame
+        // velocity measurement cancel exactly - which is why the NHC branch above carries only a
+        // velocity block - so the Jacobian row is a' * R' = (R * a)'.
+        if (dimension != 1 || !finite(measurement + 1, 3)) return -1;
+        const Vector3 axis(measurement[1], measurement[2], measurement[3]);
+        const double length = axis.norm();
+        if (!(length > 0.99 && length < 1.01)) return -1;
+        const Vector3 unit = axis / length;
+        jacobian.block<1, 3>(0, 3) = (filter->rotation * unit).transpose();
+        residual(0) = measurement[0] - unit.dot(filter->rotation.transpose() * filter->velocity);
+    } else if (kind == SETU_VEHICLE_VELOCITY) {
+        if (dimension != 3 || !finite(measurement + 3, 9)) return -1;
+        const Matrix3 inverse_rotation = filter->rotation.transpose();
+        const Vector3 body_velocity = inverse_rotation * filter->velocity;
+        for (int index = 0; index < 3; ++index) {
+            const Vector3 axis(measurement[3 + index * 3], measurement[4 + index * 3], measurement[5 + index * 3]);
+            const double length = axis.norm();
+            if (!(length > 0.99 && length < 1.01)) return -1;
+            const Vector3 unit = axis / length;
+            jacobian.block<1, 3>(index, 3) = (filter->rotation * unit).transpose();
+            residual(index) = measurement[index] - unit.dot(body_velocity);
+        }
     } else return -1;
+    // Letting these constraints correct attitude through the covariance cross-terms was tried both
+    // ways: freezing the attitude part of the correction, on the reasoning that a body-frame
+    // velocity measurement carries no attitude information, made the tunnel profile markedly worse
+    // (median 237 m to 551 m). The cross-terms are doing useful work; leave them alone.
     if (dimension == 1) return apply<1>(*filter, residual.head<1>(), jacobian.topRows<1>(), standard_deviations, nis);
     if (dimension == 2) return apply<2>(*filter, residual.head<2>(), jacobian.topRows<2>(), standard_deviations, nis);
     return apply<3>(*filter, residual, jacobian, standard_deviations, nis);

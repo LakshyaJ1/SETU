@@ -1,1 +1,22 @@
+# Runtime assets are generated, checksum-verified artefacts. Git must never rewrite their bytes.
+#
+# With the default core.autocrlf=true on Windows, checkout converted the trailing newline of
+# tile-index.json from LF to CRLF. That added a single byte, so its SHA-256 no longer matched the
+# indexSha256 declared in tiles.json, OfflineTiles.prepare() failed its integrity check, and the
+# Delhi & NCR offline map reported "The active map could not be opened" on every Windows clone.
+# Twelve assets were affected the same way, including wmm2025.wmm, the magnetic-model coefficients
+# GeographicLib parses for heading initialisation.
+#
+# The integrity checks were right; the bytes reaching them were wrong. Marking the whole asset tree
+# binary is what keeps a verified artefact byte-identical from build machine to device.
+android/app/src/main/assets/** -text
+
+# Map packs and model bundles are verified the same way wherever they are staged.
+*.setumap  -text
+*.pbf      -text
+*.mbtiles  -text
+*.wmm      -text
+*.wmm.cof  -text
+
+# Large generated graph, stored out of line.
 android/app/src/main/assets/regions/delhi/roads.bin.gzip filter=lfs diff=lfs merge=lfs -text

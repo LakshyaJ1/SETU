@@ -62,21 +62,27 @@ fun DriveScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Un
         ?.let { if (fresh) it else it.copy(bearing = null, accuracyMeters = null, filterRadius95Meters = null) }
     val demoFrame = model.positioningDemo?.frameAt(model.replayPositionMs.toLong())
     val trail = model.positioningDemo?.trailAt(model.replayPositionMs.toLong()) ?: if (recording) model.trackingTrail else emptyList()
+    // Wording here is the first thing a person reads, and it used to be written for whoever built
+    // the filter: "Inertial estimate", "GPS + IMU", "Estimate withheld". Those name the mechanism
+    // rather than the situation. "Bridging" is the one state worth calling out by name, because it
+    // is the moment the app is doing the thing it exists to do.
+    val bridging = fresh && usingNative && (!locationEnabled || (native.gpsAgeSeconds ?: 0.0) > 2)
     val status = when {
-        demoFrame != null -> "Simulated sensors"
-        fresh && fix?.filterRadius95Meters != null && !locationEnabled -> "Sensor estimate"
+        demoFrame != null -> "Demo"
+        fresh && fix?.filterRadius95Meters != null && !locationEnabled -> "Bridging"
         model.replayTrip != null -> "Replay"
         !model.hasLocationPermission -> "Location off"
-        fresh && usingNative && fix?.mock == true -> "Test estimate"
-        fresh && usingNative -> if (!locationEnabled || native.gpsAgeSeconds!! > 2) "Inertial estimate" else "GPS + IMU"
-        fresh && fix?.mock == true -> "Test location"
-        fresh && settings.nativePositioning -> "GPS · calibrating"
-        fresh -> "GPS ready"
-        fix?.mock == true -> "Last test fix"
-        fix != null -> "Last GPS fix"
+        fresh && usingNative && fix?.mock == true -> "Mock location"
+        bridging -> "Bridging"
+        fresh && usingNative -> "Tracking"
+        fresh && fix?.mock == true -> "Mock location"
+        fresh && settings.nativePositioning -> "Calibrating"
+        fresh -> "Tracking"
+        fix?.mock == true -> "Last mock fix"
+        fix != null -> "Last known place"
         !locationEnabled -> "Location off"
-        settings.nativePositioning && native.status == "Estimate withheld" -> "Reacquire GPS"
-        else -> "Finding GPS"
+        settings.nativePositioning && native.status == "Estimate withheld" -> "Finding signal"
+        else -> "Finding signal"
     }
     Row(Modifier.fillMaxSize()) {
         BoxWithConstraints(Modifier.weight(1f).fillMaxHeight()) {
@@ -89,24 +95,36 @@ fun DriveScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Un
                 followPosition = following, onFollowInterrupted = { following = false })
             Row(Modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 20.dp, vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-                Surface(shape = RoundedCornerShape(18.dp), color = MaterialTheme.colorScheme.surface) {
+                // The wordmark is where someone looks to ask "what is this app?", so it answers.
+                Surface(onClick = { model.overlay = "about" }, shape = SetuShape.card,
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.testTag("about-setu")
+                        .semantics { contentDescription = "About SETU" }) {
                     Row(Modifier.padding(horizontal = 14.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                         BridgeMark(Modifier.size(30.dp))
                         if (LocalDensity.current.fontScale < 1.5f) Text("SETU", Modifier.padding(start = 8.dp), fontSize = 23.sp, fontWeight = FontWeight.ExtraBold, letterSpacing = 1.sp)
+                        Icon(Icons.Outlined.Info, null, Modifier.padding(start = 6.dp).size(15.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
                 Surface(onClick = { model.overlay = "diagnostics" }, shape = CircleShape,
                     color = MaterialTheme.colorScheme.surface, modifier = Modifier.testTag("status-diagnostics")) {
                     Row(Modifier.padding(horizontal = 14.dp, vertical = 14.dp), verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                        Icon(if (model.replayTrip != null) Icons.Outlined.PlayCircle else if (fresh) Icons.Outlined.GpsFixed else Icons.Outlined.LocationSearching,
+                        Icon(
+                            when {
+                                model.replayTrip != null || demoFrame != null -> Icons.Outlined.PlayCircle
+                                status == "Bridging" -> Icons.Outlined.Route
+                                fresh -> Icons.Outlined.GpsFixed
+                                else -> Icons.Outlined.LocationSearching
+                            },
                             null, Modifier.size(17.dp), tint = MaterialTheme.colorScheme.primary)
                         Text(status, style = MaterialTheme.typography.labelMedium)
                     }
                 }
             }
             val controls: @Composable () -> Unit = {
-                Surface(shape = RoundedCornerShape(18.dp), color = MaterialTheme.colorScheme.surface) {
+                Surface(shape = SetuShape.card, color = MaterialTheme.colorScheme.surface) {
                     Column(Modifier.width(52.dp)) {
                         IconButton(onClick = { map?.animateCamera(CameraUpdateFactory.zoomIn()) }) { Icon(Icons.Outlined.Add, "Zoom in") }
                         HorizontalDivider(Modifier.padding(horizontal = 12.dp))
@@ -155,13 +173,13 @@ private fun MapAttribution(model: SetuViewModel, modifier: Modifier = Modifier) 
     val maps by model.activeMap.collectAsStateWithLifecycle()
     Row(modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-        Surface(shape = RoundedCornerShape(6.dp), color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
+        Surface(shape = SetuShape.control, color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
             modifier = Modifier.clickable { model.overlay = "about" }) {
             Box(Modifier.heightIn(min = 48.dp).padding(horizontal = 8.dp), contentAlignment = Alignment.Center) {
                 Text(maps.region.attribution, style = MaterialTheme.typography.bodySmall, maxLines = 2)
             }
         }
-        Surface(shape = RoundedCornerShape(6.dp), color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
+        Surface(shape = SetuShape.control, color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
             modifier = Modifier.clickable { model.overlay = "offline" }) {
             Row(Modifier.heightIn(min = 48.dp).padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Outlined.OfflinePin, null, Modifier.size(13.dp))
@@ -224,7 +242,7 @@ private fun DriveTaskPanel(model: SetuViewModel, withLocationPermission: (() -> 
                     }
                     Button(onClick = { withLocationPermission(model::startDrive) },
                         enabled = (fresh && !outsideArea) || !model.hasLocationPermission,
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp).testTag("start-drive"), shape = RoundedCornerShape(16.dp)) {
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp).testTag("start-drive"), shape = SetuShape.action) {
                         Icon(Icons.Outlined.Navigation, null, Modifier.size(20.dp)); Spacer(Modifier.width(10.dp))
                         Text(when {
                             !model.hasLocationPermission -> "Enable location"
@@ -242,27 +260,46 @@ private fun DriveTaskPanel(model: SetuViewModel, withLocationPermission: (() -> 
                 }
                 else -> {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Your journey, in view.", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
+                        Text("Navigation that keeps going.", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
                         Icon(Icons.Outlined.NorthEast, null, Modifier.size(26.dp), tint = MaterialTheme.colorScheme.primary)
                     }
-                    Text("Follow your position. Keep a record of every journey.", Modifier.padding(top = 6.dp, bottom = 18.dp),
+                    Text("Offline maps, and a position that holds through tunnels and car parks.",
+                        Modifier.padding(top = 6.dp, bottom = 18.dp),
                         style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Button(onClick = { withLocationPermission(model::startTracking) },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp).heightIn(min = 54.dp).testTag("start-tracking"),
-                        shape = RoundedCornerShape(16.dp)) {
+                        shape = SetuShape.action) {
                         Icon(Icons.Outlined.MyLocation, null, Modifier.size(20.dp)); Spacer(Modifier.width(10.dp)); Text("Track my position")
                     }
                     FilledTonalButton(onClick = { model.overlay = "search" }, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag("destination-search"),
-                        shape = RoundedCornerShape(16.dp), contentPadding = PaddingValues(horizontal = 18.dp)) {
+                        shape = SetuShape.action, contentPadding = PaddingValues(horizontal = 18.dp)) {
                         Icon(Icons.Outlined.Search, null, Modifier.size(23.dp)); Spacer(Modifier.width(12.dp))
                         Text("Search a destination", Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
                         Icon(Icons.Outlined.ArrowForward, null, Modifier.size(20.dp))
                     }
-                    TextButton(onClick = model::openPositioningDemo, modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
-                        .heightIn(min = 48.dp).testTag("positioning-demo")) {
-                        Icon(Icons.Outlined.PlayCircle, null, Modifier.size(20.dp)); Spacer(Modifier.width(8.dp)); Text("Demo GPS loss & recovery")
+                    // The demos are how the product is shown to someone who is not moving, so they
+                    // are presented as a named part of the app rather than two trailing text links.
+                    Surface(shape = SetuShape.action, color = MaterialTheme.colorScheme.surfaceContainer,
+                        modifier = Modifier.fillMaxWidth().padding(top = 14.dp)) {
+                        Column(Modifier.padding(vertical = 6.dp)) {
+                            Text("See it in action", Modifier.padding(start = 18.dp, top = 10.dp, bottom = 2.dp),
+                                style = MaterialTheme.typography.titleMedium)
+                            ListItem(
+                                headlineContent = { Text("Watch a tunnel blackout") },
+                                supportingContent = { Text("GPS drops out and SETU bridges the gap") },
+                                leadingContent = { Icon(Icons.Outlined.PlayCircle, null) },
+                                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                modifier = Modifier.clickable(onClick = model::openPositioningDemo).testTag("positioning-demo"),
+                            )
+                            ListItem(
+                                headlineContent = { Text("Take a sample route") },
+                                supportingContent = { Text("Try the offline map and route planner") },
+                                leadingContent = { Icon(Icons.Outlined.Map, null) },
+                                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                modifier = Modifier.clickable(onClick = model::openDemo).testTag("open-demo"),
+                            )
+                        }
                     }
-                    TextButton(onClick = model::openDemo, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("open-demo")) { Text("Explore a sample route") }
                 }
             }
         }
@@ -336,7 +373,7 @@ private fun LiveTrackingPanel(model: SetuViewModel, fix: Pose?, fresh: Boolean, 
     },
         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     Button(onClick = model::stopTracking, modifier = Modifier.fillMaxWidth().padding(top = 12.dp)
-        .heightIn(min = 52.dp).testTag("stop-tracking"), shape = RoundedCornerShape(16.dp)) {
+        .heightIn(min = 52.dp).testTag("stop-tracking"), shape = SetuShape.action) {
         Icon(Icons.Outlined.Stop, null, Modifier.size(20.dp)); Spacer(Modifier.width(8.dp)); Text("Stop & save journey")
     }
 }
@@ -405,7 +442,7 @@ fun DestinationSearch(model: SetuViewModel) {
         PageHeader("Where are we headed?", onBack = { model.overlay = null })
         OutlinedTextField(query, { query = it }, modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp).testTag("place-query"),
             placeholder = { Text("Search ${maps.region.name}") }, singleLine = true,
-            leadingIcon = { Icon(Icons.Outlined.Search, null) }, shape = RoundedCornerShape(16.dp))
+            leadingIcon = { Icon(Icons.Outlined.Search, null) }, shape = SetuShape.action)
         Column(Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp)) {
             SectionTitle(if (query.isBlank()) "A few places to start" else "Matching places")
             val results = maps.places.filter { it.name.contains(query, ignoreCase = true) || it.detail.contains(query, ignoreCase = true) }

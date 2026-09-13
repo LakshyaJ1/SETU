@@ -28,6 +28,13 @@ data class NativeEstimate(
     val pairingDrops: Long = 0,
     val headingSource: String? = null,
     val calibrationHint: String? = null,
+    // Dead-reckoning constraint activity, so the diagnostics screen can show that the GNSS-denied
+    // path is actually engaging rather than leaving it to be inferred.
+    val zupts: Int = 0,
+    val nhcs: Int = 0,
+    val turnSpeedUpdates: Int = 0,
+    val spectralUpdates: Int = 0,
+    val spectralScale: Double? = null,
 ) {
     fun currentPose(nowNs: Long): Pose? = pose?.takeIf { nowNs >= it.timestampNs && nowNs - it.timestampNs <= 300_000_000L }
 }
@@ -94,34 +101,57 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
         return true
     }
 
+    // The sensor callbacks are single-threaded on the sensor HandlerThread and every consumer
+    // (ImuSynchronizer, CompassAlignment, MotionAlignment, the JNI bridge) copies what it keeps, so
+    // these scratch buffers replace four array allocations per callback.
+    private val vectorScratch = DoubleArray(3)
+    private val matrixScratch = FloatArray(9)
+    private val rotationScratch = DoubleArray(9)
+    private val trueRotationScratch = DoubleArray(9)
+
+    private fun copy(values: FloatArray): DoubleArray {
+        vectorScratch[0] = values[0].toDouble()
+        vectorScratch[1] = values[1].toDouble()
+        vectorScratch[2] = values[2].toDouble()
+        return vectorScratch
+    }
+
+    private fun rotationMatrix(values: FloatArray): DoubleArray {
+        SensorManager.getRotationMatrixFromVector(matrixScratch, values)
+        for (index in 0 until 9) rotationScratch[index] = matrixScratch[index].toDouble()
+        return rotationScratch
+    }
+
     fun sensor(type: Int, timestamp: Long, values: FloatArray, accuracy: Int) {
         if (timestamp <= 0 || timestamp > SystemClock.elapsedRealtimeNanos() || values.any { !it.isFinite() }) return
         when (type) {
             Sensor.TYPE_ACCELEROMETER -> {
-                val sample = values.take(3).map(Float::toDouble).toDoubleArray()
+                if (values.size < 3) return
+                val sample = copy(values)
                 compass.acceleration(timestamp, sample)
                 synchronizer.acceleration(timestamp, sample)
             }
             Sensor.TYPE_GYROSCOPE -> {
-                val sample = values.take(3).map(Float::toDouble).toDoubleArray()
+                if (values.size < 3) return
+                val sample = copy(values)
                 compass.gyroscope(timestamp, sample)
                 synchronizer.gyroscope(timestamp, sample)
             }
-            Sensor.TYPE_MAGNETIC_FIELD -> compass.magnetometer(timestamp, values.take(3).map(Float::toDouble).toDoubleArray(), accuracy)
+            Sensor.TYPE_MAGNETIC_FIELD -> {
+                if (values.size < 3) return
+                compass.magnetometer(timestamp, copy(values), accuracy)
+            }
             Sensor.TYPE_GAME_ROTATION_VECTOR -> {
                 if (values.size < 3) return
-                val matrix = FloatArray(9)
-                SensorManager.getRotationMatrixFromVector(matrix, values)
-                motion.rotation(timestamp, DoubleArray(9) { matrix[it].toDouble() })
+                motion.rotation(timestamp, rotationMatrix(values))
                 applyMotionAlignment(timestamp)
             }
             Sensor.TYPE_ROTATION_VECTOR -> {
                 headingAccuracyAvailable = values.size >= 5 && values[4] >= 0
                 if (!declination.isFinite() || values.size < 3) return
-                val matrix = FloatArray(9)
-                SensorManager.getRotationMatrixFromVector(matrix, values)
-                val trueRotation = trueNorthRotation(DoubleArray(9) { matrix[it].toDouble() }, declination)
-                val alignment = compass.evaluate(timestamp, trueRotation, values.getOrNull(4)?.toDouble(), accuracy) ?: return
+                val trueRotation = trueNorthRotation(rotationMatrix(values), declination, trueRotationScratch)
+                val reportedSigma = if (values.size >= 5) values[4].toDouble() else null
+                val alignment = compass.evaluate(timestamp, trueRotation, reportedSigma, accuracy) ?: return
                 if (!applyMotionAlignment(timestamp) && engine.attitude(timestamp, trueRotation, alignment.sigmaRadians) == 1) pendingHeadingSource = alignment.source
             }
         }
@@ -137,25 +167,45 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
         engine.gnss(pose)
     }
 
+    /**
+     * Forward speed from the on-device model.
+     *
+     * The measurement is produced on a background thread by the inference session, but the engine
+     * is only safe to touch from the sensor thread, so it is posted there rather than applied
+     * inline. A speed that cannot be applied is dropped, not queued: by the time a queue drained it
+     * would describe a moment the filter has already left.
+     */
+    fun speed(timestampNs: Long, speedMps: Double, sigmaMps: Double): Int =
+        engine.speed(timestampNs, speedMps, sigmaMps)
+
     override fun close() = engine.close()
 }
 
-internal fun trueNorthRotation(magnetic: DoubleArray, declination: Double): DoubleArray {
-    require(magnetic.size == 9 && magnetic.all(Double::isFinite) && declination.isFinite())
+internal fun trueNorthRotation(magnetic: DoubleArray, declination: Double): DoubleArray =
+    trueNorthRotation(magnetic, declination, DoubleArray(9))
+
+/** Writes the true-north rotation into [destination], which may not alias [magnetic]. */
+internal fun trueNorthRotation(magnetic: DoubleArray, declination: Double, destination: DoubleArray): DoubleArray {
+    require(magnetic.size == 9 && magnetic.all(Double::isFinite) && declination.isFinite() && destination.size == 9)
     val cosine = cos(declination)
     val sine = sin(declination)
-    return DoubleArray(9) { index ->
-        when (index / 3) {
+    for (index in 0 until 9) {
+        destination[index] = when (index / 3) {
             0 -> cosine * magnetic[index] + sine * magnetic[index + 3]
             1 -> -sine * magnetic[index - 3] + cosine * magnetic[index]
             else -> magnetic[index]
         }
     }
+    return destination
 }
 
 internal fun decodeNativeEstimate(values: DoubleArray, paired: Long = 0, dropped: Long = 0,
                                   headingAccuracyAvailable: Boolean? = null): NativeEstimate {
-    require(values.size == 20)
+    // Greater-or-equal, not equal: the native estimate array grows as the engine reports more, and
+    // pinning it to an exact length meant adding the dead-reckoning counters crashed every sensor
+    // callback with "Failed requirement" before the first frame was drawn. Older fields keep their
+    // indices, so reading a prefix stays correct.
+    require(values.size >= 20) { "native estimate is ${values.size} values, expected at least 20" }
     val mode = values[0].toInt()
     val available = mode in 2..3 && listOf(1, 2, 3, 5, 7, 8).all { values[it].isFinite() }
     val missingHeadingAccuracy = mode in 0..1 && headingAccuracyAvailable == false
@@ -168,6 +218,7 @@ internal fun decodeNativeEstimate(values: DoubleArray, paired: Long = 0, dropped
         else -> "Waiting for GPS + IMU"
     }
     val source = if (mode == 3) "Native inertial" else "Native GPS + IMU"
+    fun counter(index: Int) = if (values.size > index) values[index].takeIf(Double::isFinite)?.toInt() ?: 0 else 0
     val pose = if (available) Pose(GeoPoint(values[2], values[3]), values[5], values[6].takeIf(Double::isFinite),
         timestampNs = (values[1] * 1e9).toLong(), source = source, altitudeMeters = values[4].takeIf(Double::isFinite),
         mock = values[9].takeIf(Double::isFinite)?.let { it == 1.0 }, filterRadius95Meters = values[7]) else null
@@ -176,9 +227,13 @@ internal fun decodeNativeEstimate(values: DoubleArray, paired: Long = 0, dropped
     } else when (mode) {
         1 -> "Needs a recent rotation-vector heading with reported accuracy. No vehicle-forward constraint is assumed."
         4 -> "An IMU gap exceeded 100 ms. Waiting for fresh GPS and heading rather than integrating across it."
-        5 -> "More than 10 s without an accepted fix, or a 95% radius above 150 m. GPS remains the fallback."
-        2, 3 -> "Experimental phone-frame RI-EKF. WGS84 / WMM2025; no learned speed, road matching or mount constraints."
+        5 -> "The 95% radius passed 400 m, or there has been no fix for a very long time. GPS remains the fallback."
+        3 -> "Dead reckoning: vehicle axes estimated from motion, with non-holonomic, zero-velocity, turn-rate and axle-vibration speed constraints. Along-track distance is held by the vibration line; heading drifts over a long blackout. No road matching."
+        2 -> "Phone-frame RI-EKF fusing GPS with IMU. WGS84 / WMM2025. Vehicle axes and axle-vibration scale are calibrated while GPS is available."
         else -> "Needs synchronized accelerometer/gyro and GPS with a reported accuracy."
     }, pose, values[7].takeIf { available }, values[8].takeIf { available },
-        values[10].toInt(), values[11].toInt(), values[12].toInt(), values[13].toInt(), values[14].toInt(), paired, dropped)
+        values[10].toInt(), values[11].toInt(), values[12].toInt(), values[13].toInt(), values[14].toInt(), paired, dropped,
+        zupts = counter(20), nhcs = counter(21), turnSpeedUpdates = counter(22),
+        spectralUpdates = counter(24),
+        spectralScale = if (values.size > 25) values[25].takeIf { it.isFinite() && it > 0 } else null)
 }

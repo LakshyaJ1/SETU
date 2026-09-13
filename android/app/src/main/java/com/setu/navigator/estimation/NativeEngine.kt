@@ -16,6 +16,17 @@ class NativeEngine(directory: File) : AutoCloseable {
     }
 
     @Synchronized
+    /**
+     * Forward speed from the on-device learned model, applied along the vehicle axis the engine
+     * estimates for itself. Returns 1 applied, 0 gated (no mount yet, or the measurement is stale),
+     * -1 rejected.
+     */
+    fun speed(timestampNs: Long, speedMps: Double, sigmaMps: Double): Int {
+        if (!speedMps.isFinite() || !sigmaMps.isFinite() || sigmaMps <= 0) return -1
+        check(handle != 0L) { "Engine is closed" }
+        return nativeSpeed(handle, timestampNs, speedMps, sigmaMps)
+    }
+
     fun attitude(timestampNs: Long, rotation: DoubleArray, sigma: Double): Int {
         check(handle != 0L) { "Engine is closed" }
         return nativeAttitude(handle, timestampNs, rotation, sigma)
@@ -59,6 +70,7 @@ class NativeEngine(directory: File) : AutoCloseable {
     private external fun nativeDestroy(handle: Long)
     private external fun nativeImu(handle: Long, timestampNs: Long, acceleration: DoubleArray, angularRate: DoubleArray): Int
     private external fun nativeAttitude(handle: Long, timestampNs: Long, rotation: DoubleArray, sigma: Double): Int
+    private external fun nativeSpeed(handle: Long, timestampNs: Long, speed: Double, sigma: Double): Int
     private external fun nativeGnss(handle: Long, timestampNs: Long, values: DoubleArray): Int
     private external fun nativePoll(handle: Long): DoubleArray?
     private external fun nativeDeclination(handle: Long, year: Double, latitude: Double, longitude: Double, altitude: Double): Double

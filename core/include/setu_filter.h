@@ -16,7 +16,32 @@ enum SetuMeasurement {
     SETU_SVO_FREQUENCY = 5,
     SETU_POSITION_2D = 6,
     SETU_ALTITUDE = 7,
-    SETU_VELOCITY_2D = 8
+    SETU_VELOCITY_2D = 8,
+    /*
+     * Velocity along one arbitrary unit axis of the body frame.
+     *
+     * measurement = { target_speed, axis_x, axis_y, axis_z }, dimension = 1.
+     *
+     * SETU_NHC and SETU_ZUPT constrain the body axes themselves, which is only correct when the
+     * phone is mounted square to the vehicle. The mount is unknown and drifts, so the engine
+     * estimates the vehicle axes in phone-body coordinates and constrains those instead; this kind
+     * is what lets it do that without a second filter frame.
+     */
+    SETU_BODY_AXIS = 9,
+    /*
+     * The whole vehicle-frame velocity in one update.
+     *
+     * measurement = { target_lateral, target_forward, target_up,
+     *                 lateral_axis[3], forward_axis[3], up_axis[3] }, dimension = 3,
+     * where the axes are unit vectors in the phone body frame.
+     *
+     * Applying the non-holonomic constraints and the spectral speed as three separate scalar
+     * updates is not the same thing when the states are correlated: the filter could satisfy a
+     * disagreement about forward speed by rotating the velocity rather than rescaling it, which
+     * turned a 1 % speed bias into degrees of heading error. Sharing one innovation covariance
+     * removes that trade.
+     */
+    SETU_VEHICLE_VELOCITY = 10
 };
 
 enum { SETU_SNAPSHOT_SIZE = 279 };

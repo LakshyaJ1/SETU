@@ -46,10 +46,32 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     private val mutablePose = MutableStateFlow<Pose?>(null)
     val sensors = mutableSensors.asStateFlow()
     val pose = mutablePose.asStateFlow()
-    private val mutableLocationEnabled = MutableStateFlow(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+    private val mutableLocationEnabled = MutableStateFlow(anyProviderEnabled())
     val locationEnabled = mutableLocationEnabled.asStateFlow()
     @Volatile var record: ((JSONObject) -> Unit)? = null
+
+    /**
+     * Allocation-free destination for raw sensor samples. When set it replaces the per-callback
+     * `JSONObject` encoding; when null (unit tests, no active recording) the JSON path still runs so
+     * the observable behaviour is unchanged.
+     */
+    @Volatile var sensorSink: SensorSink? = null
     @Volatile var modelSession: LiveModelSession? = null
+
+    /**
+     * Hand a learned speed to the native estimator.
+     *
+     * Inference runs off the sensor thread, but the engine may only be touched from it, so the
+     * application is posted there. A measurement that arrives while the estimator is being torn
+     * down is dropped rather than queued: by the time a queue drained, it would be describing a
+     * moment the filter has already left.
+     */
+    fun applyModelSpeed(timestampNs: Long, speedMps: Double, sigmaMps: Double) {
+        val worker = thread ?: return
+        Handler(worker.looper).post {
+            if (thread === worker) liveEstimator?.speed(timestampNs, speedMps, sigmaMps)
+        }
+    }
     @Volatile private var thread: HandlerThread? = null
     private var lastPublishNs = 0L
     private var rateStartNs = 0L
@@ -58,6 +80,9 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     private var rate = 0.0
     private var acceleration = listOf(0f, 0f, 0f)
     private var angularRate = listOf(0f, 0f, 0f)
+    private val latestAcceleration = FloatArray(3)
+    private val latestAngularRate = FloatArray(3)
+    private val sampleScratch = DoubleArray(3)
     private var pressureValue: Float? = null
     private var locationStarted = false
 
@@ -87,7 +112,16 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     }
 
     fun hasLocationPermission() = context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-    fun isLocationEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    fun isLocationEnabled() = anyProviderEnabled()
+
+    // "Location is on" means any provider can answer, not specifically the satellite one. Keying
+    // this to GPS_PROVIDER alone reported the service as off whenever the user had chosen
+    // battery-saving location mode.
+    private fun anyProviderEnabled(): Boolean =
+        listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER)
+            .any { provider -> runCatching { locationManager.isProviderEnabled(provider) }.getOrDefault(false) } ||
+            (android.os.Build.VERSION.SDK_INT >= 31 &&
+                runCatching { locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER) }.getOrDefault(false))
 
     @Synchronized
     fun start() {
@@ -113,23 +147,80 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
                     mutableNative.value = NativeEstimate("Native initialization failed", "Could not load the packaged geophysics data. GPS remains available.")
                 }
             }
-            listOfNotNull(accelerometer, gyroscope, pressure, magnetometer, rotationVector, gameRotationVector).forEach { sensor ->
-                sensorManager.registerListener(this, sensor, 5000, handler)
+            // Only the inertial pair needs the full rate. Requesting 200 Hz from the magnetometer
+            // and both fused rotation vectors doubled the callback volume and made Android run its
+            // orientation fusion 400 times a second, for channels that seed attitude and check
+            // compass health at a few hertz. The compass freshness checks allow 100 ms, so 50 Hz
+            // keeps every existing gate satisfied with a wide margin.
+            listOfNotNull(accelerometer, gyroscope).forEach { sensor ->
+                sensorManager.registerListener(this, sensor, INERTIAL_PERIOD_US, handler)
             }
+            listOfNotNull(magnetometer, rotationVector, gameRotationVector).forEach { sensor ->
+                sensorManager.registerListener(this, sensor, ATTITUDE_PERIOD_US, handler)
+            }
+            pressure?.let { sensorManager.registerListener(this, it, BAROMETER_PERIOD_US, handler) }
         }
         startLocation()
     }
 
+    /**
+     * Providers to subscribe to, best first.
+     *
+     * Only GPS_PROVIDER used to be requested. That is the raw satellite provider: outdoors with a
+     * warm almanac it is quick, but from cold, indoors, or in a street of tall buildings its first
+     * fix takes minutes and may never arrive, which is why the app could sit on "Finding GPS" for
+     * a quarter of an hour with location switched on and working. The fused provider answers in a
+     * second or two from Wi-Fi and cell, and the platform upgrades it to satellite quality as soon
+     * as that is available.
+     */
+    private fun locationProviders(): List<String> = buildList {
+        if (android.os.Build.VERSION.SDK_INT >= 31) add(LocationManager.FUSED_PROVIDER)
+        add(LocationManager.GPS_PROVIDER)
+        add(LocationManager.NETWORK_PROVIDER)
+    }.filter { provider -> runCatching { locationManager.isProviderEnabled(provider) }.getOrDefault(false) }
+
     @Suppress("MissingPermission")
     private fun startLocation() {
         if (locationStarted || !hasLocationPermission()) return
+        val main = Looper.getMainLooper()
+        val providers = locationProviders()
+        if (providers.isEmpty()) return
         try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 0f, this, Looper.getMainLooper())
-            locationManager.registerGnssStatusCallback(satellites, Handler(Looper.getMainLooper()))
-            locationManager.registerGnssMeasurementsCallback(rawGnss, Handler(Looper.getMainLooper()))
+            providers.forEach { provider ->
+                runCatching { locationManager.requestLocationUpdates(provider, 1000L, 0f, this, main) }
+            }
+            // Raw GNSS and satellite status only exist on the satellite provider, and only matter
+            // for the recorded log and the health readout, so a failure here must not stop the
+            // position updates above.
+            runCatching { locationManager.registerGnssStatusCallback(satellites, Handler(main)) }
+            runCatching { locationManager.registerGnssMeasurementsCallback(rawGnss, Handler(main)) }
             locationStarted = true
-            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)?.let { location ->
-                if (SystemClock.elapsedRealtimeNanos() - location.elapsedRealtimeNanos in 0 until 30_000_000_000L) onLocationChanged(location)
+
+            // Show something immediately. The old code looked only at the satellite provider and
+            // discarded anything over 30 s old, so on a normal cold start it almost always found
+            // nothing and the screen stayed empty until a satellite fix landed. A minutes-old fix
+            // is a far better answer than no answer: it is marked stale by Pose.isFresh, so the UI
+            // already labels it "Last GPS fix" rather than claiming it is current.
+            providers.asSequence()
+                .mapNotNull { provider -> runCatching { locationManager.getLastKnownLocation(provider) }.getOrNull() }
+                .filter { location ->
+                    val age = SystemClock.elapsedRealtimeNanos() - location.elapsedRealtimeNanos
+                    age in 0 until 600_000_000_000L
+                }
+                .minByOrNull { location -> location.accuracy.takeIf { location.hasAccuracy() } ?: Float.MAX_VALUE }
+                ?.let(::onLocationChanged)
+
+            // Actively drive one fresh fix rather than waiting for the periodic stream to produce
+            // its first sample, which is what makes the difference between a few seconds and a few
+            // minutes on a cold start.
+            if (android.os.Build.VERSION.SDK_INT >= 30) {
+                providers.forEach { provider ->
+                    runCatching {
+                        locationManager.getCurrentLocation(provider, null, context.mainExecutor) { location ->
+                            if (location != null) onLocationChanged(location)
+                        }
+                    }
+                }
             }
         } catch (_: SecurityException) {
             locationStarted = false
@@ -157,12 +248,20 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
 
     override fun onSensorChanged(event: SensorEvent) {
         if (Looper.myLooper() != thread?.looper) return
-        liveEstimator?.sensor(event.sensor.type, event.timestamp, event.values, event.accuracy)
+        val values = event.values
+        liveEstimator?.sensor(event.sensor.type, event.timestamp, values, event.accuracy)
         sampleCount++
+        // Nothing on this path may allocate: it runs for every callback of five sensors, so roughly
+        // a thousand times a second on a 200 Hz phone. Latest values are copied into reusable
+        // scratch arrays and only turned into lists at the 10 Hz publish below.
         val kind = when (event.sensor.type) {
             Sensor.TYPE_ACCELEROMETER -> {
-                acceleration = event.values.take(3)
-                modelSession?.acceleration(event.timestamp, event.values.take(3).map(Float::toDouble).toDoubleArray())
+                if (values.size < 3) return
+                latestAcceleration[0] = values[0]; latestAcceleration[1] = values[1]; latestAcceleration[2] = values[2]
+                modelSession?.let { session ->
+                    sampleScratch[0] = values[0].toDouble(); sampleScratch[1] = values[1].toDouble(); sampleScratch[2] = values[2].toDouble()
+                    session.acceleration(event.timestamp, sampleScratch)
+                }
                 if (rateStartNs == 0L) rateStartNs = event.timestamp
                 rateSamples++
                 val span = event.timestamp - rateStartNs
@@ -174,20 +273,28 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
                 "accelerometer"
             }
             Sensor.TYPE_GYROSCOPE -> {
-                angularRate = event.values.take(3)
-                modelSession?.gyroscope(event.timestamp, event.values.take(3).map(Float::toDouble).toDoubleArray())
+                if (values.size < 3) return
+                latestAngularRate[0] = values[0]; latestAngularRate[1] = values[1]; latestAngularRate[2] = values[2]
+                modelSession?.let { session ->
+                    sampleScratch[0] = values[0].toDouble(); sampleScratch[1] = values[1].toDouble(); sampleScratch[2] = values[2].toDouble()
+                    session.gyroscope(event.timestamp, sampleScratch)
+                }
                 "gyroscope"
             }
-            Sensor.TYPE_PRESSURE -> { pressureValue = event.values.firstOrNull(); "barometer" }
+            Sensor.TYPE_PRESSURE -> { pressureValue = values.firstOrNull(); "barometer" }
             Sensor.TYPE_MAGNETIC_FIELD -> "magnetometer"
             Sensor.TYPE_ROTATION_VECTOR -> "rotation_vector"
             Sensor.TYPE_GAME_ROTATION_VECTOR -> "game_rotation_vector"
             else -> return
         }
-        record?.invoke(JSONObject().put("type", kind).put("tNs", event.timestamp)
-            .put("values", JSONArray(event.values.toList())).put("accuracy", event.accuracy))
+        val sink = sensorSink
+        if (sink != null) sink.sensor(kind, event.timestamp, values, values.size, event.accuracy)
+        else record?.invoke(JSONObject().put("type", kind).put("tNs", event.timestamp)
+            .put("values", JSONArray(values.toList())).put("accuracy", event.accuracy))
         if (event.timestamp - lastPublishNs >= 100_000_000L) {
             lastPublishNs = event.timestamp
+            acceleration = listOf(latestAcceleration[0], latestAcceleration[1], latestAcceleration[2])
+            angularRate = listOf(latestAngularRate[0], latestAngularRate[1], latestAngularRate[2])
             mutableSensors.update { previous -> previous.copy(
                 accelerometer = acceleration, gyroscope = angularRate, pressure = pressureValue,
                 achievedHz = rate, sampleCount = sampleCount, lastSampleNs = event.timestamp,
@@ -199,26 +306,42 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
         val current = locationPose(location, SystemClock.elapsedRealtimeNanos()) ?: return
         if (current.timestampNs <= (mutablePose.value?.timestampNs ?: 0L)) return
         mutablePose.value = current
-        thread?.let { worker -> Handler(worker.looper).post { if (thread == worker) liveEstimator?.gnss(current, location.time) } }
+        // A Wi-Fi or cell fix is worth showing - it answers "roughly where am I" in a second - but
+        // it is not worth fusing: at a few hundred metres it would drag the filter around and undo
+        // the dead-reckoning it is supposed to anchor. The engine rejects anything worse than 100 m
+        // outright; this keeps the estimator on fixes that are actually satellite-grade.
+        val usable = current.accuracyMeters?.let { it <= ESTIMATOR_ACCURACY_LIMIT_METRES } == true
+        if (usable) {
+            thread?.let { worker -> Handler(worker.looper).post { if (thread == worker) liveEstimator?.gnss(current, location.time) } }
+        }
         record?.invoke(TripStore.encodePose(current))
     }
 
     override fun onProviderDisabled(provider: String) {
-        if (provider == LocationManager.GPS_PROVIDER) {
-            mutableLocationEnabled.value = false
-            mutablePose.value = null
-            record?.invoke(JSONObject().put("type", "location_state").put("tNs", SystemClock.elapsedRealtimeNanos()).put("enabled", false))
-        }
+        val enabled = anyProviderEnabled()
+        if (mutableLocationEnabled.value == enabled) return
+        mutableLocationEnabled.value = enabled
+        if (!enabled) mutablePose.value = null
+        record?.invoke(JSONObject().put("type", "location_state").put("tNs", SystemClock.elapsedRealtimeNanos()).put("enabled", enabled))
     }
 
     override fun onProviderEnabled(provider: String) {
-        if (provider == LocationManager.GPS_PROVIDER) {
-            mutableLocationEnabled.value = true
-            record?.invoke(JSONObject().put("type", "location_state").put("tNs", SystemClock.elapsedRealtimeNanos()).put("enabled", true))
-        }
+        val enabled = anyProviderEnabled()
+        if (mutableLocationEnabled.value == enabled) return
+        mutableLocationEnabled.value = enabled
+        record?.invoke(JSONObject().put("type", "location_state").put("tNs", SystemClock.elapsedRealtimeNanos()).put("enabled", enabled))
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
+
+    private companion object {
+        // Satellite fixes are typically 3-10 m; network fixes are hundreds. Anything coarser than
+        // this is shown to the user but never fused.
+        const val ESTIMATOR_ACCURACY_LIMIT_METRES = 35.0
+        const val INERTIAL_PERIOD_US = 5_000    // 200 Hz: accelerometer and gyroscope
+        const val ATTITUDE_PERIOD_US = 20_000   // 50 Hz: magnetometer and rotation vectors
+        const val BAROMETER_PERIOD_US = 100_000 // 10 Hz: pressure
+    }
 }
 
 internal fun locationPose(location: Location, nowNs: Long): Pose? {

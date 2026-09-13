@@ -1,0 +1,29 @@
+{
+  "integrity": "pass",
+  "files_verified": 16,
+  "keras_load_and_inference": "pass",
+  "heldout_metric_recalculation": "pass",
+  "test_mae_mps": 2.910102128982544,
+  "test_rmse_mps": 3.9047443866729736,
+  "local_tensorflow": "2.21.0",
+  "local_numpy": "2.5.3",
+  "keras_local_vs_kaggle_max_speed_difference_mps": 8.58306884765625e-06,
+  "keras_local_vs_kaggle_max_sigma_difference_mps": 5.7220458984375e-06,
+  "keras_local_vs_export_reference_max_difference": 4.76837158203125e-06,
+  "speed_float.tflite": {
+    "load_and_inference": "pass",
+    "shape": [
+      32,
+      2
+    ],
+    "local_vs_export_reference_max_difference": 0.0
+  },
+  "speed_int8.tflite": {
+    "load_and_inference": "pass",
+    "shape": [
+      32,
+      2
+    ],
+    "local_vs_export_reference_max_difference": 0.0
+  }
+}

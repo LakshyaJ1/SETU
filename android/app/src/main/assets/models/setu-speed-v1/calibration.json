@@ -1,0 +1,10 @@
+{
+  "sigma_scale": 1.3077728748321533,
+  "fitted_on": "driver B second time block",
+  "test_coverage": {
+    "1_sigma": 0.7431769588730978,
+    "2_sigma": 0.932712866306125,
+    "3_sigma": 0.9632750597409131
+  },
+  "gate_g4_pass": false
+}

@@ -1,0 +1,1585 @@
+{
+  "tensorflow": "2.20.0",
+  "numpy": "2.0.2",
+  "gpu": [
+    "PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')"
+  ],
+  "data_commit": "118939602e3422d47b8ab0807b623751c3ac135b",
+  "files": [
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-M.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e3f26432d584fdb8ca38ec0c65059218fb038b1b",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/e3f26432d584fdb8ca38ec0c65059218fb038b1b"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-S1.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c73e7516318633cde9c51e3b37e19df6c97eb0af",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/c73e7516318633cde9c51e3b37e19df6c97eb0af"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-S2.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f441430e780dc96fa9d8fb11e1ae8eb3a0bebb0d",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/f441430e780dc96fa9d8fb11e1ae8eb3a0bebb0d"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-S3a.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3268f7eefd367f14f73f25d117d73655b288a2ff",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/3268f7eefd367f14f73f25d117d73655b288a2ff"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-S3b.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1fa2eb26bcabadbdd7ddad2b544f0b78d8329b25",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/1fa2eb26bcabadbdd7ddad2b544f0b78d8329b25"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-S3c.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8acedfc83bb4a2dc59837d2fb52aea7babe1db41",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/8acedfc83bb4a2dc59837d2fb52aea7babe1db41"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-S4.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40268767c17b5c2d8a9a0f72a507bf4843341046",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/40268767c17b5c2d8a9a0f72a507bf4843341046"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vfa01.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "79971f201f632bda223e4cfcf56242e3a4a33347",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/79971f201f632bda223e4cfcf56242e3a4a33347"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vfa02.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a83539eb18ccd502d185347447a297a26406ef4c",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/a83539eb18ccd502d185347447a297a26406ef4c"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta10.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ee3ab9c2c90e8143b0c22da6f55ea9ba769c4e21",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/ee3ab9c2c90e8143b0c22da6f55ea9ba769c4e21"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta11.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1619e6b09128949528dbad43c8562b64d9b96c8b",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/1619e6b09128949528dbad43c8562b64d9b96c8b"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta12.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "da9a266190fd089930765e14f216d97552751b90",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/da9a266190fd089930765e14f216d97552751b90"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta13.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d8f9d53384e2c185f72b3ae1a4a39898648cfe53",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/d8f9d53384e2c185f72b3ae1a4a39898648cfe53"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta14.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6590ecc92dfa125c2431fd13bae13e4c51fa9d0b",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/6590ecc92dfa125c2431fd13bae13e4c51fa9d0b"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta15.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bc15da01b2b4d995ed95ee969182c01513964d06",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/bc15da01b2b4d995ed95ee969182c01513964d06"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta16.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "850481cef81ea4786a537133c751898fa9f61a60",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/850481cef81ea4786a537133c751898fa9f61a60"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta17.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "63c395743e5599c9bcaa0fb6e55b9a413b18fb75",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/63c395743e5599c9bcaa0fb6e55b9a413b18fb75"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta19.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "37ca334831a670164daea0b21600dd82be06346a",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/37ca334831a670164daea0b21600dd82be06346a"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta1a.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d59b2fbe52c04639df42934e2cd3ec81ff34017",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/7d59b2fbe52c04639df42934e2cd3ec81ff34017"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta1b.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eed3e4015cbeadad830cc80665a72c3a6d8cbf6e",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/eed3e4015cbeadad830cc80665a72c3a6d8cbf6e"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta2.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "210a7f67270ed44a5344333efd4517d2bdad0881",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/210a7f67270ed44a5344333efd4517d2bdad0881"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta20.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "28ab374f13c21b9e61095d2a980b03f20df224fc",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/28ab374f13c21b9e61095d2a980b03f20df224fc"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta21.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "992853f5d227608c347cb07955345bcb3435887a",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/992853f5d227608c347cb07955345bcb3435887a"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta22.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2650591715e7f8fd667a494c07e83112d6e7e5e0",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/2650591715e7f8fd667a494c07e83112d6e7e5e0"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta23.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "26af7a7b5da24179b95db73b1f5f998963894be3",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/26af7a7b5da24179b95db73b1f5f998963894be3"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta24.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c5d95cdb2b0c5e055561f22a71b9533478c73d79",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/c5d95cdb2b0c5e055561f22a71b9533478c73d79"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta25.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "25b014ddf01a096048e6dec1561e72fc7e072876",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/25b014ddf01a096048e6dec1561e72fc7e072876"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta26.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d5da987565dcfb2d2797751467f7a2f792d56f1",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/7d5da987565dcfb2d2797751467f7a2f792d56f1"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta27.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "afc09e66a3fc4e65589be0950bde44c08a14ac53",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/afc09e66a3fc4e65589be0950bde44c08a14ac53"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta28.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe008ff9886c34dd581ad53f16be69d4865c4618",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/fe008ff9886c34dd581ad53f16be69d4865c4618"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta29.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f3f122bc7ed1e2dd7e0332ce1feff6566c3d4e40",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/f3f122bc7ed1e2dd7e0332ce1feff6566c3d4e40"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta3.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2f8efe6837e917b0c5c80649ccb12ed1c538ee70",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/2f8efe6837e917b0c5c80649ccb12ed1c538ee70"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta30.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "361b1c3fef19a8f531a115dd3bbb77055e293c2a",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/361b1c3fef19a8f531a115dd3bbb77055e293c2a"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta4.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e022a23b178afa78d55e1b82088370e7b71b10b",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/9e022a23b178afa78d55e1b82088370e7b71b10b"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta5.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f2932ffbc07b286b46696e351329073db90ffed",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/8f2932ffbc07b286b46696e351329073db90ffed"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta6.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f31a7088cd67bda1e39d94d48a232a4789eab390",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/f31a7088cd67bda1e39d94d48a232a4789eab390"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta7.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "71571a62fa62864258d025202645f7b6935e3427",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/71571a62fa62864258d025202645f7b6935e3427"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta8.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f0b3715c45c66a4eb9c70205abec16128505ae1",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/6f0b3715c45c66a4eb9c70205abec16128505ae1"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vta9.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9981183fd33e9c8d3515bf6c0b5ed7521847aa42",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/9981183fd33e9c8d3515bf6c0b5ed7521847aa42"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vtb1.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bf78f583c8d8053847e849d4f3701883fb5ca375",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/bf78f583c8d8053847e849d4f3701883fb5ca375"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vtb10.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dcb6cc79e8e49b11f6602ba76ccaaaa860c9b3e4",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/dcb6cc79e8e49b11f6602ba76ccaaaa860c9b3e4"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vtb11.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1af2b0d711b12d9b3392f7c394a1ae67b46ba1e6",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/1af2b0d711b12d9b3392f7c394a1ae67b46ba1e6"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vtb12.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04a07ce897cc6e6f03a2fd66fdfdd80913b8b152",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/04a07ce897cc6e6f03a2fd66fdfdd80913b8b152"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vtb2.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "19aa39c743f6a4d5cea172c9c3cdbc74e73d0d02",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/19aa39c743f6a4d5cea172c9c3cdbc74e73d0d02"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vtb3.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2d230214a9b5b032519707ededd21433f8f4d933",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/2d230214a9b5b032519707ededd21433f8f4d933"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vtb4.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fed1bea190e0d238aeec92c2cd95f1c8d63c64d4",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/fed1bea190e0d238aeec92c2cd95f1c8d63c64d4"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vtb5.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "37cfb72dbd2b47d64b448a7e73b67f5363a7849f",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/37cfb72dbd2b47d64b448a7e73b67f5363a7849f"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vtb6.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5911a5f142befc77dd20cf98397ebd7c363b6a6e",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/5911a5f142befc77dd20cf98397ebd7c363b6a6e"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vtb7.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4e346d8bed56d1afeedb27a9623ad54d8ff3c574",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/4e346d8bed56d1afeedb27a9623ad54d8ff3c574"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vtb8.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "401df84eac93606f092d7acb955adc020ec0af79",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/401df84eac93606f092d7acb955adc020ec0af79"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vtb9.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bbd5a63fa34681a79f7e5c17bb3da5612e650445",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/bbd5a63fa34681a79f7e5c17bb3da5612e650445"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw1.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2c72a2ff74298be5736338b06bfee617fd920cac",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/2c72a2ff74298be5736338b06bfee617fd920cac"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw10.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0920a693c01679f1b19c18c6ac7ae9c9a9849aec",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/0920a693c01679f1b19c18c6ac7ae9c9a9849aec"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw11.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0fc3bcb8a3f056a9d7f6244924bb565853071dd0",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/0fc3bcb8a3f056a9d7f6244924bb565853071dd0"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw12.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "23e04b06036bb1d4ea2b1915b50250b2b147fe14",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/23e04b06036bb1d4ea2b1915b50250b2b147fe14"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw13.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f06ac47c5208858a4a952f52832fc46772e16c1",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/8f06ac47c5208858a4a952f52832fc46772e16c1"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw14a.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fa7291cb4a988a4c19f564902b5a448d3fc5b4db",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/fa7291cb4a988a4c19f564902b5a448d3fc5b4db"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw14b.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "504306aea67f36710a380ccfc478a14ccb46f797",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/504306aea67f36710a380ccfc478a14ccb46f797"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw14c.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "95db47b47cca420746b1b01f66d32e6f1e0627bc",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/95db47b47cca420746b1b01f66d32e6f1e0627bc"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw15.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a6ac1dbb83d7f654dc1a8413ad964258c263bc52",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/a6ac1dbb83d7f654dc1a8413ad964258c263bc52"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw16a.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d203f9145a1e64c2cfb9182e7a8f33d0f5b5c34e",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/d203f9145a1e64c2cfb9182e7a8f33d0f5b5c34e"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw16b.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e43330d47255ccb602bf285494eab79faaa68738",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/e43330d47255ccb602bf285494eab79faaa68738"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw17.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "27fef731e47e4308b6f85b19bcbcc4d228cf74a3",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/27fef731e47e4308b6f85b19bcbcc4d228cf74a3"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw2.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fbd781dde12bf5a529abb101ba9c5f14977c7d01",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/fbd781dde12bf5a529abb101ba9c5f14977c7d01"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw3.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5e6cafa7e74bcda8576b51b21035f70ed351579b",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/5e6cafa7e74bcda8576b51b21035f70ed351579b"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw4.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d30e1fb7fc7b199909b90be6552584252a05c51c",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/d30e1fb7fc7b199909b90be6552584252a05c51c"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw5.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "245e330eb1643028f2a6ade30fc029e7c0ebe77a",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/245e330eb1643028f2a6ade30fc029e7c0ebe77a"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw6.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3e18843fece7a0d0547af76f942a06bc947fe8c0",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/3e18843fece7a0d0547af76f942a06bc947fe8c0"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw7.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e632249edc3fff843e02e5ff613fa887bafd9e48",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/e632249edc3fff843e02e5ff613fa887bafd9e48"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw8.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a2ae9b15208b795ee7a25b4f78c2ecc8713623dc",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/a2ae9b15208b795ee7a25b4f78c2ecc8713623dc"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Vw9.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d1bd0a3c3f757374c70ae0e7a451f2d27256ae6e",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/d1bd0a3c3f757374c70ae0e7a451f2d27256ae6e"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/S-Dataset/S-Y1.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "af7d71686aedcc709d77d62190361125e80ec193",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/af7d71686aedcc709d77d62190361125e80ec193"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-M.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93637f4885a14b50cfb2cec5472dcf25926b5486",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/93637f4885a14b50cfb2cec5472dcf25926b5486"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-S1.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "934083121f4bd4b7edcd549cca8522518a112a4a",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/934083121f4bd4b7edcd549cca8522518a112a4a"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-S2.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6d0e8026c602f82dcf963962f5eb5603df99633f",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/6d0e8026c602f82dcf963962f5eb5603df99633f"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-S3a.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "298e9bd64ad86cc6d02022d3e359a10f8015e016",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/298e9bd64ad86cc6d02022d3e359a10f8015e016"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-S3b.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aefaaf960a11bdfee862798eefd539d93dc78ca7",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/aefaaf960a11bdfee862798eefd539d93dc78ca7"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-S3c.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "566ef07a9c048c19ece7604967953b7e39aa1063",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/566ef07a9c048c19ece7604967953b7e39aa1063"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-S4.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a157cbba2455529966c41dbb13aa960cb8b4b98",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/0a157cbba2455529966c41dbb13aa960cb8b4b98"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vfa01.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a4173a54e6cbbdde0c9e893aa982081d3ed0ee45",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/a4173a54e6cbbdde0c9e893aa982081d3ed0ee45"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vfa02.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef8a87f00b1325407c02ba4baf41e69b63041cda",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/ef8a87f00b1325407c02ba4baf41e69b63041cda"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vta1a.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "163d6612cc80bb5a063d0510c8471b9b2e960a04",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/163d6612cc80bb5a063d0510c8471b9b2e960a04"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vta1b.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "73d6309784d27beb7c850c7bd425ee0e226b45c3",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/73d6309784d27beb7c850c7bd425ee0e226b45c3"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw1.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7559893108c608de0c6bd133b89f5187bac6dac0",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/7559893108c608de0c6bd133b89f5187bac6dac0"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw10.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e0738291af7d20ea3234e795a6125057f10c2771",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/e0738291af7d20ea3234e795a6125057f10c2771"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw11.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "70ef6c2a2d542a55d6b43c5fb1c0183964b306ec",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/70ef6c2a2d542a55d6b43c5fb1c0183964b306ec"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw12.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9499e1e62cdde973a5d64d18d8804749b9a87fd7",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/9499e1e62cdde973a5d64d18d8804749b9a87fd7"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw13.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "69e1092e079407f4f08b1b967b1008c12ebe02ad",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/69e1092e079407f4f08b1b967b1008c12ebe02ad"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw14a.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e1c3dccb86a5904bc280a0202ba0c85940bf934c",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/e1c3dccb86a5904bc280a0202ba0c85940bf934c"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw14b.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7c753907b732ddc84432fe635bbffda1fc4b01da",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/7c753907b732ddc84432fe635bbffda1fc4b01da"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw14c.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c9b5e9352467d17eb894a7ed307bddfbc05b821f",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/c9b5e9352467d17eb894a7ed307bddfbc05b821f"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw15.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47399986233162bbabe5c1a5a2c51bf2118d1546",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/47399986233162bbabe5c1a5a2c51bf2118d1546"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw16a.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d7bccf97091d99a811c5db15a164a6a4a6b9297e",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/d7bccf97091d99a811c5db15a164a6a4a6b9297e"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw16b.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "989b64fb285bc273f82f7cb23785e9565bdadd8d",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/989b64fb285bc273f82f7cb23785e9565bdadd8d"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw17.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85a9b745f72272622736af4ea44953211b02b5a4",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/85a9b745f72272622736af4ea44953211b02b5a4"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw2.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a144f0e70d0667d05e7d00f8df8d974cebec35fb",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/a144f0e70d0667d05e7d00f8df8d974cebec35fb"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw3.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c497e575c00d66755f17237dc076df517a558caf",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/c497e575c00d66755f17237dc076df517a558caf"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw4.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "07a96f2c5f6b40cf69b98ff98692b3e74d8d7e27",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/07a96f2c5f6b40cf69b98ff98692b3e74d8d7e27"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw5.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "53b7ab1f15aa8415d93a45a2230f60e342a5c8d9",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/53b7ab1f15aa8415d93a45a2230f60e342a5c8d9"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw6.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fbf483bc854f5e0f125f37168383eb68ac2e27d3",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/fbf483bc854f5e0f125f37168383eb68ac2e27d3"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw7.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "03088209a71ec7397cec6079d2396c2b6c7ff880",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/03088209a71ec7397cec6079d2396c2b6c7ff880"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw8.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "42272c7dc3cca19366c402e9aa290245829d24b2",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/42272c7dc3cca19366c402e9aa290245829d24b2"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Vw9.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "82dafc4bc7416f4822273470c7aa57c493f668c1",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/82dafc4bc7416f4822273470c7aa57c493f668c1"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-Y1.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "534057c348cc6c16ea590da2347251d46dfdddf1",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/534057c348cc6c16ea590da2347251d46dfdddf1"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta10.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bf35696030586c0edf60fc30652d9ca31e1e0d44",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/bf35696030586c0edf60fc30652d9ca31e1e0d44"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta11.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ae302f9df50735a38681b7f671bc1769e4076bae",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/ae302f9df50735a38681b7f671bc1769e4076bae"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta12.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "91b3770e4d10c2647ed606c45c6cae2b5ddb32c1",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/91b3770e4d10c2647ed606c45c6cae2b5ddb32c1"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta13.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "21bfe8d9860b2cc66fc812bf2861b26e66703ad1",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/21bfe8d9860b2cc66fc812bf2861b26e66703ad1"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta14.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ba8bb3bb346f0570f785e001bee571c7c283744e",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/ba8bb3bb346f0570f785e001bee571c7c283744e"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta15.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "31488f1fcf720a764785d4e4d656536c457d36b5",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/31488f1fcf720a764785d4e4d656536c457d36b5"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta16.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db20cf15a985cf7dae6604ce131b4a8fdc381565",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/db20cf15a985cf7dae6604ce131b4a8fdc381565"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta17.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eaaa630c3e8a62437a42bf6b407c5a44083a02fe",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/eaaa630c3e8a62437a42bf6b407c5a44083a02fe"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta19.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bb789874cffd41d2c31aa9ab8acf43827ce45dc0",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/bb789874cffd41d2c31aa9ab8acf43827ce45dc0"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta2.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "73f194095a67624e822feaeeafeb10f4a4231f6c",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/73f194095a67624e822feaeeafeb10f4a4231f6c"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta20.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b89761963abfe9941bbb77a2e1dd441bfccbbd7b",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/b89761963abfe9941bbb77a2e1dd441bfccbbd7b"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta21.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d90baf003ccf47c514d360c2b467a6ad3ff99825",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/d90baf003ccf47c514d360c2b467a6ad3ff99825"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta22.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "de979a5beded5fa81280410672b3c5f3b1d20559",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/de979a5beded5fa81280410672b3c5f3b1d20559"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta23.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7eb9d49f0d90988aad1ab5ffc08b67ea292f51d7",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/7eb9d49f0d90988aad1ab5ffc08b67ea292f51d7"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta24.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "373294a58c79261d17281ab9aaeca04fa9e2eb81",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/373294a58c79261d17281ab9aaeca04fa9e2eb81"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta25.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c6d07e1076434397651db1a157207a489d39a371",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/c6d07e1076434397651db1a157207a489d39a371"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta26.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d8d5195950270f4b0a93821d62a3acc8d371cdc1",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/d8d5195950270f4b0a93821d62a3acc8d371cdc1"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta27.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8662466d2aa06283946cc75d7d0b5e9210e660cf",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/8662466d2aa06283946cc75d7d0b5e9210e660cf"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta28.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b46307e5a215c7932652befaee91be4fa54e518b",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/b46307e5a215c7932652befaee91be4fa54e518b"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta29.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a95972eaf3fd6eb02b9cd555c068c4cb23e1f8aa",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/a95972eaf3fd6eb02b9cd555c068c4cb23e1f8aa"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta3.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "31639405c3435a12defb1fecae77390ba2470441",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/31639405c3435a12defb1fecae77390ba2470441"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta30.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "33654f833dd57aaae96c356c540e037674e5f80a",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/33654f833dd57aaae96c356c540e037674e5f80a"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta4.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3ea80a5b837fc4914205dd989831733bd3572238",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/3ea80a5b837fc4914205dd989831733bd3572238"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta5.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6cd469d38ff1e25a2f896c57a49cee595fa94504",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/6cd469d38ff1e25a2f896c57a49cee595fa94504"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta6.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f23469ed8e4a55a41aa64786defe73647bf28f4e",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/f23469ed8e4a55a41aa64786defe73647bf28f4e"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta7.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9c8436badc183252e7561e60dbb63f3d1ebc066c",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/9c8436badc183252e7561e60dbb63f3d1ebc066c"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta8.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "98a4b2e3c510bc868e823bbb3c1d71b811024f8b",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/98a4b2e3c510bc868e823bbb3c1d71b811024f8b"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vta9.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a5c00f417b4766642a50a6d6e40173ab6e77d95a",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/a5c00f417b4766642a50a6d6e40173ab6e77d95a"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vtb1.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d7d3ea748645555fafd10d3edae95c72c835fcba",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/d7d3ea748645555fafd10d3edae95c72c835fcba"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vtb10.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4f4b3c57640ce6bc1fc8901f1cd4e085a43f7177",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/4f4b3c57640ce6bc1fc8901f1cd4e085a43f7177"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vtb11.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2df8c9499143bd0d567bea9ea7838215eae0a050",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/2df8c9499143bd0d567bea9ea7838215eae0a050"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vtb12.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "95a06a2d5ca58033aeeaf94010cffffe357e6b81",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/95a06a2d5ca58033aeeaf94010cffffe357e6b81"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vtb2.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "10a94452584bbda3950feb48fbde6225c0eeb6d6",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/10a94452584bbda3950feb48fbde6225c0eeb6d6"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vtb3.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01b173815832dca33d8b3039b937d3e351eda093",
+      "size": 132,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/01b173815832dca33d8b3039b937d3e351eda093"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vtb4.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "962ad163c5dda4c8b06e2df1524f09ebba057459",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/962ad163c5dda4c8b06e2df1524f09ebba057459"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vtb5.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d723acf073262c3a9483beaf16ab32f2b64032e7",
+      "size": 133,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/d723acf073262c3a9483beaf16ab32f2b64032e7"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vtb6.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "463dbee0689717623d063a7fb08aca6e66c6a2a6",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/463dbee0689717623d063a7fb08aca6e66c6a2a6"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vtb7.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "88dbfbf50d786b84f56490617207eed71ce46d54",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/88dbfbf50d786b84f56490617207eed71ce46d54"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vtb8.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6236c40321c310a442deeefe39f82328efee3512",
+      "size": 131,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/6236c40321c310a442deeefe39f82328efee3512"
+    },
+    {
+      "path": "Synchronised V abd S datasets/Uncategorised IOVNB Dataset/V-Dataset/V-vtb9.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9812f1a91c7acce44d24ecbea9964414565071dd",
+      "size": 130,
+      "url": "https://api.github.com/repos/onyekpeu/IO-VNBD/git/blobs/9812f1a91c7acce44d24ecbea9964414565071dd"
+    }
+  ],
+  "examples": {
+    "V": {
+      "bytes": 10967129,
+      "shape": [
+        51746,
+        29
+      ],
+      "columns": [
+        "No of GPS Satellites Available",
+        " Time Since Start of Day (seconds)",
+        " Latitude (degrees)",
+        " Longitude (degrees)",
+        " Velocity (km/hr)",
+        " Heading (degrees)",
+        " Height (km)",
+        " Vertical velocity (km/hr)",
+        " Sample period (seconds)",
+        " Steering Angle (degrees)",
+        " Wheel Speed Front Left (rad/sec)",
+        " Wheel Speed Front Right (rad/sec)",
+        " Wheel Speed Rear Left (rad/sec)",
+        " Wheel Speed Rear Right (rad/sec)",
+        " Yaw Rate (deg/sec)",
+        " Indicated Vehicle Speed (km/hr)",
+        " Indicated Longitudinal Acceleration (g)",
+        " Indicated Lateral Acceleration (g)",
+        " Handbrake (0 or 1)",
+        " Gear Requested (Number fof gear employed 1-5)",
+        " Gear (Number fof gear employed 1-5)",
+        " Engine Speed (rev/min)",
+        " Coolant Temperature (degrees)",
+        " Clutch Position (0 or 1)",
+        " Brake Pressure (psi)",
+        " Brake Position (0 or 1)",
+        " Battery Voltage (volts)",
+        " Air Temperature (degrees)",
+        " Accelerator Pedal Position (0 or 1)"
+      ],
+      "head": [
+        {
+          "No of GPS Satellites Available": 11.0,
+          " Time Since Start of Day (seconds)": 32869.0,
+          " Latitude (degrees)": 52.4017192,
+          " Longitude (degrees)": -1.5053331,
+          " Velocity (km/hr)": 19.969,
+          " Heading (degrees)": 241.713,
+          " Height (km)": 110.19,
+          " Vertical velocity (km/hr)": 0.2,
+          " Sample period (seconds)": 0.1,
+          " Steering Angle (degrees)": 31.0,
+          " Wheel Speed Front Left (rad/sec)": 20.39999,
+          " Wheel Speed Front Right (rad/sec)": 19.98,
+          " Wheel Speed Rear Left (rad/sec)": 20.39,
+          " Wheel Speed Rear Right (rad/sec)": 19.82999,
+          " Yaw Rate (deg/sec)": -5.100006,
+          " Indicated Vehicle Speed (km/hr)": 20.2,
+          " Indicated Longitudinal Acceleration (g)": 0.0,
+          " Indicated Lateral Acceleration (g)": -0.1091398999999999,
+          " Handbrake (0 or 1)": 0.0,
+          " Gear Requested (Number fof gear employed 1-5)": 3.0,
+          " Gear (Number fof gear employed 1-5)": 3.0,
+          " Engine Speed (rev/min)": 1342.0,
+          " Coolant Temperature (degrees)": 40.0,
+          " Clutch Position (0 or 1)": 0.0,
+          " Brake Pressure (psi)": -0.2200012,
+          " Brake Position (0 or 1)": 0.0,
+          " Battery Voltage (volts)": 14.3,
+          " Air Temperature (degrees)": 15.0,
+          " Accelerator Pedal Position (0 or 1)": 8.5
+        },
+        {
+          "No of GPS Satellites Available": 11.0,
+          " Time Since Start of Day (seconds)": 32869.1,
+          " Latitude (degrees)": 52.4017169,
+          " Longitude (degrees)": -1.5053403,
+          " Velocity (km/hr)": 20.272,
+          " Heading (degrees)": 241.71,
+          " Height (km)": 110.21,
+          " Vertical velocity (km/hr)": 0.21,
+          " Sample period (seconds)": 0.1,
+          " Steering Angle (degrees)": 29.79999,
+          " Wheel Speed Front Left (rad/sec)": 20.43,
+          " Wheel Speed Front Right (rad/sec)": 19.81,
+          " Wheel Speed Rear Left (rad/sec)": 20.39,
+          " Wheel Speed Rear Right (rad/sec)": 19.68,
+          " Yaw Rate (deg/sec)": -5.799988,
+          " Indicated Vehicle Speed (km/hr)": 20.14,
+          " Indicated Longitudinal Acceleration (g)": 0.0,
+          " Indicated Lateral Acceleration (g)": -0.09996009,
+          " Handbrake (0 or 1)": 0.0,
+          " Gear Requested (Number fof gear employed 1-5)": 3.0,
+          " Gear (Number fof gear employed 1-5)": 3.0,
+          " Engine Speed (rev/min)": 1344.0,
+          " Coolant Temperature (degrees)": 40.0,
+          " Clutch Position (0 or 1)": 0.0,
+          " Brake Pressure (psi)": 0.009979248,
+          " Brake Position (0 or 1)": 0.0,
+          " Battery Voltage (volts)": 14.3,
+          " Air Temperature (degrees)": 15.0,
+          " Accelerator Pedal Position (0 or 1)": 11.0
+        },
+        {
+          "No of GPS Satellites Available": 11.0,
+          " Time Since Start of Day (seconds)": 32869.2,
+          " Latitude (degrees)": 52.401715,
+          " Longitude (degrees)": -1.5053474,
+          " Velocity (km/hr)": 19.447,
+          " Heading (degrees)": 243.917,
+          " Height (km)": 110.28,
+          " Vertical velocity (km/hr)": 0.26,
+          " Sample period (seconds)": 0.1,
+          " Steering Angle (degrees)": 25.70001,
+          " Wheel Speed Front Left (rad/sec)": 20.48,
+          " Wheel Speed Front Right (rad/sec)": 19.84,
+          " Wheel Speed Rear Left (rad/sec)": 20.28,
+          " Wheel Speed Rear Right (rad/sec)": 19.73,
+          " Yaw Rate (deg/sec)": -5.600006,
+          " Indicated Vehicle Speed (km/hr)": 20.09,
+          " Indicated Longitudinal Acceleration (g)": 0.009180069,
+          " Indicated Lateral Acceleration (g)": -0.04997993,
+          " Handbrake (0 or 1)": 0.0,
+          " Gear Requested (Number fof gear employed 1-5)": 3.0,
+          " Gear (Number fof gear employed 1-5)": 3.0,
+          " Engine Speed (rev/min)": 1359.0,
+          " Coolant Temperature (degrees)": 40.0,
+          " Clutch Position (0 or 1)": 0.0,
+          " Brake Pressure (psi)": 0.009979248,
+          " Brake Position (0 or 1)": 0.0,
+          " Battery Voltage (volts)": 14.3,
+          " Air Temperature (degrees)": 15.0,
+          " Accelerator Pedal Position (0 or 1)": 11.5
+        }
+      ],
+      "tail": [
+        {
+          "No of GPS Satellites Available": 139.0,
+          " Time Since Start of Day (seconds)": 38043.4,
+          " Latitude (degrees)": 52.403121000000006,
+          " Longitude (degrees)": -1.5579615,
+          " Velocity (km/hr)": 0.083,
+          " Heading (degrees)": 179.41,
+          " Height (km)": 111.48,
+          " Vertical velocity (km/hr)": 0.01,
+          " Sample period (seconds)": 0.1,
+          " Steering Angle (degrees)": 0.0,
+          " Wheel Speed Front Left (rad/sec)": 0.0,
+          " Wheel Speed Front Right (rad/sec)": 0.0,
+          " Wheel Speed Rear Left (rad/sec)": 0.0,
+          " Wheel Speed Rear Right (rad/sec)": 0.0,
+          " Yaw Rate (deg/sec)": 0.0,
+          " Indicated Vehicle Speed (km/hr)": 0.0,
+          " Indicated Longitudinal Acceleration (g)": 0.02957988,
+          " Indicated Lateral Acceleration (g)": 0.01937985,
+          " Handbrake (0 or 1)": 0.0,
+          " Gear Requested (Number fof gear employed 1-5)": 1.0,
+          " Gear (Number fof gear employed 1-5)": 3.0,
+          " Engine Speed (rev/min)": 869.0,
+          " Coolant Temperature (degrees)": 102.0,
+          " Clutch Position (0 or 1)": 0.0,
+          " Brake Pressure (psi)": 12.78998,
+          " Brake Position (0 or 1)": 1.0,
+          " Battery Voltage (volts)": 13.8,
+          " Air Temperature (degrees)": 16.5,
+          " Accelerator Pedal Position (0 or 1)": 0.0
+        },
+        {
+          "No of GPS Satellites Available": 139.0,
+          " Time Since Start of Day (seconds)": 38043.5,
+          " Latitude (degrees)": 52.403121000000006,
+          " Longitude (degrees)": -1.5579614,
+          " Velocity (km/hr)": 0.144,
+          " Heading (degrees)": 179.41,
+          " Height (km)": 111.48,
+          " Vertical velocity (km/hr)": 0.0,
+          " Sample period (seconds)": 0.1,
+          " Steering Angle (degrees)": 0.0,
+          " Wheel Speed Front Left (rad/sec)": 0.0,
+          " Wheel Speed Front Right (rad/sec)": 0.0,
+          " Wheel Speed Rear Left (rad/sec)": 0.0,
+          " Wheel Speed Rear Right (rad/sec)": 0.0,
+          " Yaw Rate (deg/sec)": 0.0,
+          " Indicated Vehicle Speed (km/hr)": 0.0,
+          " Indicated Longitudinal Acceleration (g)": 0.01937985,
+          " Indicated Lateral Acceleration (g)": 0.01937985,
+          " Handbrake (0 or 1)": 0.0,
+          " Gear Requested (Number fof gear employed 1-5)": 1.0,
+          " Gear (Number fof gear employed 1-5)": 3.0,
+          " Engine Speed (rev/min)": 865.0,
+          " Coolant Temperature (degrees)": 102.0,
+          " Clutch Position (0 or 1)": 0.0,
+          " Brake Pressure (psi)": 16.59,
+          " Brake Position (0 or 1)": 1.0,
+          " Battery Voltage (volts)": 13.7,
+          " Air Temperature (degrees)": 16.5,
+          " Accelerator Pedal Position (0 or 1)": 0.0
+        }
+      ],
+      "missing": {
+        "No of GPS Satellites Available": 0,
+        " Time Since Start of Day (seconds)": 0,
+        " Latitude (degrees)": 0,
+        " Longitude (degrees)": 0,
+        " Velocity (km/hr)": 0,
+        " Heading (degrees)": 0,
+        " Height (km)": 0,
+        " Vertical velocity (km/hr)": 0,
+        " Sample period (seconds)": 0,
+        " Steering Angle (degrees)": 0,
+        " Wheel Speed Front Left (rad/sec)": 0,
+        " Wheel Speed Front Right (rad/sec)": 0,
+        " Wheel Speed Rear Left (rad/sec)": 0,
+        " Wheel Speed Rear Right (rad/sec)": 0,
+        " Yaw Rate (deg/sec)": 0,
+        " Indicated Vehicle Speed (km/hr)": 0,
+        " Indicated Longitudinal Acceleration (g)": 0,
+        " Indicated Lateral Acceleration (g)": 0,
+        " Handbrake (0 or 1)": 0,
+        " Gear Requested (Number fof gear employed 1-5)": 0,
+        " Gear (Number fof gear employed 1-5)": 0,
+        " Engine Speed (rev/min)": 0,
+        " Coolant Temperature (degrees)": 0,
+        " Clutch Position (0 or 1)": 0,
+        " Brake Pressure (psi)": 0,
+        " Brake Position (0 or 1)": 0,
+        " Battery Voltage (volts)": 0,
+        " Air Temperature (degrees)": 0,
+        " Accelerator Pedal Position (0 or 1)": 0
+      }
+    },
+    "S": {
+      "bytes": 10011984,
+      "shape": [
+        51746,
+        24
+      ],
+      "columns": [
+        "GPS LATITUDE (degrees)",
+        " GPS LONGITUDE (degrees)",
+        " GPS ALTITUDE (m)",
+        " GPS SPEED (Kmh)",
+        " GPS ACCURACY (m)",
+        " GPS ORIENTATION (\u00c2\u00b0)",
+        "GPS SATELLITES IN RANGE",
+        " TIME SINCE START (ms)",
+        " DATE (YYYY-MO-DD HH-MI-SS_SSS)",
+        " ACCELEROMETER X (m/s\u00b2) ",
+        " ACCELEROMETER Y (m/s\u00b2)",
+        " ACCELEROMETER Z (m/s\u00b2)",
+        " GRAVITY X (m/s\u00b2)",
+        " GRAVITY Y (m/s\u00b2)",
+        " GRAVITY Z (m/s\u00b2)",
+        " GYROSCOPE X (rad/s)",
+        " GYROSCOPE Y (rad/s)",
+        " GYROSCOPE Z (rad/s)",
+        " MAGNETIC FIELD X (\u00ce\u00bcT)",
+        " MAGNETIC FIELD Y (\u00ce\u00bcT)",
+        " MAGNETIC FIELD Z (\u00ce\u00bcT)",
+        " ORIENTATION (Azimuth) (\u00c2\u00b0)",
+        " ORIENTATION (Pitch) (\u00c2\u00b0)",
+        " ORIENTATION (Roll ) (\u00c2\u00b0)"
+      ],
+      "head": [
+        {
+          "GPS LATITUDE (degrees)": 52.40166,
+          " GPS LONGITUDE (degrees)": -1.50529,
+          " GPS ALTITUDE (m)": 147.5,
+          " GPS SPEED (Kmh)": 5.57,
+          " GPS ACCURACY (m)": 3,
+          " GPS ORIENTATION (\u00c2\u00b0)": 241.65,
+          "GPS SATELLITES IN RANGE": "27 / 28",
+          " TIME SINCE START (ms)": 2922,
+          " DATE (YYYY-MO-DD HH-MI-SS_SSS)": "2019-09-08 10:07:49:546",
+          " ACCELEROMETER X (m/s\u00b2) ": 0.1002,
+          " ACCELEROMETER Y (m/s\u00b2)": 1.539,
+          " ACCELEROMETER Z (m/s\u00b2)": 9.8338,
+          " GRAVITY X (m/s\u00b2)": 0.0028,
+          " GRAVITY Y (m/s\u00b2)": 0.0048,
+          " GRAVITY Z (m/s\u00b2)": 9.8066,
+          " GYROSCOPE X (rad/s)": 0.0187,
+          " GYROSCOPE Y (rad/s)": -0.0607,
+          " GYROSCOPE Z (rad/s)": -0.0069,
+          " MAGNETIC FIELD X (\u00ce\u00bcT)": -5.87,
+          " MAGNETIC FIELD Y (\u00ce\u00bcT)": -26.37,
+          " MAGNETIC FIELD Z (\u00ce\u00bcT)": 30.31,
+          " ORIENTATION (Azimuth) (\u00c2\u00b0)": 18.78,
+          " ORIENTATION (Pitch) (\u00c2\u00b0)": -78.2,
+          " ORIENTATION (Roll ) (\u00c2\u00b0)": -153.5
+        },
+        {
+          "GPS LATITUDE (degrees)": 52.40166,
+          " GPS LONGITUDE (degrees)": -1.50529,
+          " GPS ALTITUDE (m)": 147.5,
+          " GPS SPEED (Kmh)": 5.57,
+          " GPS ACCURACY (m)": 3,
+          " GPS ORIENTATION (\u00c2\u00b0)": 241.65,
+          "GPS SATELLITES IN RANGE": "27 / 28",
+          " TIME SINCE START (ms)": 3022,
+          " DATE (YYYY-MO-DD HH-MI-SS_SSS)": "2019-09-08 10:07:49:646",
+          " ACCELEROMETER X (m/s\u00b2) ": 0.3661,
+          " ACCELEROMETER Y (m/s\u00b2)": -0.5675,
+          " ACCELEROMETER Z (m/s\u00b2)": 10.2633,
+          " GRAVITY X (m/s\u00b2)": 0.0112,
+          " GRAVITY Y (m/s\u00b2)": -0.0054,
+          " GRAVITY Z (m/s\u00b2)": 9.8066,
+          " GYROSCOPE X (rad/s)": -0.0116,
+          " GYROSCOPE Y (rad/s)": -0.0595,
+          " GYROSCOPE Z (rad/s)": -0.0168,
+          " MAGNETIC FIELD X (\u00ce\u00bcT)": -6.0,
+          " MAGNETIC FIELD Y (\u00ce\u00bcT)": -26.06,
+          " MAGNETIC FIELD Z (\u00ce\u00bcT)": 29.81,
+          " ORIENTATION (Azimuth) (\u00c2\u00b0)": 18.42,
+          " ORIENTATION (Pitch) (\u00c2\u00b0)": -78.22,
+          " ORIENTATION (Roll ) (\u00c2\u00b0)": -153.78
+        },
+        {
+          "GPS LATITUDE (degrees)": 52.40166,
+          " GPS LONGITUDE (degrees)": -1.50529,
+          " GPS ALTITUDE (m)": 147.5,
+          " GPS SPEED (Kmh)": 5.57,
+          " GPS ACCURACY (m)": 3,
+          " GPS ORIENTATION (\u00c2\u00b0)": 241.65,
+          "GPS SATELLITES IN RANGE": "27 / 28",
+          " TIME SINCE START (ms)": 3121,
+          " DATE (YYYY-MO-DD HH-MI-SS_SSS)": "2019-09-08 10:07:49:745",
+          " ACCELEROMETER X (m/s\u00b2) ": 0.0257,
+          " ACCELEROMETER Y (m/s\u00b2)": 0.7192,
+          " ACCELEROMETER Z (m/s\u00b2)": 9.7339,
+          " GRAVITY X (m/s\u00b2)": 0.0061,
+          " GRAVITY Y (m/s\u00b2)": -0.0161,
+          " GRAVITY Z (m/s\u00b2)": 9.8065,
+          " GYROSCOPE X (rad/s)": -0.0143,
+          " GYROSCOPE Y (rad/s)": -0.0524,
+          " GYROSCOPE Z (rad/s)": 0.0234,
+          " MAGNETIC FIELD X (\u00ce\u00bcT)": -5.69,
+          " MAGNETIC FIELD Y (\u00ce\u00bcT)": -26.06,
+          " MAGNETIC FIELD Z (\u00ce\u00bcT)": 30.56,
+          " ORIENTATION (Azimuth) (\u00c2\u00b0)": 17.81,
+          " ORIENTATION (Pitch) (\u00c2\u00b0)": -78.15,
+          " ORIENTATION (Roll ) (\u00c2\u00b0)": -154.56
+        }
+      ],
+      "tail": [
+        {
+          "GPS LATITUDE (degrees)": 52.403114,
+          " GPS LONGITUDE (degrees)": -1.55797,
+          " GPS ALTITUDE (m)": 161.72,
+          " GPS SPEED (Kmh)": 0.69,
+          " GPS ACCURACY (m)": 2,
+          " GPS ORIENTATION (\u00c2\u00b0)": 183.94,
+          "GPS SATELLITES IN RANGE": "28 / 29",
+          " TIME SINCE START (ms)": 5177321,
+          " DATE (YYYY-MO-DD HH-MI-SS_SSS)": "2019-09-08 11:34:03:945",
+          " ACCELEROMETER X (m/s\u00b2) ": -0.1894,
+          " ACCELEROMETER Y (m/s\u00b2)": 0.1088,
+          " ACCELEROMETER Z (m/s\u00b2)": 10.0082,
+          " GRAVITY X (m/s\u00b2)": 0.0007,
+          " GRAVITY Y (m/s\u00b2)": -0.0008,
+          " GRAVITY Z (m/s\u00b2)": 9.8066,
+          " GYROSCOPE X (rad/s)": 0.0169,
+          " GYROSCOPE Y (rad/s)": -0.0032,
+          " GYROSCOPE Z (rad/s)": 0.004,
+          " MAGNETIC FIELD X (\u00ce\u00bcT)": -11.94,
+          " MAGNETIC FIELD Y (\u00ce\u00bcT)": -26.87,
+          " MAGNETIC FIELD Z (\u00ce\u00bcT)": 33.69,
+          " ORIENTATION (Azimuth) (\u00c2\u00b0)": 352.18,
+          " ORIENTATION (Pitch) (\u00c2\u00b0)": -81.73,
+          " ORIENTATION (Roll ) (\u00c2\u00b0)": -167.46
+        },
+        {
+          "GPS LATITUDE (degrees)": 52.403114,
+          " GPS LONGITUDE (degrees)": -1.55797,
+          " GPS ALTITUDE (m)": 161.72,
+          " GPS SPEED (Kmh)": 0.69,
+          " GPS ACCURACY (m)": 2,
+          " GPS ORIENTATION (\u00c2\u00b0)": 183.94,
+          "GPS SATELLITES IN RANGE": "28 / 29",
+          " TIME SINCE START (ms)": 5177421,
+          " DATE (YYYY-MO-DD HH-MI-SS_SSS)": "2019-09-08 11:34:04:045",
+          " ACCELEROMETER X (m/s\u00b2) ": -0.0215,
+          " ACCELEROMETER Y (m/s\u00b2)": -0.0612,
+          " ACCELEROMETER Z (m/s\u00b2)": 9.7977,
+          " GRAVITY X (m/s\u00b2)": 0.0003,
+          " GRAVITY Y (m/s\u00b2)": -0.001,
+          " GRAVITY Z (m/s\u00b2)": 9.8066,
+          " GYROSCOPE X (rad/s)": 0.0029,
+          " GYROSCOPE Y (rad/s)": -0.0035,
+          " GYROSCOPE Z (rad/s)": -0.013,
+          " MAGNETIC FIELD X (\u00ce\u00bcT)": -12.19,
+          " MAGNETIC FIELD Y (\u00ce\u00bcT)": -27.19,
+          " MAGNETIC FIELD Z (\u00ce\u00bcT)": 33.81,
+          " ORIENTATION (Azimuth) (\u00c2\u00b0)": 352.13,
+          " ORIENTATION (Pitch) (\u00c2\u00b0)": -81.7,
+          " ORIENTATION (Roll ) (\u00c2\u00b0)": -167.5
+        }
+      ],
+      "missing": {
+        "GPS LATITUDE (degrees)": 0,
+        " GPS LONGITUDE (degrees)": 0,
+        " GPS ALTITUDE (m)": 0,
+        " GPS SPEED (Kmh)": 0,
+        " GPS ACCURACY (m)": 0,
+        " GPS ORIENTATION (\u00c2\u00b0)": 0,
+        "GPS SATELLITES IN RANGE": 0,
+        " TIME SINCE START (ms)": 0,
+        " DATE (YYYY-MO-DD HH-MI-SS_SSS)": 0,
+        " ACCELEROMETER X (m/s\u00b2) ": 0,
+        " ACCELEROMETER Y (m/s\u00b2)": 0,
+        " ACCELEROMETER Z (m/s\u00b2)": 0,
+        " GRAVITY X (m/s\u00b2)": 0,
+        " GRAVITY Y (m/s\u00b2)": 0,
+        " GRAVITY Z (m/s\u00b2)": 0,
+        " GYROSCOPE X (rad/s)": 0,
+        " GYROSCOPE Y (rad/s)": 0,
+        " GYROSCOPE Z (rad/s)": 0,
+        " MAGNETIC FIELD X (\u00ce\u00bcT)": 0,
+        " MAGNETIC FIELD Y (\u00ce\u00bcT)": 0,
+        " MAGNETIC FIELD Z (\u00ce\u00bcT)": 0,
+        " ORIENTATION (Azimuth) (\u00c2\u00b0)": 0,
+        " ORIENTATION (Pitch) (\u00c2\u00b0)": 0,
+        " ORIENTATION (Roll ) (\u00c2\u00b0)": 0
+      }
+    }
+  }
+}

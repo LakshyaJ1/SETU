@@ -75,6 +75,18 @@ class OfflineMap(private val context: Context, val region: MapRegion, private va
         ?: (CompiledRoadGraph.load(context, region, checkpoint)
             ?: MapJson.graph(open("roads.json", "bengaluru-roads.json"), checkpoint)).also { graph = it }
 
+    /**
+     * Prepares everything the first route would otherwise load while the user waits: the compiled
+     * graph is extracted and verified, its structure validated, and its segment index built.
+     *
+     * On the bundled Delhi/NCR region that is a 238 MB digest, a walk over 3.19 M nodes and 7.26 M
+     * edges, and a 7.26 M-edge index pass. Doing it here, off the interactive path, is the whole
+     * point; a route that arrives mid-warm-up simply waits on the same monitor it would have held.
+     */
+    fun warmUp(checkpoint: () -> Unit = {}) {
+        synchronized(this) { loadGraph(checkpoint) }.index(checkpoint)
+    }
+
     @Synchronized
     fun route(from: GeoPoint, to: GeoPoint, checkpoint: () -> Unit = {}): DriveRoute {
         checkpoint()

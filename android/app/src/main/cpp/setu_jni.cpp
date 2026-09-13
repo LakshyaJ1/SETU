@@ -96,6 +96,12 @@ Java_com_setu_navigator_estimation_NativeEngine_nativeAttitude(JNIEnv* environme
 }
 
 extern "C" JNIEXPORT jint JNICALL
+Java_com_setu_navigator_estimation_NativeEngine_nativeSpeed(JNIEnv*, jobject, jlong handle,
+    jlong timestamp, jdouble speed, jdouble sigma) {
+    return setu_engine_speed(reinterpret_cast<SetuEngine*>(handle), timestamp, speed, sigma);
+}
+
+extern "C" JNIEXPORT jint JNICALL
 Java_com_setu_navigator_estimation_NativeEngine_nativeGnss(JNIEnv* environment, jobject, jlong handle,
     jlong timestamp, jdoubleArray observation) {
     double values[10];

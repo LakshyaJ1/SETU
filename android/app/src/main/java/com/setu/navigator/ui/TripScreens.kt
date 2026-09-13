@@ -33,7 +33,7 @@ fun TripsScreen(model: SetuViewModel, onImport: () -> Unit) {
         if (model.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
         if (trips.isEmpty()) Column(Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()).padding(32.dp),
             verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-            Surface(shape = RoundedCornerShape(28.dp), color = MaterialTheme.colorScheme.primaryContainer) {
+            Surface(shape = SetuShape.hero, color = MaterialTheme.colorScheme.primaryContainer) {
                 Icon(Icons.Outlined.Route, null, Modifier.padding(26.dp).size(52.dp), tint = MaterialTheme.colorScheme.primary)
             }
             Text("Every drive has\na story.", Modifier.padding(top = 26.dp), style = MaterialTheme.typography.headlineMedium,
@@ -41,24 +41,24 @@ fun TripsScreen(model: SetuViewModel, onImport: () -> Unit) {
             Text("Record your first journey to replay its route and keep the original sensor data.",
                 Modifier.padding(top = 12.dp, bottom = 24.dp), style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
-            Button(onClick = { model.tab = "Record" }, modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp), shape = RoundedCornerShape(16.dp)) {
+            Button(onClick = { model.tab = "Record" }, modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp), shape = SetuShape.action) {
                 Icon(Icons.Outlined.RadioButtonChecked, null, Modifier.size(19.dp)); Spacer(Modifier.width(8.dp)); Text("Record a drive")
             }
-            OutlinedButton(onClick = onImport, enabled = !model.busy, modifier = Modifier.fillMaxWidth().padding(top = 10.dp).heightIn(min = 52.dp), shape = RoundedCornerShape(16.dp)) {
+            OutlinedButton(onClick = onImport, enabled = !model.busy, modifier = Modifier.fillMaxWidth().padding(top = 10.dp).heightIn(min = 52.dp), shape = SetuShape.action) {
                 Text("Import a recording")
             }
             TextButton(onClick = model::openDemo, Modifier.padding(top = 8.dp)) { Text("Explore a sample replay") }
         } else Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp)) {
             Row(Modifier.fillMaxWidth().padding(bottom = 20.dp), horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                 Metric("Recordings", trips.size.toString(), Modifier.weight(1f))
-                Metric("GPS distance", distanceLabel(trips.sumOf { it.distanceMeters }), Modifier.weight(1f))
+                Metric("Distance", distanceLabel(trips.sumOf { it.distanceMeters }), Modifier.weight(1f))
             }
             trips.forEach { trip ->
                 ListItem(headlineContent = { Text(trip.name, fontWeight = FontWeight.SemiBold) },
                     supportingContent = {
-                        Text("${DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(trip.startedAtMs))}\n${durationLabel(trip.durationMs)} · ${distanceLabel(trip.distanceMeters)}${if (trip.recovered) " · Recovered" else ""}")
+                        Text("${DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(trip.startedAtMs))} · ${DateFormat.getTimeInstance(DateFormat.SHORT).format(Date(trip.startedAtMs))}\n${durationLabel(trip.durationMs)} · ${distanceLabel(trip.distanceMeters)}${if (trip.recovered) " · Recovered" else ""}")
                     }, leadingContent = {
-                        Surface(shape = RoundedCornerShape(14.dp), color = MaterialTheme.colorScheme.primaryContainer) {
+                        Surface(shape = SetuShape.action, color = MaterialTheme.colorScheme.primaryContainer) {
                             Icon(Icons.Outlined.Route, null, Modifier.padding(14.dp), tint = MaterialTheme.colorScheme.primary)
                         }
                     }, trailingContent = { Icon(Icons.Outlined.ChevronRight, null) },
@@ -84,11 +84,11 @@ fun TripDetailScreen(model: SetuViewModel, trip: Trip, onExport: (Trip) -> Unit)
             Text(trip.name, style = MaterialTheme.typography.headlineMedium)
             Text(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(trip.startedAtMs)),
                 Modifier.padding(top = 8.dp, bottom = 20.dp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            if (trip.points.size >= 2) Surface(shape = RoundedCornerShape(20.dp), modifier = Modifier.height(240.dp).fillMaxWidth()) {
+            if (trip.points.size >= 2) Surface(shape = SetuShape.card, modifier = Modifier.height(240.dp).fillMaxWidth()) {
                 val maps by model.activeMap.collectAsStateWithLifecycle()
                 NavigationMap(DriveRoute(trip.points.map { it.point }, trip.distanceMeters, emptyList()), trip.points.last(), 0, dark, Modifier.fillMaxSize(), maps = maps,
                     recordedPath = trip.points)
-            } else Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surfaceContainer) {
+            } else Surface(shape = SetuShape.card, color = MaterialTheme.colorScheme.surfaceContainer) {
                 Column(Modifier.fillMaxWidth().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(Icons.Outlined.LocationOff, null, Modifier.size(36.dp))
                     Text("No position path to draw", Modifier.padding(top = 12.dp), style = MaterialTheme.typography.titleMedium)
@@ -97,17 +97,17 @@ fun TripDetailScreen(model: SetuViewModel, trip: Trip, onExport: (Trip) -> Unit)
             }
             Row(Modifier.padding(top = 24.dp, bottom = 8.dp), horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                 Metric("Duration", durationLabel(trip.durationMs), Modifier.weight(1f))
-                Metric(if (hasEstimates) "Estimated distance" else "GPS distance", distanceLabel(trip.distanceMeters), Modifier.weight(1f))
+                Metric(if (hasEstimates) "Estimated distance" else "Distance", distanceLabel(trip.distanceMeters), Modifier.weight(1f))
             }
             ReadingRow("Timestamped records", "%,d".format(trip.sampleCount), Icons.Outlined.GraphicEq)
             ReadingRow(if (hasEstimates) "GPS + sensor positions" else "GPS positions", "%,d".format(trip.points.size), Icons.Outlined.GpsFixed)
             ReadingRow("Data source", if (trip.synthetic) "Synthetic sample" else "Recorded sensors", Icons.Outlined.FolderOpen)
             if (trip.recovered) InformationNote("Recovered after an interrupted recording. Only complete records can be replayed or exported.")
             Button(onClick = { model.playTrip(trip) }, enabled = trip.points.size >= 2,
-                modifier = Modifier.fillMaxWidth().padding(top = 20.dp).heightIn(min = 54.dp).testTag("replay-trip"), shape = RoundedCornerShape(16.dp)) {
+                modifier = Modifier.fillMaxWidth().padding(top = 20.dp).heightIn(min = 54.dp).testTag("replay-trip"), shape = SetuShape.action) {
                 Icon(Icons.Outlined.PlayArrow, null); Spacer(Modifier.width(8.dp)); Text("Replay drive")
             }
-            OutlinedButton(onClick = { onExport(trip) }, modifier = Modifier.fillMaxWidth().padding(top = 10.dp).heightIn(min = 52.dp).testTag("export-trip"), shape = RoundedCornerShape(16.dp)) {
+            OutlinedButton(onClick = { onExport(trip) }, modifier = Modifier.fillMaxWidth().padding(top = 10.dp).heightIn(min = 52.dp).testTag("export-trip"), shape = SetuShape.action) {
                 Icon(Icons.Outlined.IosShare, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)); Text("Export original recording")
             }
             InformationNote("Export includes raw sensors, precise GPS observations and any sensor-estimated trajectory. Share only with someone you trust. Gaps are not interpolated; path distance is not a validated odometer reading.")

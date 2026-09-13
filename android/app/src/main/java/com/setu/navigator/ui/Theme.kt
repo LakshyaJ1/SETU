@@ -1,13 +1,29 @@
 package com.setu.navigator.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+/**
+ * The shape scale, stated once so it can be obeyed.
+ *
+ * The UI had grown eight different corner radii (6, 12, 14, 16, 18, 20, 24, 28), which is what
+ * makes an interface read as assembled from parts rather than designed. Four steps, each with a
+ * job: controls and small tiles, actions, containers, and the one hero mark.
+ */
+object SetuShape {
+    val control = RoundedCornerShape(12.dp)   // chips, icon tiles, small inline controls
+    val action = RoundedCornerShape(16.dp)    // buttons and anything the user presses to proceed
+    val card = RoundedCornerShape(20.dp)      // cards, sheets, grouped containers
+    val hero = RoundedCornerShape(28.dp)      // the app mark only
+}
 
 val Forest = Color(0xFF195A40)
 val Leaf = Color(0xFFDBEDBD)

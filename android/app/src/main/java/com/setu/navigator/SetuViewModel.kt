@@ -237,7 +237,7 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
         if (navigating || mapBusy || recording.value) return
         clearRoute()
         tab = "Drive"
-        startRecording("Position tracking")
+        startRecording(defaultDriveName())
     }
 
     fun stopTracking() {

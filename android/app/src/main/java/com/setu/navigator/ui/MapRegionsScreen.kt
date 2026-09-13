@@ -44,7 +44,7 @@ fun MapRegionsScreen(model: SetuViewModel) {
         PageHeader("A city in your pocket", "Your maps. Ready without a signal.", onBack = { model.overlay = null })
         Column(Modifier.weight(1f).verticalScroll(scroll).padding(horizontal = 24.dp)) {
             model.mapMessage?.let { message ->
-                Surface(color = MaterialTheme.colorScheme.surfaceContainer, shape = RoundedCornerShape(12.dp),
+                Surface(color = MaterialTheme.colorScheme.surfaceContainer, shape = SetuShape.control,
                     modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
                     Text(message, Modifier.padding(16.dp).testTag("map-operation-message"), style = MaterialTheme.typography.bodyMedium)
                 }
@@ -54,7 +54,7 @@ fun MapRegionsScreen(model: SetuViewModel) {
                 Text(model.mapProgress ?: "Checking map…", Modifier.padding(top = 8.dp), style = MaterialTheme.typography.bodyMedium)
                 TextButton(onClick = model::cancelMapOperation, modifier = Modifier.testTag("cancel-map-operation")) { Text("Cancel") }
             }
-            Surface(shape = RoundedCornerShape(20.dp), modifier = Modifier.fillMaxWidth().height(180.dp)) {
+            Surface(shape = SetuShape.card, modifier = Modifier.fillMaxWidth().height(180.dp)) {
                 NavigationMap(null, null, 0, dark, Modifier.fillMaxSize(), maps = maps)
             }
             Text(maps.region.name, Modifier.padding(top = 20.dp).testTag("active-map-name"), style = MaterialTheme.typography.headlineSmall)

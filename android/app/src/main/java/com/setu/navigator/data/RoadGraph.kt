@@ -13,7 +13,6 @@ class RoadGraph internal constructor(
     val nodeCount get() = latitudes.limit()
     val edgeCount get() = targets.limit()
     private data class Snap(val from: Int, val edge: Int, val fraction: Double, val point: GeoPoint, val offset: Double)
-    private data class Visit(val node: Int, val cost: Double, val priority: Double)
     private fun point(node: Int) = GeoPoint(latitudes[node], longitudes[node])
     private var segmentIndex: RoadSegmentIndex? = null
 
@@ -54,21 +53,22 @@ class RoadGraph internal constructor(
         require(starts.isNotEmpty()) { "No mapped driving road within 250 metres of your start. Choose a nearby public road." }
         val ends = snaps(to, checkpoint)
         require(ends.isNotEmpty()) { "No mapped driving road within 250 metres of this destination. Choose a nearby entrance." }
-        return search(from, to, starts, ends, checkpoint)
-            ?: search(from, to, starts, snaps(to, checkpoint, true), checkpoint)
-            ?: search(from, to, snaps(from, checkpoint, true), snaps(to, checkpoint, true), checkpoint)
+        // One scratch buffer serves every attempt, so a route costs a few hundred kilobytes of
+        // working memory instead of three dense node-count arrays.
+        val scratch = SearchScratch(nodeCount)
+        return search(from, to, starts, ends, scratch, checkpoint)
+            ?: search(from, to, starts, snaps(to, checkpoint, true), scratch, checkpoint)
+            ?: search(from, to, snaps(from, checkpoint, true), snaps(to, checkpoint, true), scratch, checkpoint)
             ?: error("No connected driving route between roads within 250 metres of these points. Try another public-road entrance.")
     }
 
-    private fun search(from: GeoPoint, to: GeoPoint, starts: List<Snap>, ends: List<Snap>, checkpoint: () -> Unit): DriveRoute? {
+    private fun search(from: GeoPoint, to: GeoPoint, starts: List<Snap>, ends: List<Snap>,
+                       scratch: SearchScratch, checkpoint: () -> Unit): DriveRoute? {
+        scratch.reset()
         val endNodes = ends.groupBy { it.from }
         val endEdges = ends.groupBy { it.edge }
         val maximumOffset = ends.maxOf { it.offset } + 2.0
         fun heuristic(node: Int) = maxOf(0.0, point(node).distanceTo(to) - maximumOffset)
-        val costs = DoubleArray(nodeCount) { Double.POSITIVE_INFINITY }
-        val previous = IntArray(nodeCount) { -1 }
-        val root = IntArray(nodeCount) { -1 }
-        val queue = PriorityQueue<Visit>(compareBy { it.priority })
         var bestCost = Double.POSITIVE_INFINITY
         var bestEnd: Snap? = null
         var directStart: Snap? = null
@@ -79,31 +79,30 @@ class RoadGraph internal constructor(
             }
             val target = targets[start.edge]
             val cost = start.offset + (1.0 - start.fraction) * lengths[start.edge]
-            if (cost < costs[target]) {
-                costs[target] = cost
-                root[target] = index
-                queue.add(Visit(target, cost, cost + heuristic(target)))
-            }
+            if (scratch.relax(target, cost, -1, index)) scratch.push(target, cost, cost + heuristic(target))
         }
         var iterations = 0
-        while (queue.isNotEmpty()) {
+        while (!scratch.frontierIsEmpty()) {
             if (iterations++ % 1024 == 0) checkpoint()
-            val visit = queue.remove()
-            if (visit.priority >= bestCost) break
-            if (visit.cost > costs[visit.node]) continue
-            endNodes[visit.node].orEmpty().forEach { end ->
-                val cost = visit.cost + end.fraction * lengths[end.edge] + end.offset
+            if (scratch.peekPriority() >= bestCost) break
+            scratch.pop()
+            val node = scratch.poppedNode
+            val settled = scratch.poppedCost
+            if (scratch.expansions > SearchScratch.MAX_EXPANSIONS) {
+                error("This journey is too large to plan offline. Try a closer destination.")
+            }
+            if (settled > scratch.costOf(node)) continue
+            val root = scratch.rootOf(node)
+            endNodes[node].orEmpty().forEach { end ->
+                val cost = settled + end.fraction * lengths[end.edge] + end.offset
                 if (cost < bestCost) { bestCost = cost; bestEnd = end; directStart = null }
             }
-            var edge = heads[visit.node]
+            var edge = heads[node]
             while (edge >= 0) {
                 val target = targets[edge]
-                val candidate = visit.cost + lengths[edge]
-                if (candidate < costs[target]) {
-                    costs[target] = candidate
-                    previous[target] = edge
-                    root[target] = root[visit.node]
-                    queue.add(Visit(target, candidate, candidate + heuristic(target)))
+                val candidate = settled + lengths[edge]
+                if (candidate < bestCost && scratch.relax(target, candidate, edge, root)) {
+                    scratch.push(target, candidate, candidate + heuristic(target))
                 }
                 edge = next[edge]
             }
@@ -120,12 +119,14 @@ class RoadGraph internal constructor(
         } else {
             val edges = mutableListOf<Int>()
             var node = end.from
-            while (previous[node] >= 0) {
-                val edge = previous[node]
+            while (scratch.previousEdgeOf(node) >= 0) {
+                val edge = scratch.previousEdgeOf(node)
                 edges.add(edge)
                 node = sourceNodes[edge]
             }
-            val start = starts[root[node]]
+            val rootIndex = scratch.rootOf(node)
+            if (rootIndex !in starts.indices) return null
+            val start = starts[rootIndex]
             append(start.point, start.edge)
             append(point(targets[start.edge]), start.edge)
             edges.asReversed().forEach { append(point(targets[it]), it) }
