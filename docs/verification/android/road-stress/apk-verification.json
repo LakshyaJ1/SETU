@@ -1,0 +1,19 @@
+﻿{
+    "artifact":  "dist/android/SETU-navigation-evaluation.apk",
+    "sha256":  "985a4ba2494850c82f928428abc7dd2a5b960ebce55bcc142725027f4324cea9",
+    "bytes":  212472310,
+    "signatureVerified":  true,
+    "zip16KiBAligned":  true,
+    "installedSha256Matches":  true,
+    "developmentBuild":  true,
+    "navigationAccuracyApproved":  false,
+    "jvmTestsPassed":  97,
+    "physicalRegressionTestsPassed":  25,
+    "physicalRegressionSeconds":  139.903,
+    "longWarmupReplayTestsPassed":  1,
+    "longWarmupReplayCombinations":  15,
+    "longWarmupReplaySeconds":  428.419,
+    "longWarmupReplayApkSha256":  "06f4b670549a25eb6b63891a234182d97132f3ace7e1135a17dd4f31cfe325e0",
+    "lintErrors":  0,
+    "lintWarnings":  25
+}

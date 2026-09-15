@@ -61,12 +61,6 @@ internal class OfflineTiles(private val context: Context, private val metadata: 
         val root = File(context.filesDir, "offline-vector-maps").apply { check(isDirectory || mkdirs()) }
         val destination = File(root, checksum)
         val marker = File(destination, "complete")
-        // Re-hashing all 11,159 tiles (48.5 MB) costs real time and ran on every style load, so a
-        // theme change or a map reselection paid it again. Once this process has verified every tile
-        // of this exact archive, and the completion marker is still present, the directory is
-        // trusted for the rest of the process; a restart re-verifies in full. Nothing outside this
-        // class writes there, so the integrity contract in docs/20 is unchanged across launches.
-        if (checksum in verifiedRoots && marker.isFile && marker.length() == 64L) return@synchronized destination
         val verificationBuffer = ByteArray(65536)
         val verificationHash = MessageDigest.getInstance("SHA-256")
         val intact = runCatching {
@@ -83,7 +77,7 @@ internal class OfflineTiles(private val context: Context, private val metadata: 
                 }
             }
         }.getOrDefault(false)
-        if (intact) { verifiedRoots.add(checksum); return@synchronized destination }
+        if (intact) return@synchronized destination
         val digest = MessageDigest.getInstance("SHA-256")
         context.assets.open(ARCHIVE).use { input ->
             val buffer = ByteArray(65536)
@@ -136,7 +130,6 @@ internal class OfflineTiles(private val context: Context, private val metadata: 
                 check(destination.deleteRecursively())
             }
             check(staging.renameTo(destination)) { "Could not prepare the offline map. Check available storage." }
-            verifiedRoots.add(checksum)
             destination
         } finally {
             if (staging.exists()) staging.deleteRecursively()
@@ -149,8 +142,6 @@ internal class OfflineTiles(private val context: Context, private val metadata: 
             return buildString(size * 2) { for (byte in this@hex) { val value = byte.toInt() and 255; append(digits[value ushr 4]); append(digits[value and 15]) } }
         }
         private val lock = Any()
-        /** Archive checksums whose published tile directory this process has verified in full. */
-        private val verifiedRoots = HashSet<String>()
         private const val ARCHIVE = "regions/delhi/city-tiles.zip"
         fun matching(context: Context, region: MapRegion): OfflineTiles? {
             if (region.id != "delhi" || region.cityChecksum == null) return null

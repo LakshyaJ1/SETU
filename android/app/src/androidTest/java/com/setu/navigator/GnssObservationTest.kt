@@ -1,6 +1,8 @@
 package com.setu.navigator
 
 import android.location.Location
+import android.content.ContextWrapper
+import android.content.pm.PackageManager
 import android.os.SystemClock
 import androidx.core.location.LocationCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -106,9 +108,14 @@ class GnssObservationTest {
 
     @Test
     fun duplicateDelayedAndFutureFixesDoNotReplaceLatestOrEnterLog() {
-        val hub = SensorHub(InstrumentationRegistry.getInstrumentation().targetContext)
+        val context = object : ContextWrapper(InstrumentationRegistry.getInstrumentation().targetContext) {
+            override fun checkSelfPermission(permission: String) = PackageManager.PERMISSION_DENIED
+        }
+        val hub = SensorHub(context)
         val records = mutableListOf<JSONObject>()
-        hub.record = records::add
+        hub.record = { if (it.optString("type") == "pose") records.add(it) }
+        hub.start()
+        try {
         val now = SystemClock.elapsedRealtimeNanos()
         val first = location().apply { elapsedRealtimeNanos = now - 2_000_000_000L }
         hub.onLocationChanged(first)
@@ -122,5 +129,9 @@ class GnssObservationTest {
         assertEquals(2, records.size)
         assertEquals(next.elapsedRealtimeNanos, hub.pose.value!!.timestampNs)
         assertTrue(records.all { it.isNull("speedMps") && it.isNull("bearing") && it.isNull("accuracyMeters") })
+        hub.stop()
+        hub.onLocationChanged(Location(next).apply { elapsedRealtimeNanos++ })
+        assertEquals(2, records.size)
+        } finally { hub.stop() }
     }
 }

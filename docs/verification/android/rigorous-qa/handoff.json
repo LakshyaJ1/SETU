@@ -1,0 +1,28 @@
+{
+  "schema": "setu.phone-handoff.v1",
+  "date": "2026-09-15",
+  "device": "CPH2467",
+  "latestApkInstalled": true,
+  "apkSha256": "410ca8d79d42780b3cb1c33c0d569c093e1216b257d9c2ccd10dc56e9a8db62b",
+  "originalRecordings": 37,
+  "recordingsAfterFinalSuite": 37,
+  "originalRecordingHashMismatches": 0,
+  "testRecordingServiceStopped": true,
+  "harmlessWakeSignalSent": true,
+  "originalPhoneSettingsRestored": true,
+  "phoneLockedAfterTests": true,
+  "finalScreenshotBlockedBySecureLockscreen": true,
+  "restored": {
+    "stayAwakeWhilePluggedIn": 0,
+    "locationEnabled": true,
+    "wifiEnabled": true,
+    "mobileDataEnabled": true,
+    "brightness": 3220,
+    "brightnessMode": 0,
+    "batterySaverEnabled": true
+  },
+  "localWebsite": "http://127.0.0.1:4173",
+  "publisherWatchSeconds": 30,
+  "publisherIsPermanentService": false,
+  "publicDeployment": false
+}

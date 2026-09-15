@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -24,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +41,8 @@ fun RecordScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> U
     val records by model.recordCount.collectAsStateWithLifecycle()
     val fix by model.livePose.collectAsStateWithLifecycle()
     var name by rememberSaveable { mutableStateOf("") }
+    var fixedMount by rememberSaveable { mutableStateOf(false) }
+    val settings by model.settings.collectAsStateWithLifecycle()
     var elapsed by remember { mutableLongStateOf(0) }
     var nowNs by remember { mutableLongStateOf(SystemClock.elapsedRealtimeNanos()) }
     val context = LocalContext.current
@@ -84,6 +88,18 @@ fun RecordScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> U
             if (!recording) OutlinedTextField(name, { name = it.take(100) }, label = { Text("Drive name (optional)") },
                 placeholder = { Text("Evening loop, tunnel trial…") }, singleLine = true, shape = SetuShape.action,
                 modifier = Modifier.fillMaxWidth().padding(top = 16.dp).testTag("recording-name"))
+            SectionTitle("Training collection")
+            ReadingRow("Activity label", settings.vehicle, Icons.Outlined.DirectionsCar)
+            if (settings.vehicle == "Walking") InformationNote("Walking mode uses detected steps, not the car speed model. Hold the phone pointing along travel. Calibrate step length in Settings; raw IMU and step events stay in your recording.")
+            if (!recording && settings.vehicle != "Walking") Row(Modifier.fillMaxWidth().testTag("fixed-mount")
+                .toggleable(value = fixedMount, role = Role.Checkbox, onValueChange = { fixedMount = it }), verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(fixedMount, null)
+                Text("Phone is secured in a fixed mount", style = MaterialTheme.typography.bodyMedium)
+            }
+            if (!recording && settings.vehicle != "Walking" && !fixedMount) {
+                InformationNote("Mount not confirmed: this recording can be reviewed, but is excluded from model training. Confirm only a securely attached phone; a pocket or loose storage compartment is not a fixed mount.")
+            }
+            InformationNote("For training, leave GPS on for the whole drive. Save first, then open Trips → Export training bundle. SETU compares full-rate IMU with GPS every second and separately replays GPS gaps without changing live navigation. Missing or poor GPS is flagged, never invented.")
             InformationNote("Recordings stay on this phone. If enabled in Model integration, live IMU windows are shared with your server. Secure the phone and start before driving. Export is always your choice.")
             InformationNote("Recording with the screen off? Check Background recording in Settings first. Battery saver and background restrictions can pause sensor capture.")
             Spacer(Modifier.height(16.dp))
@@ -91,8 +107,11 @@ fun RecordScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> U
       }
       Surface(color = MaterialTheme.colorScheme.surface) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp)) {
+            Text("Keep SETU visible for this demo. The screen stays on while recording.",
+                Modifier.padding(bottom = 8.dp), style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
             Button(onClick = {
-                if (recording) model.stopRecording() else withLocationPermission { model.startRecording(name.ifBlank { "My drive" }) }
+                if (recording) model.stopRecording() else withLocationPermission { model.startRecording(name.ifBlank { "My drive" }, fixedMount) }
             }, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag("record-toggle"),
                 shape = SetuShape.action) {
                 Icon(if (recording) Icons.Outlined.Stop else Icons.Outlined.FiberManualRecord, null, Modifier.size(20.dp))
@@ -137,6 +156,8 @@ fun DiagnosticsScreen(model: SetuViewModel) {
             SensorChart(history.toList(), Modifier.fillMaxWidth().height(100.dp).padding(vertical = 12.dp))
             AxisReadings("Accelerometer", state.accelerometer, "m/s²", state.hasAccelerometer && state.lastSampleNs > 0)
             AxisReadings("Gyroscope", state.gyroscope, "rad/s", state.hasGyroscope && state.lastSampleNs > 0)
+            Text("Gyroscope values are turn rate, not the angle turned. A fast turn can produce a large reading without forward motion.",
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             ReadingRow("Pressure", state.pressure?.let { "%.1f hPa".format(it) } ?: "Not available", Icons.Outlined.Height)
             SectionTitle("Satellite reception")
             ReadingRow("Satellites used / seen", "${state.satellitesUsed} / ${state.satellites}", Icons.Outlined.SatelliteAlt)
@@ -162,14 +183,8 @@ fun DiagnosticsScreen(model: SetuViewModel) {
             SectionTitle("Estimation channels")
             val inference by model.modelInference.collectAsStateWithLifecycle()
             val learned = inference.recentMeasurement(observationNowNs)
-            ReadingRow("Learned speed · evaluation only", learned?.let { "%.2f m/s".format(it.speedMps) } ?: inference.status, Icons.Outlined.Science)
+            ReadingRow("Model speed · not measured motion", learned?.let { "%.2f m/s".format(it.speedMps) } ?: "No usable model speed", Icons.Outlined.Science)
             Text(inference.detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            listOf("Spectral odometer (SVO)", "Turn speed (CTS)", "GNSS trust model").forEach {
-                Row(Modifier.fillMaxWidth().padding(vertical = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(it, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-                    Text("Not connected", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            }
             OutlinedButton(onClick = { model.overlay = "models" }, modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
                 Text("Research model server")
             }
@@ -187,8 +202,16 @@ fun DiagnosticsScreen(model: SetuViewModel) {
             ReadingRow("Delayed fixes replayed", native.delayedCorrections.toString(), Icons.Outlined.History)
             ReadingRow("Last GPS aid", native.gpsAgeSeconds?.takeIf { currentNative != null }?.let { "%.1f s ago".format(it) } ?: "Unavailable", Icons.Outlined.Schedule)
             ReadingRow("Sensor resets / unpaired", "${native.resets} / ${native.pairingDrops}", Icons.Outlined.Sync)
-            ReadingRow("Native speed", currentNative?.speedMps?.let { "%.1f %s".format(it * if (settings.units == "mph") 2.236936 else 3.6, settings.units) } ?: "Unavailable", Icons.Outlined.Speed)
-            ReadingRow("95% filter radius", native.radius95Meters?.takeIf { currentNative != null }?.let { "%.1f m".format(it) } ?: "Unavailable", Icons.Outlined.RadioButtonUnchecked)
+            if (settings.vehicle == "Walking") {
+                ReadingRow("Step detector", if (state.stepDetectorActive) "Active" else if (state.hasStepDetector) "Needs physical activity permission" else "Not available", Icons.Outlined.Sensors)
+                ReadingRow("Positioned / rejected steps", "${native.walkingSteps} / ${native.rejectedSteps}", Icons.Outlined.DirectionsWalk)
+                ReadingRow("Step length", "%.2f m".format(settings.walkingStepLengthMeters), Icons.Outlined.Straighten)
+            } else {
+                ReadingRow("Vehicle mount calibration", if (!native.vehicleConstraintsEnabled) "Car constraints not applied" else if (native.vehicleCalibrated) "Aligned from motion" else "Not calibrated · 10 s ceiling", Icons.Outlined.DirectionsCar)
+                ReadingRow("Stop / turn / vibration updates", "${native.zupts} / ${native.turnSpeedUpdates} / ${native.spectralUpdates}", Icons.Outlined.Sensors)
+            }
+            ReadingRow(if (settings.vehicle == "Walking") "Step-based speed" else "Native speed", currentNative?.speedMps?.let { "%.1f %s".format(it * if (settings.units == "mph") 2.236936 else 3.6, settings.units) } ?: "Unavailable", Icons.Outlined.Speed)
+            ReadingRow(if (settings.vehicle == "Walking") "Model radius · unvalidated" else "95% filter radius", native.radius95Meters?.takeIf { currentNative != null }?.let { "%.1f m".format(it) } ?: "Unavailable", Icons.Outlined.RadioButtonUnchecked)
             Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f).padding(end = 12.dp)) {
                     Text("Use native positioning", style = MaterialTheme.typography.titleSmall)
@@ -197,7 +220,7 @@ fun DiagnosticsScreen(model: SetuViewModel) {
                 Switch(settings.nativePositioning, { model.updateSettings(settings.copy(nativePositioning = it)) },
                     modifier = Modifier.testTag("native-positioning-toggle").semantics { contentDescription = "Use native positioning" })
             }
-            InformationNote("For testing, not validated driving accuracy. The displayed radius is model-derived, not a guarantee. Keep the phone secured; vehicle mount calibration and road matching are not connected.")
+            InformationNote("Experimental positioning, not verified accuracy. No road matching. Walking requires detected steps and calibrated step length; no steps means no new displacement. Vehicle mode requires a secured phone and motion calibration. The radius is a model estimate, not measured coverage.")
             SectionTitle("Synthetic integration check")
             Text("16-state RI-EKF · C++20 / Eigen 3.4", style = MaterialTheme.typography.bodyMedium)
             Text(model.nativeCoreStatus.message, style = MaterialTheme.typography.titleMedium,

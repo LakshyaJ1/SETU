@@ -1,0 +1,33 @@
+........................................................................ [ 31%]
+.......................F................................................ [ 62%]
+................................s....s.................................. [ 93%]
+..............                                                           [100%]
+================================== FAILURES ===================================
+________________ TestReport.test_renders_valid_standalone_html ________________
+
+self = <test_eval_and_report.TestReport object at 0x0000018D63C26E70>
+result = ExperimentResult(route='curvy_a_road', tier='A', outage_s=60.0, traces=[OutageTrace(label='B1_ins', t=array([150. , 15...ion'])], scores={'B1_ins': nan, 'B2_ins_nhc_zupt': nan, 'SETU': 0.6394459156653188}, verdict='supported: test fixture')
+
+    def test_renders_valid_standalone_html(self, result):
+        from setu.report import render_report
+    
+        html = render_report(result)
+        assert html.startswith("<!doctype html>")
+        assert html.count("<svg") >= 3  # hero, coverage, trajectory
+        assert "</html>" in html
+        # Self-contained: no script tags, no external stylesheet beyond fonts.
+>       assert "<script" not in html
+E       AssertionError: assert '<script' not in '<!doctype h...>\n</html>\n'
+E         
+E         '<script' is contained here:
+E           >
+E           
+E           </div>
+E           <script>
+E           /* Adds the sweep when the chart is reached. Purely additive: the page is...
+E         
+E         ...Full output truncated (15 lines hidden), use '-vv' to show
+
+tests\test_eval_and_report.py:285: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_eval_and_report.py::TestReport::test_renders_valid_standalone_html

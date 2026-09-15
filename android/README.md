@@ -3,6 +3,91 @@
 Native Kotlin / Jetpack Compose application. Open this `android/` directory in
 Android Studio. The Python scientific reference remains at the repository root.
 
+## Latest rigorous QA
+
+See [phone QA and repeatable checks](../docs/28-rigorous-phone-qa.md) and the
+[full PDF](../docs/verification/android/rigorous-qa/report.pdf) for six requested
+outage durations, real Location-off sensor continuity, isolated regressions and
+repeated app journeys. The earlier combined-test failures remain documented.
+The application artifact is `../dist/android/SETU-qa-beta.apk`. Compact map
+controls no longer overlap attribution, loading feedback stays above the sheet,
+and the screen stays on during foreground recording. Model weights are unchanged.
+Background sensor gaps remain unresolved; keep SETU visible for the demo.
+GPS-free navigation accuracy is not approved.
+
+## Curvier demo development build
+
+Preceding development APK: `../dist/android/SETU-curvy-demo.apk`.
+The presentation demo now includes alternating bends, corner braking and a stop.
+Routes remain visible after screen recreation and theme changes; the phone test
+checks rendered map features, not just status labels. See
+[demo changes and the 6.8-minute CPU training experiment](../docs/27-demo-and-cpu-training.md).
+The research checkpoint is not installed: held-out tests still show motion at rest.
+This build passes 102 JVM tests, the demo visibility test and 25 physical-phone
+regressions. The 90%-within-10-m GPS-free target remains unmet.
+The combined 26-test run still fails its map-memory ceiling; see the follow-up
+for exact results. This is a development build, not a bug-free release.
+
+## Retained heading bootstrap improvement
+
+Pooled GPS-motion heading initialization adds usable predictions in matched
+replay without losing previously successful points or relaxing navigation guards.
+See [the measured improvement and limitations](../docs/26-heading-bootstrap.md).
+Normal training exports now allow 120 seconds of GPS warmup before 30-second
+withheld intervals and describe the actual protocol. All original recordings remain
+unchanged. [Verification and measured results](../docs/verification/android/road-stress/README.md)
+include 675 synthetic trials and the three selected rides. The 90%-within-10-m
+GPS-free target is not met. This is not the final navigation release.
+The previous `../dist/android/SETU-heading-bootstrap.apk` and
+`../dist/android/SETU-navigation-evaluation.apk` remain available.
+
+## Scooter recording review
+
+Previous test APK: `../dist/android/SETU-scooter-review.apk`.
+Select **Settings → Activity → Two-wheeler** for scooter recordings. Good fresh
+GPS remains the navigation source; unsupported car-only speed inference and car
+mount/turn/vibration constraints are not applied to scooters. This does not make
+sensor-only scooter navigation field-ready. The three selected rides still show
+poor heading initialization; see [findings and next collection steps](../docs/24-scooter-data-review.md)
+and [build verification](../docs/verification/android/scooter-review/README.md).
+
+## Walking and stationary-speed fixes
+
+Earlier test APK: `../dist/android/SETU-walking-batch-fix.apk`; its fixes are retained.
+Select **Settings → Activity → Walking** for on-foot trials, allow **Physical
+activity**, calibrate step length, and obtain GPS/heading alignment before testing
+GPS loss. Walking does not run the car speed model. Keep a recording active during
+the trial. No steps means no additional step displacement. Batched step reporting
+is supported; stop speed can lag by 1.5–4.5 seconds (about three on the tested phone).
+Ordinary phone pitch no longer erases initialized heading. Keep the phone pointed
+along travel; magnetic interference still blocks unsafe compass initialization.
+Walking field accuracy is not yet validated. See the
+[investigation and test procedure](../docs/23-walking-fallback-investigation.md)
+and [build verification](../docs/verification/android/walking-batches/README.md).
+The earlier walking APK and its verification remain available separately.
+
+## Recording-to-training pipeline
+
+Record GPS and sensors together with the correct vehicle label and confirmed
+fixed mount. Keep GPS enabled for reference data. After saving, use **Trips →
+drive → Export training bundle** for raw data, a quality-marked 1 Hz comparison,
+and independent GPS-withheld replay, prepared entirely on the phone.
+See [collection, privacy, dataset conversion and fine-tuning](../docs/22-phone-training-pipeline.md).
+The current model remains evaluation-only; this feature does not auto-train or
+upload recordings. Keep SETU open while preparing an export.
+
+The earlier collection build is retained at `../dist/android/SETU-training-pipeline.apk`.
+[Verification and APK hash](../docs/verification/android/collection-pipeline/README.md)
+include physical capture, leakage checks, regression tests and release limitations.
+
+## Upstream review baseline
+
+`../dist/android/SETU-reviewed-preview.apk` contains the reviewed teammate update
+and fixes for map integrity, sensor/provider lifecycle, recording finalization,
+model approval enforcement and delayed-GNSS constraint replay. The bundled local
+speed model runs for evaluation, not approved navigation fusion. See
+`../docs/21-upstream-review.md` for verification and open requirements.
+
 ## Presentation MVP
 
 Delhi & NCR is included alongside Bengaluru Central. Select it in **Settings →
@@ -18,19 +103,19 @@ Start with **Track my position** for a live recorded session, or
 The presentation sequence, APK locations and exact boundaries are documented in
 `../docs/14-demo-mvp.md`. Native demo output is not a physical accuracy claim.
 
-## Reliability preview
+## Earlier reliability preview
 
-The latest build is `../dist/android/SETU-reliability-preview.apk`. It validates
+The earlier build is `../dist/android/SETU-reliability-preview.apk`. It validates
 and repairs offline tiles in persistent app storage, accelerates road snapping,
 and publishes native estimates at 100 ms intervals when valid input is available.
 See `../docs/verification/android/phone-reliability/README.md` for exact hashes,
 device checks, failed tests and remaining acceptance work.
 
-The connected phone freezes background sensor capture even with a recording
-service active. Battery controls are explained in **Settings > Background recording**;
-allowing background use and disabling Battery saver did not resolve this phone's
-all-radios-off background test. Do not rely on screen-off recording or a complete
-GPS-free drive. Foreground sensor capture is not proof of navigation accuracy.
+That build's connected-phone test froze background sensor capture despite a
+recording service. Battery controls are in **Settings > Background recording**.
+The reviewed update passes short foreground/background capture checks; consult
+the current verification ledger for durations. This is not long-duration
+screen-off qualification or proof of a complete GPS-free drive.
 
 ## Earlier routing preview
 

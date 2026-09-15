@@ -1,0 +1,4624 @@
+{
+  "schema": "setu.road-stress-comparison.v1",
+  "synthetic": true,
+  "releaseApproved": false,
+  "manifestSha256": "b00e24bdcd6cd7320dfb5b01abc510809e0bd705fdca19120fc51e64420145bd",
+  "binarySha256": "f2388086a8f4de1ae7b99ee0d37818493f283ebae265fcdbf0f49f471ff3cee3",
+  "sources": {
+    "core/test/dr_bench.cpp": "b8267307445fd69fd9fc34b92c681152ab742a10c447a50fd09436d35b5cc2c6",
+    "core/src/setu_engine.cpp": "9a85286e536f64a6a30b5c7d3afa869b4d8b2d13acfef3ea0dbc0cbf8198e50b",
+    "core/src/setu_filter.cpp": "3cb15b5b8c554b7fb77c3983db5ffa9b94bd254071e39eb27aa659c009176c66",
+    "core/src/turn_speed.h": "84788ff7f4d6156175adf282f3f182f857d5db6353901d180090d238ba3b51d7",
+    "core/src/filter_state.h": "921e0ef604d21c28a5849d468ef851d17ea8fb1f04fdb260d992485461ae77d6",
+    "core/include/setu_engine.h": "95f8dd504b9e70dfa63dcf0114e98c43652e4beba5d6db503eda836a1e26026d",
+    "core/include/setu_filter.h": "120fccf114953760b2594b3879b3c7c56354a6a739797106f468f12a7435d0dc",
+    "core/CMakeLists.txt": "08ec88b69e945943c7d6947536b463eee6451fd7952fbb17551bc2bc32263a84"
+  },
+  "deviceModel": "CPH2467",
+  "androidApi": "35",
+  "repeats": 5,
+  "conditions": 135,
+  "trials": 675,
+  "cases": [
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "car",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 1.0,
+      "finalErrorP90Meters": 2.114797146,
+      "driftP90": null,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": true,
+      "releaseApproved": false,
+      "sourceSha256": "2f555cf77b420ad5c694ad82890f8e742e8144daf8973ab909c8247a379185df",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        1.0,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "car",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 1.0,
+      "finalErrorP90Meters": 9.077423041,
+      "driftP90": 0.07564519201,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": true,
+      "releaseApproved": false,
+      "sourceSha256": "edd82985bfa98f97342cc0dcc0adbad1332d5b92f66a5496334fd8a4fc50b134",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        1.0,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "car",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 0.73861386,
+      "finalErrorP90Meters": 28.78667674,
+      "driftP90": 0.2862735834,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "e49f80b2b5e68c7e2e26f2b2ec83eb8cffd287f0bfa133f278aff9fd67aafe01",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.5207920792079208,
+        0.9524752475247524
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "car",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 0.83960396,
+      "finalErrorP90Meters": 22.23184836,
+      "driftP90": 0.2210880732,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "369b7b5cade2a02c86e0f9e2a0610089c16b06253ca2e18a7e39da3b5f846c1e",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.6099009900990099,
+        0.996039603960396
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "car",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 0.82574257,
+      "finalErrorP90Meters": 26.89551276,
+      "driftP90": 0.2674666091,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "1446bde637bf7cb4a0e6b821c3c565bbba27fce08835c3b0ffd8fa9dbe13b191",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.5564356435643565,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "car",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 0.8039604,
+      "finalErrorP90Meters": 37.39665282,
+      "driftP90": 0.3718968294,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "11e1590bb66576e440e4cd58d21b43a5b36b3f42cd083531aff7441bbf95c424",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.4910891089108911,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "car",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 255,
+      "jointSuccess": 0.47326733,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "d5fadb747d092485509eb68d6112a6118b47f527149a4fc0c4412b2a16457a13",
+      "availability": 0.504950495049505,
+      "jointBootstrapInterval95": [
+        0.40990099009900993,
+        0.504950495049505
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "car",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 210,
+      "jointSuccess": 0.37623762,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "fa46e12f479e07323eb2a67dc6d488b5a881f80f31f54d3c3ca32e1051a6b01e",
+      "availability": 0.4158415841584158,
+      "jointBootstrapInterval95": [
+        0.297029702970297,
+        0.4158415841584159
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "car",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 160,
+      "jointSuccess": 0.2970297,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "483ac01a9a29e27cf09441efe235c57b96ed86f61f0223a066f2daeaddc5feea",
+      "availability": 0.31683168316831684,
+      "jointBootstrapInterval95": [
+        0.25742574257425743,
+        0.31683168316831684
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "car",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 1.0,
+      "finalErrorP90Meters": 2.09260972,
+      "driftP90": null,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": true,
+      "releaseApproved": false,
+      "sourceSha256": "72b43a40f9679caaf0f823ce39f87c51932cb07753a4d58b13b70bcef45ad013",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        1.0,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "car",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.69302326,
+      "finalErrorP90Meters": 40.12885644,
+      "driftP90": 0.1114690457,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "ae21789566d3e6cd345746a71f0b3ffa719d2fcc18bce6983bc00049308fec2c",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.5016611295681063,
+        0.8843853820598007
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "car",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.49833887,
+      "finalErrorP90Meters": 23.74756045,
+      "driftP90": 0.1349982197,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "ac3ac1fa729e2b9b2651260862f8023844f5a6955e8514945cc5b5ac6ef05f2a",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.24983388704318937,
+        0.746843853820598
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "car",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.38803987,
+      "finalErrorP90Meters": 104.9518058,
+      "driftP90": 0.5966215755,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "169deef3d76c159cea53ed9cee53064cd9fb5067c4748e6c247ad232875f6dee",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.30697674418604654,
+        0.4564784053156147
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "car",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.4179402,
+      "finalErrorP90Meters": 39.89145542,
+      "driftP90": 0.2267717341,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "93c0efc998ddcb1bf44c98b5d276243d3c31e19bb4e7ba796668185de5f35e1e",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.25980066445182726,
+        0.5308970099667774
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "car",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.41129568,
+      "finalErrorP90Meters": 38.15868579,
+      "driftP90": 0.2169214248,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "c923f74261a1e384e9fee6dc30c658ccda1444cad41e9a8b0db44a15b6213a81",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.24119601328903656,
+        0.5348837209302325
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "car",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 255,
+      "jointSuccess": 0.15880399,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "5d9bf8fe9f50cceb351fb5f4fb0f0dcc32b0b092bec3d6c985e84ced3ab03cec",
+      "availability": 0.16943521594684385,
+      "jointBootstrapInterval95": [
+        0.13754152823920265,
+        0.16943521594684385
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "car",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 210,
+      "jointSuccess": 0.12624585,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "cad2e036367c2d50c15352cb54ab7a0c8dd49991ab8bab97b1ac3f08d695eb34",
+      "availability": 0.13953488372093023,
+      "jointBootstrapInterval95": [
+        0.09966777408637875,
+        0.13953488372093023
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "car",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 160,
+      "jointSuccess": 0.09966777,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "1e5d14fe7426deeb13ebaa87b378b908bcc804337342352973c1251f3cbfb8cf",
+      "availability": 0.10631229235880399,
+      "jointBootstrapInterval95": [
+        0.08637873754152825,
+        0.10631229235880399
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "car",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 1.0,
+      "finalErrorP90Meters": 2.101368927,
+      "driftP90": null,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": true,
+      "releaseApproved": false,
+      "sourceSha256": "61ccff7012c46e24f435a4d4368f9cb8995016f8f5fd53c29b0444a4b34ef58a",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        1.0,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "car",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 2916,
+      "jointSuccess": 0.40965058,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "38691e96cc9202a60862d2f5679c17bd4a408a82bde3d6be1c456b8031b79ee7",
+      "availability": 0.9703826955074876,
+      "jointBootstrapInterval95": [
+        0.2512479201331115,
+        0.6119800332778702
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "car",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.36306156,
+      "finalErrorP90Meters": 70.40505876,
+      "driftP90": 0.1530544673,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "a29be2c00cfabfb2e0c524396de33c5b6fc600e59e902b9771555de1f3eaea51",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.12512479201331114,
+        0.6009983361064892
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "car",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.19434276,
+      "finalErrorP90Meters": 99.28847429,
+      "driftP90": 0.2158444976,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "4ee030a3ef09fcca1312d8b10fee8751102285a58c34895cd4afe104375a547c",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.15374376039933443,
+        0.2286189683860233
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "car",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.2093178,
+      "finalErrorP90Meters": 91.79144482,
+      "driftP90": 0.1995466083,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "51192b930396e6032dafbd15340e9aaffeea4c23f9950b65b15af75fbc0ce646",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.13011647254575706,
+        0.26589018302828615
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "car",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.20599002,
+      "finalErrorP90Meters": 117.9291428,
+      "driftP90": 0.2563676878,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "9b7c5072399df041f5254a70b795ede0003ae620d3ef1351dc81a2997e171fd4",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.12079866888519135,
+        0.26788685524126454
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "car",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 255,
+      "jointSuccess": 0.07953411,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "88ef660cb6d575662a39a22e895652e180512c94b21ee3dfb26014ec7909a82e",
+      "availability": 0.08485856905158069,
+      "jointBootstrapInterval95": [
+        0.06888519134775374,
+        0.08485856905158069
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "car",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 210,
+      "jointSuccess": 0.06322795,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "13fe8d355453a58cf3f8fa608a9e0628b4cc61278f3ae9d771dfd8af77f6c471",
+      "availability": 0.06988352745424292,
+      "jointBootstrapInterval95": [
+        0.04991680532445923,
+        0.06988352745424292
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "car",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 160,
+      "jointSuccess": 0.04991681,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "f2ee5b930984c58088cc46e163b9c49cd75d3349316f1ca4eb5d0187600bcde5",
+      "availability": 0.05324459234608985,
+      "jointBootstrapInterval95": [
+        0.04326123128119801,
+        0.053244592346089845
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "car",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 1.0,
+      "finalErrorP90Meters": 2.098863832,
+      "driftP90": null,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": true,
+      "releaseApproved": false,
+      "sourceSha256": "1659fb882d02b5c39eed438a86823ace1a51d04690163de6e9a7d4b576e75c72",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        1.0,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "car",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 2916,
+      "jointSuccess": 0.20499584,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "1e98b91ce5c9e20ad1c04d998167e8598f2c1567469c4754e40e7d6e548f3276",
+      "availability": 0.4855953372189842,
+      "jointBootstrapInterval95": [
+        0.12572855953372192,
+        0.3062447960033306
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "car",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.18168193,
+      "finalErrorP90Meters": 106.7210608,
+      "driftP90": 0.1160011468,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "d9ab17def22bc7b2c735f76b82486f0b41a525316127f352cfe8357ae3a184e1",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.06261448792672772,
+        0.3007493755203997
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "car",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.09725229,
+      "finalErrorP90Meters": 194.4964131,
+      "driftP90": 0.2114091331,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "17e0d0788b623838f968231b08e5cf86c1504976a24c35987db200f2aee635de",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.07693588676103247,
+        0.11440466278101583
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "car",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.10474604,
+      "finalErrorP90Meters": 174.4459842,
+      "driftP90": 0.1896151899,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "87db3d5c0835defe0385dec24ae9ef33dc68bb7840f14b40bc6837e7b8efa226",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.06511240632805995,
+        0.13305578684429642
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "car",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.10308077,
+      "finalErrorP90Meters": 253.5753181,
+      "driftP90": 0.2756253307,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "c34adaaa6174e8c41945aae2ea65e20ab55e51bcf25d30d272cedbb457c2560a",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.06044962531223981,
+        0.13405495420482932
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "car",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 255,
+      "jointSuccess": 0.03980017,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "d8257652a70b6e3ff8bb28b4a23f60ba019aa6032e005b9ab1ce6e28b0e41d92",
+      "availability": 0.042464612822647796,
+      "jointBootstrapInterval95": [
+        0.034471273938384686,
+        0.042464612822647796
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "car",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 210,
+      "jointSuccess": 0.0316403,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "0ed27617d3535698d307667587be05635a9ffed3d2bf3ce8915074c44e304035",
+      "availability": 0.034970857618651124,
+      "jointBootstrapInterval95": [
+        0.02497918401332223,
+        0.034970857618651124
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "car",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 160,
+      "jointSuccess": 0.02497918,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "b67aa46a246409a4d39dab47a08e107650261852ebbf34fd84d63669b6db9ae1",
+      "availability": 0.026644462947543714,
+      "jointBootstrapInterval95": [
+        0.02164862614487927,
+        0.02664446294754371
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "car",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 1.0,
+      "finalErrorP90Meters": 2.102476933,
+      "driftP90": null,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": true,
+      "releaseApproved": false,
+      "sourceSha256": "b2e8717288de3d1c21c9a345fd76fae4db7661a2fefba89cea6ac07b854d47bb",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        1.0,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "car",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 2916,
+      "jointSuccess": 0.13670183,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "fa28461f9256b706c996dbdead068cbec41c8dc5bd909c7f4fbcbff90f111261",
+      "availability": 0.3238200999444753,
+      "jointBootstrapInterval95": [
+        0.0838423098278734,
+        0.2042198778456413
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "car",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.12115491,
+      "finalErrorP90Meters": 104.1691214,
+      "driftP90": 0.07548486647,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "aec13775a5f4b101a35b484e71ba22afae3bc3a46bdaf6191b257c91d90596e0",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.04175458078845086,
+        0.20055524708495281
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "car",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.06485286,
+      "finalErrorP90Meters": 325.821029,
+      "driftP90": 0.2361021821,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "884245ec1d6ee627f11c7051f04a2290d224e2d816e616bec569d92a43ef2628",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.05130483064963909,
+        0.07629094947251527
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "car",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.06985008,
+      "finalErrorP90Meters": 264.5964092,
+      "driftP90": 0.191736518,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "8cf96a507a305e8e24b0c716d663507d1ede5fbcd98c1bba6a554ae47f665c50",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.04342032204330927,
+        0.08872848417545807
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "car",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.06873959,
+      "finalErrorP90Meters": 350.029996,
+      "driftP90": 0.2536449109,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "7a72d5e3aee3b495f9fff3fe7b4e7f9ef48680943a4ba3b6d880fac027fac53f",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.04031093836757357,
+        0.08939478067740145
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "car",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 255,
+      "jointSuccess": 0.02654081,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "88d9791a9b60f9a68ff18c4357b4e5fe487b2754538ba76630fb7bc4438efb0d",
+      "availability": 0.028317601332593003,
+      "jointBootstrapInterval95": [
+        0.022987229317046085,
+        0.028317601332593
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "car",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 210,
+      "jointSuccess": 0.02109939,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "e645daebe113e52c9bf213cf164be0d4f221d470fb076035099be4ddcb0733ff",
+      "availability": 0.023320377568017768,
+      "jointBootstrapInterval95": [
+        0.01665741254858412,
+        0.023320377568017768
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "car",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 160,
+      "jointSuccess": 0.01665741,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "c41661d5c807f423a67416bd510e8a1487eea5c27701ca59a9fb74db18ea6621",
+      "availability": 0.01776790671848973,
+      "jointBootstrapInterval95": [
+        0.014436424208772905,
+        0.01776790671848973
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "cv",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 1.0,
+      "finalErrorP90Meters": 3.696392832,
+      "driftP90": null,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": true,
+      "releaseApproved": false,
+      "sourceSha256": "f7a023d225154d4df3031cc841f477a5ad89772d5c5e3e6f23261e445422b594",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        1.0,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "cv",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 1.0,
+      "finalErrorP90Meters": 8.302790491,
+      "driftP90": 0.06918992076,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": true,
+      "releaseApproved": false,
+      "sourceSha256": "bd92894896d74d729e74be92fdb7746e097dda11713b31f96309e0df0a326c2a",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        1.0,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "cv",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 0.57227723,
+      "finalErrorP90Meters": 21.68180245,
+      "driftP90": 0.2156180561,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "5cc0622e2b798939f4b0dc6800e8d0126a7d33ee08d1b73ab9e21b9efc2db004",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.48316831683168315,
+        0.7128712871287128
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "cv",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 0.39405941,
+      "finalErrorP90Meters": 31.29225064,
+      "driftP90": 0.3111906526,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "e54543440b4138d97a7bcbabfc75cdd71a571d282c62096cfd161d76d39b156f",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.17029702970297028,
+        0.6653465346534654
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "cv",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 0.39405941,
+      "finalErrorP90Meters": 31.29225064,
+      "driftP90": 0.3111906526,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "5d8714dcb0a189358fc741dcdb50145fe166692b0589a5450def0f3b407d2f09",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.17029702970297028,
+        0.6653465346534654
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "cv",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 0.39405941,
+      "finalErrorP90Meters": 31.29225064,
+      "driftP90": 0.3111906526,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "1c88e1119993a1c84d52d8b451078ebc99abc39ae30190dc30f9097c9f340040",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.17029702970297028,
+        0.6653465346534654
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "cv",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 0.39405941,
+      "finalErrorP90Meters": 31.29225064,
+      "driftP90": 0.3111906526,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "b9b26934e8e1f7ba951ef08082142b1e62eaab53cdc3e31a8e99531fe5568a83",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.17029702970297028,
+        0.6653465346534654
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "cv",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 0.39405941,
+      "finalErrorP90Meters": 31.29225064,
+      "driftP90": 0.3111906526,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "203531822d9863571591c45e4ed2334bdc9607413f60df703ca5aff43ff7b481",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.17029702970297028,
+        0.6653465346534654
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "cv",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 505,
+      "jointSuccess": 0.39405941,
+      "finalErrorP90Meters": 31.29225064,
+      "driftP90": 0.3111906526,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "974653bb4194f986a40da1823e8939652b1004acd9b516fa74dcbf6029d946f7",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.17029702970297028,
+        0.6653465346534654
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "cv",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 1.0,
+      "finalErrorP90Meters": 5.187578109,
+      "driftP90": null,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "3b86aab81b0e0c24b8ac7d554d33bf83c6254b7bc036058f1300bc593b11d4cf",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        1.0,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "cv",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.78737542,
+      "finalErrorP90Meters": 19.36152093,
+      "driftP90": 0.0537820026,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "159cd5bad091d509ee898cfed9313d32c99f3eac99080bf064bfc01935705ff4",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.5906976744186047,
+        0.9800664451827241
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "cv",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.19202658,
+      "finalErrorP90Meters": 225.3243351,
+      "driftP90": 1.280905639,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "05886d6937295f4cf4976d77e937607f6e06a42eaec268f3ee644a8687fd7056",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.16212624584717608,
+        0.23920265780730898
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "cv",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.13222591,
+      "finalErrorP90Meters": 232.878043,
+      "driftP90": 1.323846349,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "566218553d87559c30fde2fffee92e7b8622c1c6c7c4c64d4486f1b494a64846",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.05714285714285714,
+        0.22325581395348837
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "cv",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.13222591,
+      "finalErrorP90Meters": 232.878043,
+      "driftP90": 1.323846349,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "4325c68f4098cdecbac5f2889dafc69b20c3bf60deb9380bab8ac0e11996096a",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.05714285714285714,
+        0.22325581395348837
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "cv",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.13222591,
+      "finalErrorP90Meters": 232.878043,
+      "driftP90": 1.323846349,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "de38b8400dce86856f20c6d542c6f71e9fd8a91bf674dcf8391a25cddeab017e",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.05714285714285714,
+        0.22325581395348837
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "cv",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.13222591,
+      "finalErrorP90Meters": 232.878043,
+      "driftP90": 1.323846349,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "85628d5869996d430d81b994ff2e472914da1971451505ea82d2116bef0695a2",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.05714285714285714,
+        0.22325581395348837
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "cv",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.13222591,
+      "finalErrorP90Meters": 232.878043,
+      "driftP90": 1.323846349,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "e5de24246f9901a9ca45b9011d4cf34fa2b95d0aa89846569a1bc4be78fed8de",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.05714285714285714,
+        0.22325581395348837
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "cv",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 1505,
+      "jointSuccess": 0.13222591,
+      "finalErrorP90Meters": 232.878043,
+      "driftP90": 1.323846349,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "ff7ba755eb7643b315e8186e7b61a8fc74a2ff4d0167c3d37b7a88880d7e2f9a",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.05714285714285714,
+        0.22325581395348837
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "cv",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.99101498,
+      "finalErrorP90Meters": 10.48532034,
+      "driftP90": null,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "1a7670130ecdaf8527734eabdf4932e2464a581d7807a842f265b9273ccde1ce",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.973044925124792,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "cv",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.51980033,
+      "finalErrorP90Meters": 41.58606977,
+      "driftP90": 0.05775843024,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "a7ba43cb287cbcdd1c2237f39bd339bfd13729cb4859349adf8385f9174230ad",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.2978369384359401,
+        0.7537437603993344
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "cv",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.09617304,
+      "finalErrorP90Meters": 356.5853159,
+      "driftP90": 0.7751854272,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "2de3b56ce131ab9040c1c806a9d6cf85443bd32db264be529f4d152be7523233",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.08119800332778702,
+        0.11980033277870217
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "cv",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.06622296,
+      "finalErrorP90Meters": 367.8642107,
+      "driftP90": 0.7997047624,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "6b7d09176e938cf0f686691483d0c4c0a87bf6ed20f8442b66cac1001e575a0f",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.02861896838602329,
+        0.11181364392678869
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "cv",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.06622296,
+      "finalErrorP90Meters": 367.8642107,
+      "driftP90": 0.7997047624,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "baa481623bf24bda5df9497c8385d98a73086041e6c7abc210ec2955ebc0a205",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.02861896838602329,
+        0.11181364392678869
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "cv",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.06622296,
+      "finalErrorP90Meters": 367.8642107,
+      "driftP90": 0.7997047624,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "5f37a7ac33c8e57291df71f08115adee08fd91809aac98aa043f4590a7d8e54a",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.02861896838602329,
+        0.11181364392678869
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "cv",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.06622296,
+      "finalErrorP90Meters": 367.8642107,
+      "driftP90": 0.7997047624,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "bf3768fc2ad6ea4c01445dd40be119390a91a08e563fec6849a7caf3a0dd823f",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.02861896838602329,
+        0.11181364392678869
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "cv",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.06622296,
+      "finalErrorP90Meters": 367.8642107,
+      "driftP90": 0.7997047624,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "a833e8d6c949e67990e45118d8b14d952e67796b10ac8c494f133dbb68eca3d4",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.02861896838602329,
+        0.11181364392678869
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "cv",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 3005,
+      "jointSuccess": 0.06622296,
+      "finalErrorP90Meters": 367.8642107,
+      "driftP90": 0.7997047624,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "61a8ee84995fcc442060e755eb1155a462a98aa23925c1e59a668ce474e72ad2",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.02861896838602329,
+        0.11181364392678869
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "cv",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.8071607,
+      "finalErrorP90Meters": 21.5632865,
+      "driftP90": null,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "fcbb5892b57ec2ba16e2c69428be5c6ddcefc2f2e8b3fec7050c88afab37bec9",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.5983347210657785,
+        1.0
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "cv",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.26011657,
+      "finalErrorP90Meters": 86.03517696,
+      "driftP90": 0.05974665067,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "91bbf0f5a5b19a7fab838d598bc999edef1e9c6bac0f56e4f01a715a606c7260",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.14904246461282264,
+        0.3771856786011657
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "cv",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.04812656,
+      "finalErrorP90Meters": 700.7328946,
+      "driftP90": 0.7616661484,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "216bf0bb2e78e5b33c5c3f9e275cba355d9e7e92182e8c843c031b9d807dd292",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.04063280599500416,
+        0.05995004163197335
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "cv",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.03313905,
+      "finalErrorP90Meters": 730.3575074,
+      "driftP90": 0.7938668127,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "d1e57b99cd173c08f76f8420db6bd0b7c9bbb86140047576cf5665001f2473c3",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.014321398834304746,
+        0.055953372189841796
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "cv",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.03313905,
+      "finalErrorP90Meters": 730.3575074,
+      "driftP90": 0.7938668127,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "cfae7c58bdc40d3d253dca907f056786d9aceac8acaa5244946084da1b02ab25",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.014321398834304746,
+        0.055953372189841796
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "cv",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.03313905,
+      "finalErrorP90Meters": 730.3575074,
+      "driftP90": 0.7938668127,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "5037ed3cca1208e95f55bb653579ae07ad5f2db6b87ae52096b81608f46dd77b",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.014321398834304746,
+        0.055953372189841796
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "cv",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.03313905,
+      "finalErrorP90Meters": 730.3575074,
+      "driftP90": 0.7938668127,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "29d71da59a2495d26d69cfc9bb1356106f5439e634d33527372be2f688d9f865",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.014321398834304746,
+        0.055953372189841796
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "cv",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.03313905,
+      "finalErrorP90Meters": 730.3575074,
+      "driftP90": 0.7938668127,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "afe552205f56a06115a3557187144c445b509fe43bb643ec6834d671f16beb02",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.014321398834304746,
+        0.055953372189841796
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "cv",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 6005,
+      "jointSuccess": 0.03313905,
+      "finalErrorP90Meters": 730.3575074,
+      "driftP90": 0.7938668127,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "e78373452828b035c8a2873540ebedded88819f6c665ea17969d4a671d1ab132",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.014321398834304746,
+        0.055953372189841796
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "cv",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.70960577,
+      "finalErrorP90Meters": 32.68308211,
+      "driftP90": null,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "483aeaffdfab604344f79806f1abc2f41f8e878d4e1dd95555bb19b0f419bb59",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.4477512493059411,
+        0.9714602998334259
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "cv",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.17345919,
+      "finalErrorP90Meters": 130.484286,
+      "driftP90": 0.06040939168,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "fc85b5eea52b5917bebd5efbbd4413e0294e7c5538cdda2a54b9175da9a120af",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.09938922820655191,
+        0.2515269294836202
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "cv",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.03209328,
+      "finalErrorP90Meters": 1073.326703,
+      "driftP90": 0.7777729313,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "7a6da7683c894ffd9d3187131a94fa9d0ac1104a1712e350e5e898d42327a5c7",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.027096057745696837,
+        0.03997779011660189
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "cv",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.02209883,
+      "finalErrorP90Meters": 1137.66044,
+      "driftP90": 0.8243915785,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "b30600748425f007d856ea0f684310e1846890a9262cb54519df4381af212bef",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.009550249861188229,
+        0.03731260410882843
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "cv",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.02209883,
+      "finalErrorP90Meters": 1137.66044,
+      "driftP90": 0.8243915785,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "1d526b93ec77742e4d26439e8953fca213231bbcad6540339fdf8a33aa57d307",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.009550249861188229,
+        0.03731260410882843
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "cv",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.02209883,
+      "finalErrorP90Meters": 1137.66044,
+      "driftP90": 0.8243915785,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "7968e20f235bc80aa8ab7634533e909d47b78f3e0aa7c0f2e85f6a83283c1929",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.009550249861188229,
+        0.03731260410882843
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "cv",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.02209883,
+      "finalErrorP90Meters": 1137.66044,
+      "driftP90": 0.8243915785,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "538fd85dac6204a2cc0e88a86585d37d894e685ec13b9062750ea13893b82a10",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.009550249861188229,
+        0.03731260410882843
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "cv",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.02209883,
+      "finalErrorP90Meters": 1137.66044,
+      "driftP90": 0.8243915785,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "07360da6ca3750c21c1d6d2d9daeb12b2024a061fbff68a9e16f49b809c79fcf",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.009550249861188229,
+        0.03731260410882843
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "cv",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 9005,
+      "jointSuccess": 0.02209883,
+      "finalErrorP90Meters": 1137.66044,
+      "driftP90": 0.8243915785,
+      "unavailableEnds": 0,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "b1ec8697e0de11377ea63f3e5adabdf65ee01ad53b75199f7aeccadd081a4ab9",
+      "availability": 1.0,
+      "jointBootstrapInterval95": [
+        0.009550249861188229,
+        0.03731260410882843
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "imu",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 455,
+      "jointSuccess": 0.9009901,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "fd4282fa6c99f53aa9568a6c2c420db759378ba3cf829189371b9501eee952b9",
+      "availability": 0.900990099009901,
+      "jointBootstrapInterval95": [
+        0.9009900990099011,
+        0.9009900990099011
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "imu",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 455,
+      "jointSuccess": 0.85742574,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "a609eb9785c24454969e88cfeaea3d2594ae6521eabc6966a91fcb21601f4ef6",
+      "availability": 0.900990099009901,
+      "jointBootstrapInterval95": [
+        0.7702970297029703,
+        0.9009900990099011
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "imu",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 455,
+      "jointSuccess": 0.84950495,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "d631a6ac8d3d0975d47621c5c91ecb964c53c8856978a1e0f422a5a37998f66a",
+      "availability": 0.900990099009901,
+      "jointBootstrapInterval95": [
+        0.7465346534653465,
+        0.9009900990099011
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "imu",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 455,
+      "jointSuccess": 0.79405941,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "1413df0d34e2fe60e6c5a31415cc25437f4676b10a482b7545874572f97af238",
+      "availability": 0.900990099009901,
+      "jointBootstrapInterval95": [
+        0.6831683168316832,
+        0.9009900990099011
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "imu",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 455,
+      "jointSuccess": 0.79405941,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "c2c20f8354deda66e829a58ea1a1ba62e380bbfdd7d682501c8349c3fe141db0",
+      "availability": 0.900990099009901,
+      "jointBootstrapInterval95": [
+        0.6831683168316832,
+        0.9009900990099011
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "imu",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 455,
+      "jointSuccess": 0.79405941,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "1ef7b19371f4b145c57cb0ba2f11100d1e1876b3fc7b8d24e1a32f89371ccd93",
+      "availability": 0.900990099009901,
+      "jointBootstrapInterval95": [
+        0.6752475247524752,
+        0.9009900990099011
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "imu",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 335,
+      "jointSuccess": 0.52673267,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "0aef5b2a12eb8cd103f4c6a450df7fab87c32ffb100c6808510f6e7117666506",
+      "availability": 0.6633663366336634,
+      "jointBootstrapInterval95": [
+        0.39801980198019804,
+        0.6811881188118812
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "imu",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 210,
+      "jointSuccess": 0.41584158,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "38df27cef5fd75d0870dac6ec42341f49a13a0f2cc479a96bdbad5fed08f3e47",
+      "availability": 0.4158415841584158,
+      "jointBootstrapInterval95": [
+        0.4158415841584159,
+        0.4158415841584159
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "imu",
+      "durationSeconds": 10,
+      "runs": 5,
+      "outputs": 505,
+      "available": 455,
+      "jointSuccess": 0.79207921,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "386c47920a1bef7202957d9a948aeacc1f840b244b15d51ab0c96b7b87dfbd23",
+      "availability": 0.900990099009901,
+      "jointBootstrapInterval95": [
+        0.6732673267326732,
+        0.9009900990099011
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "imu",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 455,
+      "jointSuccess": 0.30232558,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "5ca2871caf0d1661d4a57a9a854306a56119195360394accf76ce8a75da53bb1",
+      "availability": 0.3023255813953488,
+      "jointBootstrapInterval95": [
+        0.3023255813953488,
+        0.3023255813953488
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "imu",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 455,
+      "jointSuccess": 0.28770764,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "e3398bd9922bb3f5843422904355136710c8117d2142905e1b2ee88ef4fac816",
+      "availability": 0.3023255813953488,
+      "jointBootstrapInterval95": [
+        0.2584717607973422,
+        0.3023255813953488
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "imu",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 455,
+      "jointSuccess": 0.28504983,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "dd34ed509416044a6d04c32515e79b447137846c831dd8439e14c416a5c9ac28",
+      "availability": 0.3023255813953488,
+      "jointBootstrapInterval95": [
+        0.2504983388704319,
+        0.3023255813953488
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "imu",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 455,
+      "jointSuccess": 0.26644518,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "fd1de61b186277c1709126fa4d08c973525903fd4534ec1cbc9f692e7b7557df",
+      "availability": 0.3023255813953488,
+      "jointBootstrapInterval95": [
+        0.2292358803986711,
+        0.3023255813953488
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "imu",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 455,
+      "jointSuccess": 0.26644518,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "c811f0d9051e97427a9d89dec448456cbba7f8632081d662841d65f9a12253b3",
+      "availability": 0.3023255813953488,
+      "jointBootstrapInterval95": [
+        0.2292358803986711,
+        0.3023255813953488
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "imu",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 455,
+      "jointSuccess": 0.26644518,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "30accdc5d51e613d2833a19f2b1086c94e04d043c84fac143865303c41472f70",
+      "availability": 0.3023255813953488,
+      "jointBootstrapInterval95": [
+        0.226578073089701,
+        0.3023255813953488
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "imu",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 335,
+      "jointSuccess": 0.17674419,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "645d67b91894348b1c8fed01234036beabb9c19e380ef97ead1891d0c24121d1",
+      "availability": 0.22259136212624583,
+      "jointBootstrapInterval95": [
+        0.13355481727574753,
+        0.22857142857142856
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "imu",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 210,
+      "jointSuccess": 0.13953488,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "26684df51cc4385b7167ba5270c64d882aa1c17fd436d8d947af16a76bc7b051",
+      "availability": 0.13953488372093023,
+      "jointBootstrapInterval95": [
+        0.13953488372093023,
+        0.13953488372093023
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "imu",
+      "durationSeconds": 30,
+      "runs": 5,
+      "outputs": 1505,
+      "available": 455,
+      "jointSuccess": 0.26578073,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "54a682201a4e94a60c6d30296a78c9b76b9b211b93a21b418fd8450c99e410c8",
+      "availability": 0.3023255813953488,
+      "jointBootstrapInterval95": [
+        0.22591362126245845,
+        0.3023255813953488
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "imu",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 455,
+      "jointSuccess": 0.15141431,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "e64abd4f338e442630c8185ce05ca0370e608c76fd876c94bd780f311eed94c3",
+      "availability": 0.15141430948419302,
+      "jointBootstrapInterval95": [
+        0.15141430948419302,
+        0.15141430948419302
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "imu",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 455,
+      "jointSuccess": 0.14409318,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "5a3e168af6b718088b016d80243ecdec3a5022b8a0f816382ff918fd1449999e",
+      "availability": 0.15141430948419302,
+      "jointBootstrapInterval95": [
+        0.12945091514143095,
+        0.15141430948419302
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "imu",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 455,
+      "jointSuccess": 0.14276206,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "36b2733f1e583a3d6e3169a85fdd05190dda11b443d546e38b7493d73cfa5a75",
+      "availability": 0.15141430948419302,
+      "jointBootstrapInterval95": [
+        0.1254575707154742,
+        0.15141430948419302
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "imu",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 455,
+      "jointSuccess": 0.13344426,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "516803e21c4dd123d890b1944d52c1d19e94524f9b78ac3bf425a22923dc88db",
+      "availability": 0.15141430948419302,
+      "jointBootstrapInterval95": [
+        0.11480865224625622,
+        0.15141430948419302
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "imu",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 455,
+      "jointSuccess": 0.13344426,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "0792a7f83e9e391c15f026cbfb3e53144b2c696486bb20ca5a38e0a3d8c72fec",
+      "availability": 0.15141430948419302,
+      "jointBootstrapInterval95": [
+        0.11480865224625622,
+        0.15141430948419302
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "imu",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 455,
+      "jointSuccess": 0.13344426,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "98f9a68de9b2931ae4816854e798e58ec96e689a6900e96c50d91ea965e79955",
+      "availability": 0.15141430948419302,
+      "jointBootstrapInterval95": [
+        0.11347753743760398,
+        0.15141430948419302
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "imu",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 335,
+      "jointSuccess": 0.08851913,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "49877eab88da50285cc2c00eb5b5b5229034936ae53daf1f7d6b57f034b5de27",
+      "availability": 0.11148086522462562,
+      "jointBootstrapInterval95": [
+        0.06688851913477536,
+        0.11447587354409317
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "imu",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 210,
+      "jointSuccess": 0.06988353,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "059c10076d9a8d0c7df6864a627fc3459068a69064f802b02a83045c1ba0f875",
+      "availability": 0.06988352745424292,
+      "jointBootstrapInterval95": [
+        0.06988352745424292,
+        0.06988352745424292
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "imu",
+      "durationSeconds": 60,
+      "runs": 5,
+      "outputs": 3005,
+      "available": 455,
+      "jointSuccess": 0.13311148,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "0b38c4f5664280431ad91baa69ef3d3dc1745ad6250d519f10c7a5b6cfd83c4b",
+      "availability": 0.15141430948419302,
+      "jointBootstrapInterval95": [
+        0.11314475873544091,
+        0.15141430948419302
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "imu",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 455,
+      "jointSuccess": 0.07577019,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "d60bb446ff79a40325fdd31995379b47bd4f7472ac82925c587802e23a03e1c3",
+      "availability": 0.07577019150707744,
+      "jointBootstrapInterval95": [
+        0.07577019150707744,
+        0.07577019150707744
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "imu",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 455,
+      "jointSuccess": 0.07210658,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "a74160235cf498a6a8d767781b37487f93690282cb9d0e515e91d9184079f22e",
+      "availability": 0.07577019150707744,
+      "jointBootstrapInterval95": [
+        0.06477935054121566,
+        0.07577019150707744
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "imu",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 455,
+      "jointSuccess": 0.07144047,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "df80acd221e48ee42c536adbf7466380ad5ec674c61440ecd1199d1b4be335f6",
+      "availability": 0.07577019150707744,
+      "jointBootstrapInterval95": [
+        0.06278101582014987,
+        0.07577019150707744
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "imu",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 455,
+      "jointSuccess": 0.06677769,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "31ccb6f41a437b03178bc9d34a9ea394ea601086e7c439b7a7800478b0fd744c",
+      "availability": 0.07577019150707744,
+      "jointBootstrapInterval95": [
+        0.057452123230641125,
+        0.07577019150707744
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "imu",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 455,
+      "jointSuccess": 0.06677769,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "3a1c1f883cca39db2d02b39000eeec055d72787424ad33a13d291da2d2a9fc13",
+      "availability": 0.07577019150707744,
+      "jointBootstrapInterval95": [
+        0.057452123230641125,
+        0.07577019150707744
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "imu",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 455,
+      "jointSuccess": 0.06677769,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "49a21875248c58999a4254d79fa51f15ccaf07283a3f7f290180c103e2c5d488",
+      "availability": 0.07577019150707744,
+      "jointBootstrapInterval95": [
+        0.05678601165695254,
+        0.07577019150707744
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "imu",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 335,
+      "jointSuccess": 0.04429642,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "896afc5d7207c0a3567b858c52ea14fc3372a33d8ff4f1630feeea7cf8cfc782",
+      "availability": 0.05578684429641965,
+      "jointBootstrapInterval95": [
+        0.03347210657785179,
+        0.057285595337218984
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "imu",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 210,
+      "jointSuccess": 0.03497086,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "ebd237058abb4fef67a9ce604b50dd078f80b07606db53790fd6e1cb42a5fbd8",
+      "availability": 0.034970857618651124,
+      "jointBootstrapInterval95": [
+        0.034970857618651124,
+        0.034970857618651124
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "imu",
+      "durationSeconds": 120,
+      "runs": 5,
+      "outputs": 6005,
+      "available": 455,
+      "jointSuccess": 0.06661116,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "5377321fadf98a3c5c020f9e979c20705b7f3c39505e2791b5d1af5b93593e1d",
+      "availability": 0.07577019150707744,
+      "jointBootstrapInterval95": [
+        0.05661948376353039,
+        0.07577019150707744
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "stationary",
+      "algorithm": "imu",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 455,
+      "jointSuccess": 0.05052748,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "0261ba60e97fd2143a4c94183e3ddabcb7c528112206b7f8b36d0ec6f9896343",
+      "availability": 0.05052748473070516,
+      "jointBootstrapInterval95": [
+        0.05052748473070516,
+        0.05052748473070516
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "smooth_cruise",
+      "algorithm": "imu",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 455,
+      "jointSuccess": 0.0480844,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "b4f6193169b7396652228485d4d414c5c8d003962c379732820779e5e121fc86",
+      "availability": 0.05052748473070516,
+      "jointBootstrapInterval95": [
+        0.04319822320932815,
+        0.05052748473070516
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "turns_and_stops",
+      "algorithm": "imu",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 455,
+      "jointSuccess": 0.0476402,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "399a1e08990ab627d87671125159f12b3e694dc1b068088ed5a23d0f4fd00072",
+      "availability": 0.05052748473070516,
+      "jointBootstrapInterval95": [
+        0.04186563020544142,
+        0.05052748473070516
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_turns",
+      "algorithm": "imu",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 455,
+      "jointSuccess": 0.04453082,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "e7470d7e59aab7ba4b11b274a6b677a335eb2f4daad6374d072f5abb1573e8de",
+      "availability": 0.05052748473070516,
+      "jointBootstrapInterval95": [
+        0.038312048861743477,
+        0.05052748473070516
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "potholes_turns",
+      "algorithm": "imu",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 455,
+      "jointSuccess": 0.04453082,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "de9d0888d308faf96562b914a07675ba671f6d28e2fbe73fc66187e13355d4ed",
+      "availability": 0.05052748473070516,
+      "jointBootstrapInterval95": [
+        0.038312048861743477,
+        0.05052748473070516
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_lean_potholes",
+      "algorithm": "imu",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 455,
+      "jointSuccess": 0.04453082,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "1f8937d33f129188d5faa3d845c2c1f53374efd2d106a09515159b50148d8317",
+      "availability": 0.05052748473070516,
+      "jointBootstrapInterval95": [
+        0.037867851193781235,
+        0.05052748473070516
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "scooter_sensor_clipping",
+      "algorithm": "imu",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 335,
+      "jointSuccess": 0.02953914,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "1f6123f0797d243e761c770cd94b31b27db499fe5501a498c73475f330a1d95f",
+      "availability": 0.03720155469183787,
+      "jointBootstrapInterval95": [
+        0.02232093281510272,
+        0.038200999444752914
+      ],
+      "seedsWithClipping": 5,
+      "seedsWithDropout": 0
+    },
+    {
+      "type": "summary",
+      "profile": "rough_imu_gap",
+      "algorithm": "imu",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 210,
+      "jointSuccess": 0.02332038,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "adec0797f92e5b69c1861658977b5318ec176ba8cc08b64311d3a1c9bb740596",
+      "availability": 0.023320377568017768,
+      "jointBootstrapInterval95": [
+        0.023320377568017768,
+        0.023320377568017768
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 5
+    },
+    {
+      "type": "summary",
+      "profile": "phone_handling",
+      "algorithm": "imu",
+      "durationSeconds": 180,
+      "runs": 5,
+      "outputs": 9005,
+      "available": 455,
+      "jointSuccess": 0.04441977,
+      "finalErrorP90Meters": null,
+      "driftP90": null,
+      "unavailableEnds": 5,
+      "benchmarkTargetMet": false,
+      "releaseApproved": false,
+      "sourceSha256": "6fcc0d6b0f1c50229462df59d496359034a6b64963be2742d465d4c9e6ed2121",
+      "availability": 0.05052748473070516,
+      "jointBootstrapInterval95": [
+        0.03775680177679067,
+        0.05052748473070516
+      ],
+      "seedsWithClipping": 0,
+      "seedsWithDropout": 0
+    }
+  ],
+  "paired": [
+    {
+      "durationSeconds": 10,
+      "profile": "stationary",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.0,
+      "pairedBootstrapInterval95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "stationary",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.09900990099009899,
+      "pairedBootstrapInterval95": [
+        -0.09900990099009899,
+        -0.09900990099009899
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "stationary",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": -0.09900990099009899,
+      "pairedBootstrapInterval95": [
+        -0.09900990099009899,
+        -0.09900990099009899
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "smooth_cruise",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.0,
+      "pairedBootstrapInterval95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "smooth_cruise",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.14257425742574253,
+      "pairedBootstrapInterval95": [
+        -0.22970297029702963,
+        -0.09900990099009899
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "smooth_cruise",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": -0.14257425742574253,
+      "pairedBootstrapInterval95": [
+        -0.22970297029702963,
+        -0.09900990099009899
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "turns_and_stops",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.16633663366336632,
+      "pairedBootstrapInterval95": [
+        -0.4455445544554455,
+        0.19207920792079208
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "turns_and_stops",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.11089108910891092,
+      "pairedBootstrapInterval95": [
+        -0.10693069306930691,
+        0.3762376237623763
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "turns_and_stops",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.27722772277227725,
+      "pairedBootstrapInterval95": [
+        0.14851485148514856,
+        0.3801980198019802
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "rough_turns",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.4455445544554455,
+      "pairedBootstrapInterval95": [
+        -0.8217821782178218,
+        0.059405940594059424
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "rough_turns",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.04554455445544553,
+      "pairedBootstrapInterval95": [
+        -0.23762376237623767,
+        0.13267326732673265
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "rough_turns",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.4,
+      "pairedBootstrapInterval95": [
+        0.06534653465346538,
+        0.6277227722772277
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "potholes_turns",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.43168316831683173,
+      "pairedBootstrapInterval95": [
+        -0.8297029702970298,
+        0.10891089108910894
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "potholes_turns",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.03168316831683168,
+      "pairedBootstrapInterval95": [
+        -0.24950495049504956,
+        0.17425742574257427
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "potholes_turns",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.4,
+      "pairedBootstrapInterval95": [
+        0.06534653465346538,
+        0.6277227722772277
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "scooter_lean_potholes",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.40990099009900993,
+      "pairedBootstrapInterval95": [
+        -0.8297029702970298,
+        0.17425742574257427
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "scooter_lean_potholes",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.009900990099009887,
+      "pairedBootstrapInterval95": [
+        -0.23762376237623767,
+        0.22772277227722776
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "scooter_lean_potholes",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.4,
+      "pairedBootstrapInterval95": [
+        0.05346534653465349,
+        0.6316831683168317
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.07920792079207921,
+      "pairedBootstrapInterval95": [
+        -0.27722772277227725,
+        0.16633663366336635
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.05346534653465348,
+      "pairedBootstrapInterval95": [
+        -0.01188118811881187,
+        0.17623762376237626
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.13267326732673268,
+      "pairedBootstrapInterval95": [
+        0.001980198019802004,
+        0.2693069306930693
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "rough_imu_gap",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.017821782178217838,
+      "pairedBootstrapInterval95": [
+        -0.24554455445544554,
+        0.36831683168316837
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "rough_imu_gap",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.0396039603960396,
+      "pairedBootstrapInterval95": [
+        0.0,
+        0.1188118811881188
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "rough_imu_gap",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.021782178217821767,
+      "pairedBootstrapInterval95": [
+        -0.24950495049504956,
+        0.24554455445544554
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "phone_handling",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.09702970297029703,
+      "pairedBootstrapInterval95": [
+        -0.14653465346534653,
+        0.40792079207920795
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "phone_handling",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.49504950495049516,
+      "pairedBootstrapInterval95": [
+        0.40594059405940597,
+        0.5841584158415842
+      ]
+    },
+    {
+      "durationSeconds": 10,
+      "profile": "phone_handling",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.39801980198019804,
+      "pairedBootstrapInterval95": [
+        0.047524752475247546,
+        0.6316831683168317
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "stationary",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.0,
+      "pairedBootstrapInterval95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "stationary",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.6976744186046512,
+      "pairedBootstrapInterval95": [
+        -0.6976744186046512,
+        -0.6976744186046512
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "stationary",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": -0.6976744186046512,
+      "pairedBootstrapInterval95": [
+        -0.6976744186046512,
+        -0.6976744186046512
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "smooth_cruise",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.09435215946843853,
+      "pairedBootstrapInterval95": [
+        -0.26245847176079734,
+        0.40132890365448504
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "smooth_cruise",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.40531561461794025,
+      "pairedBootstrapInterval95": [
+        -0.5820598006644518,
+        -0.22857142857142856
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "smooth_cruise",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": -0.49966777408637875,
+      "pairedBootstrapInterval95": [
+        -0.7069767441860465,
+        -0.28837209302325584
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "turns_and_stops",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.30631229235880403,
+      "pairedBootstrapInterval95": [
+        -0.573421926910299,
+        -0.021262458471760802
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "turns_and_stops",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.21328903654485054,
+      "pairedBootstrapInterval95": [
+        -0.4564784053156147,
+        0.028571428571428553
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "turns_and_stops",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.09302325581395347,
+      "pairedBootstrapInterval95": [
+        0.04983388704318935,
+        0.12757475083056477
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "rough_turns",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.2558139534883721,
+      "pairedBootstrapInterval95": [
+        -0.36212624584717606,
+        -0.09169435215946845
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "rough_turns",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.12159468438538208,
+      "pairedBootstrapInterval95": [
+        -0.159468438538206,
+        -0.06445182724252493
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "rough_turns",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.13421926910299004,
+      "pairedBootstrapInterval95": [
+        0.021926910299003316,
+        0.21063122923588037
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "potholes_turns",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.2857142857142857,
+      "pairedBootstrapInterval95": [
+        -0.4604651162790697,
+        -0.03455149501661129
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "potholes_turns",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.1514950166112957,
+      "pairedBootstrapInterval95": [
+        -0.24983388704318937,
+        -0.009302325581395354
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "potholes_turns",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.13421926910299004,
+      "pairedBootstrapInterval95": [
+        0.021926910299003316,
+        0.21063122923588037
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "scooter_lean_potholes",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.2790697674418604,
+      "pairedBootstrapInterval95": [
+        -0.4644518272425248,
+        -0.014617940199335539
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "scooter_lean_potholes",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.14485049833887043,
+      "pairedBootstrapInterval95": [
+        -0.25249169435215946,
+        0.01129568106312292
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "scooter_lean_potholes",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.13421926910299004,
+      "pairedBootstrapInterval95": [
+        0.017940199335548156,
+        0.21196013289036544
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.026578073089700997,
+      "pairedBootstrapInterval95": [
+        -0.0930232558139535,
+        0.055813953488372106
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.01794019933554817,
+      "pairedBootstrapInterval95": [
+        -0.003986710963455151,
+        0.059136212624584704
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.04451827242524917,
+      "pairedBootstrapInterval95": [
+        0.0006644518272425293,
+        0.09036544850498338
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "rough_imu_gap",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.0059800664451827214,
+      "pairedBootstrapInterval95": [
+        -0.0823920265780731,
+        0.12358803986710962
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "rough_imu_gap",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.013289036544850497,
+      "pairedBootstrapInterval95": [
+        0.0,
+        0.03986710963455149
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "rough_imu_gap",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.007308970099667775,
+      "pairedBootstrapInterval95": [
+        -0.08372093023255814,
+        0.0823920265780731
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "phone_handling",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.03255813953488372,
+      "pairedBootstrapInterval95": [
+        -0.04916943521594684,
+        0.13687707641196012
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "phone_handling",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.1661129568106312,
+      "pairedBootstrapInterval95": [
+        0.13621262458471758,
+        0.19601328903654483
+      ]
+    },
+    {
+      "durationSeconds": 30,
+      "profile": "phone_handling",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.1335548172757475,
+      "pairedBootstrapInterval95": [
+        0.015946843853820586,
+        0.21196013289036544
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "stationary",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.008985024958402654,
+      "pairedBootstrapInterval95": [
+        -0.026955074875207964,
+        0.0
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "stationary",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.8485856905158069,
+      "pairedBootstrapInterval95": [
+        -0.8485856905158069,
+        -0.8485856905158069
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "stationary",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": -0.8396006655574043,
+      "pairedBootstrapInterval95": [
+        -0.8485856905158069,
+        -0.821630615640599
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "smooth_cruise",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.11014975041597334,
+      "pairedBootstrapInterval95": [
+        -0.24559068219633948,
+        0.4183028286189684
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "smooth_cruise",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.2655574043261232,
+      "pairedBootstrapInterval95": [
+        -0.4642262895174709,
+        -0.11447587354409317
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "smooth_cruise",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": -0.3757071547420965,
+      "pairedBootstrapInterval95": [
+        -0.6096505823627287,
+        -0.1464226289517471
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "turns_and_stops",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.26688851913477535,
+      "pairedBootstrapInterval95": [
+        -0.5134775374376039,
+        -0.02029950083194675
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "turns_and_stops",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.22029950083194677,
+      "pairedBootstrapInterval95": [
+        -0.44958402662229624,
+        0.008985024958402666
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "turns_and_stops",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.04658901830282862,
+      "pairedBootstrapInterval95": [
+        0.024958402662229612,
+        0.06389351081530782
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "rough_turns",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.1281198003327787,
+      "pairedBootstrapInterval95": [
+        -0.18136439267886856,
+        -0.045923460898502494
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "rough_turns",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.060898502495840265,
+      "pairedBootstrapInterval95": [
+        -0.07986688851913477,
+        -0.032279534109816974
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "rough_turns",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.06722129783693843,
+      "pairedBootstrapInterval95": [
+        0.010981697171381028,
+        0.10549084858569051
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "potholes_turns",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.14309484193011648,
+      "pairedBootstrapInterval95": [
+        -0.23061564059900164,
+        -0.017304492512479196
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "potholes_turns",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.07587354409317804,
+      "pairedBootstrapInterval95": [
+        -0.12512479201331114,
+        -0.004658901830282868
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "potholes_turns",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.06722129783693843,
+      "pairedBootstrapInterval95": [
+        0.010981697171381028,
+        0.10549084858569051
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "scooter_lean_potholes",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.13976705490848587,
+      "pairedBootstrapInterval95": [
+        -0.23261231281198005,
+        -0.007321131447587348
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "scooter_lean_potholes",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.07254575707154742,
+      "pairedBootstrapInterval95": [
+        -0.1264559068219634,
+        0.005657237936772036
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "scooter_lean_potholes",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.06722129783693843,
+      "pairedBootstrapInterval95": [
+        0.00898502495840266,
+        0.10615640599001663
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.013311148086522456,
+      "pairedBootstrapInterval95": [
+        -0.04658901830282862,
+        0.02795341098169718
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.008985024958402662,
+      "pairedBootstrapInterval95": [
+        -0.0019966722129783677,
+        0.029617304492512476
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.02229617304492512,
+      "pairedBootstrapInterval95": [
+        0.0003327787021630557,
+        0.04525790349417637
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "rough_imu_gap",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.0029950083194675596,
+      "pairedBootstrapInterval95": [
+        -0.04126455906821963,
+        0.06189683860232946
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "rough_imu_gap",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.00665557404326123,
+      "pairedBootstrapInterval95": [
+        0.0,
+        0.019966722129783687
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "rough_imu_gap",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.003660565723793671,
+      "pairedBootstrapInterval95": [
+        -0.04193011647254576,
+        0.04126455906821963
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "phone_handling",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.016306156405990018,
+      "pairedBootstrapInterval95": [
+        -0.024625623960066557,
+        0.06855241264559069
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "phone_handling",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.08319467554076539,
+      "pairedBootstrapInterval95": [
+        0.06821963394342762,
+        0.09816971713810316
+      ]
+    },
+    {
+      "durationSeconds": 60,
+      "profile": "phone_handling",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.06688851913477536,
+      "pairedBootstrapInterval95": [
+        0.007986688851913476,
+        0.10615640599001663
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "stationary",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.19283930058284765,
+      "pairedBootstrapInterval95": [
+        -0.40166527893422155,
+        0.0
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "stationary",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.9242298084929226,
+      "pairedBootstrapInterval95": [
+        -0.9242298084929226,
+        -0.9242298084929226
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "stationary",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": -0.7313905079100749,
+      "pairedBootstrapInterval95": [
+        -0.9242298084929226,
+        -0.5225645295587011
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "smooth_cruise",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.05512073272273105,
+      "pairedBootstrapInterval95": [
+        -0.12289758534554537,
+        0.20932556203164027
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "smooth_cruise",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.13288925895087428,
+      "pairedBootstrapInterval95": [
+        -0.23230641132389676,
+        -0.057285595337218984
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "smooth_cruise",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": -0.18800999167360533,
+      "pairedBootstrapInterval95": [
+        -0.3050791007493755,
+        -0.0732722731057452
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "turns_and_stops",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.13355537052456287,
+      "pairedBootstrapInterval95": [
+        -0.2569525395503747,
+        -0.010158201498751046
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "turns_and_stops",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.11024146544546212,
+      "pairedBootstrapInterval95": [
+        -0.22497918401332226,
+        0.004496253122398003
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "turns_and_stops",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.023313905079100753,
+      "pairedBootstrapInterval95": [
+        0.01248959200666112,
+        0.03197335553705245
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "rough_turns",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.06411323896752706,
+      "pairedBootstrapInterval95": [
+        -0.09075770191507078,
+        -0.02298084929225646
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "rough_turns",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.03047460449625312,
+      "pairedBootstrapInterval95": [
+        -0.03996669442131557,
+        -0.01615320566194838
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "rough_turns",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.033638634471273944,
+      "pairedBootstrapInterval95": [
+        0.005495420482930893,
+        0.05278934221482099
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "potholes_turns",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.07160699417152373,
+      "pairedBootstrapInterval95": [
+        -0.11540383014154872,
+        -0.008659450457951709
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "potholes_turns",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.03796835970024979,
+      "pairedBootstrapInterval95": [
+        -0.06261448792672772,
+        -0.0023313905079100734
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "potholes_turns",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.033638634471273944,
+      "pairedBootstrapInterval95": [
+        0.005495420482930893,
+        0.05278934221482099
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "scooter_lean_potholes",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.06994171523730225,
+      "pairedBootstrapInterval95": [
+        -0.1164029975020816,
+        -0.0036636136552872663
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "scooter_lean_potholes",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.03630308076602832,
+      "pairedBootstrapInterval95": [
+        -0.06328059950041634,
+        0.002830974188176516
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "scooter_lean_potholes",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.033638634471273944,
+      "pairedBootstrapInterval95": [
+        0.004496253122398003,
+        0.05312239800166528
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.006661115736885931,
+      "pairedBootstrapInterval95": [
+        -0.023313905079100753,
+        0.013988343047460444
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.004496253122398002,
+      "pairedBootstrapInterval95": [
+        -0.0009991673605328905,
+        0.014820982514571191
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.011157368859283933,
+      "pairedBootstrapInterval95": [
+        0.00016652789342215258,
+        0.02264779350541216
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "rough_imu_gap",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.0014987510407993322,
+      "pairedBootstrapInterval95": [
+        -0.02064945878434638,
+        0.030974188176519563
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "rough_imu_gap",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.003330557868442964,
+      "pairedBootstrapInterval95": [
+        0.0,
+        0.009991673605328892
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "rough_imu_gap",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.0018318068276436319,
+      "pairedBootstrapInterval95": [
+        -0.02098251457119067,
+        0.02064945878434638
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "phone_handling",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.008159866777685262,
+      "pairedBootstrapInterval95": [
+        -0.012323064113238968,
+        0.034304746044962524
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "phone_handling",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.04163197335553705,
+      "pairedBootstrapInterval95": [
+        0.034138218151540375,
+        0.04912572855953372
+      ]
+    },
+    {
+      "durationSeconds": 120,
+      "profile": "phone_handling",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.03347210657785179,
+      "pairedBootstrapInterval95": [
+        0.0039966694421315575,
+        0.05312239800166528
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "stationary",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.2903942254303165,
+      "pairedBootstrapInterval95": [
+        -0.5522487506940589,
+        -0.028539700166574124
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "stationary",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.9494725152692949,
+      "pairedBootstrapInterval95": [
+        -0.9494725152692949,
+        -0.9494725152692949
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "stationary",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": -0.6590782898389784,
+      "pairedBootstrapInterval95": [
+        -0.9209328151027207,
+        -0.397223764575236
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "smooth_cruise",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.03675735702387563,
+      "pairedBootstrapInterval95": [
+        -0.08195446973903386,
+        0.13958911715713493
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "smooth_cruise",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.0886174347584675,
+      "pairedBootstrapInterval95": [
+        -0.1549139367018323,
+        -0.038200999444752914
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "smooth_cruise",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": -0.12537479178234315,
+      "pairedBootstrapInterval95": [
+        -0.2034425319267074,
+        -0.04886174347584675
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "turns_and_stops",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.08906163242642975,
+      "pairedBootstrapInterval95": [
+        -0.1713492504164353,
+        -0.006774014436424206
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "turns_and_stops",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.07351471404775126,
+      "pairedBootstrapInterval95": [
+        -0.15002776235424764,
+        0.0029983342587451443
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "turns_and_stops",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.015546918378678509,
+      "pairedBootstrapInterval95": [
+        0.008328706274292058,
+        0.02132148806218767
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "rough_turns",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.042754025541365905,
+      "pairedBootstrapInterval95": [
+        -0.06052193225985564,
+        -0.015324819544697388
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "rough_turns",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.02032204330927263,
+      "pairedBootstrapInterval95": [
+        -0.026651860077734596,
+        -0.010771793448084398
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "rough_turns",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.022431982232093278,
+      "pairedBootstrapInterval95": [
+        0.003664630760688504,
+        0.03520266518600777
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "potholes_turns",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.04775124930594114,
+      "pairedBootstrapInterval95": [
+        -0.07695724597445865,
+        -0.005774569683509164
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "potholes_turns",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.025319267073847868,
+      "pairedBootstrapInterval95": [
+        -0.04175458078845087,
+        -0.0015546918378678532
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "potholes_turns",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.022431982232093278,
+      "pairedBootstrapInterval95": [
+        0.003664630760688504,
+        0.03520266518600777
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "scooter_lean_potholes",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.046640755136035536,
+      "pairedBootstrapInterval95": [
+        -0.077623542476402,
+        -0.0024430871737923356
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "scooter_lean_potholes",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.024208772903942258,
+      "pairedBootstrapInterval95": [
+        -0.04219877845641311,
+        0.0018878400888395325
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "scooter_lean_potholes",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.022431982232093278,
+      "pairedBootstrapInterval95": [
+        0.0029983342587451395,
+        0.03542476401998889
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": -0.00444197667962243,
+      "pairedBootstrapInterval95": [
+        -0.015546918378678509,
+        0.00932815102720711
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.0029983342587451426,
+      "pairedBootstrapInterval95": [
+        -0.0006662965019433642,
+        0.009883398112159913
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "scooter_sensor_clipping",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.007440310938367572,
+      "pairedBootstrapInterval95": [
+        0.00011104941699055931,
+        0.015102720710716267
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "rough_imu_gap",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.000999444752915049,
+      "pairedBootstrapInterval95": [
+        -0.013770127706829538,
+        0.020655191560244313
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "rough_imu_gap",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.002220988339811216,
+      "pairedBootstrapInterval95": [
+        0.0,
+        0.006662965019433647
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "rough_imu_gap",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.0012215435868961678,
+      "pairedBootstrapInterval95": [
+        -0.013992226540810662,
+        0.013770127706829538
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "phone_handling",
+      "comparison": "cv minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.00544142143253748,
+      "pairedBootstrapInterval95": [
+        -0.008217656857301501,
+        0.02287617990005553
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "phone_handling",
+      "comparison": "imu minus car",
+      "runs": 5,
+      "jointSuccessDifference": 0.027762354247640196,
+      "pairedBootstrapInterval95": [
+        0.02276513048306496,
+        0.032759578012215435
+      ]
+    },
+    {
+      "durationSeconds": 180,
+      "profile": "phone_handling",
+      "comparison": "imu minus cv",
+      "runs": 5,
+      "jointSuccessDifference": 0.022320932815102716,
+      "pairedBootstrapInterval95": [
+        0.0026651860077734576,
+        0.03542476401998889
+      ]
+    }
+  ],
+  "uncertainty": "Exploratory percentile bootstrap: 2000 resamples of complete seeds, paired across algorithms. Few synthetic seeds do not establish field confidence.",
+  "limitations": [
+    "Synthetic stress physics, not measured Indian-road hazard prevalence.",
+    "No Android heading initialization, learned model, map matching or GPS recovery test.",
+    "Car constraints on leaning profiles are a negative control, not scooter support.",
+    "Missing predictions count as failures; unavailable endpoints are null, not zero.",
+    "Benchmark success is not approval against every project release gate."
+  ]
+}

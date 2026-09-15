@@ -43,7 +43,7 @@ class AndroidWorkflowTest {
         originalSettings = model.settings.value
         model.repository.mapPacks.activate("bundled")
         compose.runOnIdle {
-            model.updateSettings(checkNotNull(originalSettings).copy(modelSharingAllowed = false))
+            model.updateSettings(checkNotNull(originalSettings).copy(modelSharingAllowed = false, onDeviceSpeedModel = true))
             compose.activity.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
         compose.waitUntil(20000) { model.activeMap.value.region.key == "bundled" }
@@ -66,6 +66,28 @@ class AndroidWorkflowTest {
             while (input.read(buffer) >= 0) { }
         }
         digest.digest().joinToString("") { "%02x".format(it) }
+    }
+
+    @Test
+    fun compactMapControlsStayAboveTheDriveSheet() {
+        val model = ViewModelProvider(compose.activity)[SetuViewModel::class.java]
+        compose.runOnIdle {
+            model.tab = "Drive"
+            model.closeReplay()
+            model.clearRoute()
+        }
+        compose.waitUntil(60000) {
+            compose.onAllNodesWithContentDescription("Zoom out").fetchSemanticsNodes().isNotEmpty()
+        }
+        val attribution = compose.onNodeWithTag("map-attribution").fetchSemanticsNode().boundsInRoot
+        val header = compose.onNodeWithTag("about-setu").fetchSemanticsNode().boundsInRoot
+        for (description in listOf("Zoom in", "Zoom out", "Find my location")) {
+            val control = compose.onNodeWithContentDescription(description).assertIsDisplayed()
+                .fetchSemanticsNode().boundsInRoot
+            check(control.top >= header.bottom && control.bottom <= attribution.top) {
+                "$description overlaps the header or attribution: $control"
+            }
+        }
     }
 
     @Test
@@ -116,9 +138,13 @@ class AndroidWorkflowTest {
         compose.onNodeWithText("Theme").assertIsDisplayed()
         capture("08-settings")
         compose.onNodeWithText("Research model server").performScrollTo().performClick()
-        compose.onNodeWithTag("model-endpoint").assertIsDisplayed()
+        compose.onNodeWithTag("local-model").performScrollTo().assertIsOn().performClick().assertIsOff()
+        compose.onNodeWithTag("model-sharing").performScrollTo().assertIsOff().assertIsEnabled()
+        compose.onNodeWithTag("local-model").performScrollTo().performClick().assertIsOn()
+        compose.onNodeWithTag("model-sharing").performScrollTo().assertIsOff().assertIsNotEnabled()
+        compose.onNodeWithTag("model-endpoint").performScrollTo().assertIsDisplayed()
         capture("09-model-boundary")
-        compose.onNodeWithContentDescription("Back").performClick()
+        compose.onNodeWithContentDescription("Back").assertIsDisplayed().performClick()
         compose.onNodeWithText("Offline maps").performScrollTo().performClick()
         compose.onNodeWithTag("active-map-name").assertTextEquals("Bengaluru Central").assertIsDisplayed()
         capture("10-offline-area")
@@ -154,7 +180,7 @@ class AndroidWorkflowTest {
                 model.overlay = "diagnostics"
             }
             fun deliver(measured: Boolean) = compose.runOnIdle {
-                hub.onLocationChanged(Location("setu-test").apply {
+                hub.updateLocation(Location("setu-test").apply {
                     latitude = 12.9810
                     longitude = 77.5968
                     elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
@@ -178,10 +204,10 @@ class AndroidWorkflowTest {
             capture("26-measured-zero-gps", "Injected mock Location with explicitly measured zero speed/course/altitude; not live GPS")
             Thread.sleep(3500)
             compose.onNodeWithContentDescription("Back").performClick()
-            compose.waitUntil(10000) { compose.onAllNodesWithText("Last test fix").fetchSemanticsNodes().isNotEmpty() }
+            compose.waitUntil(10000) { compose.onAllNodesWithText("Last mock fix").fetchSemanticsNodes().isNotEmpty() }
             capture("27-stale-gps-position", "Injected mock Location older than three seconds; no live positioning or heading")
             compose.runOnIdle {
-                hub.onLocationChanged(Location("setu-test").apply {
+                hub.updateLocation(Location("setu-test").apply {
                     latitude = 39.237255
                     longitude = -123.150032
                     elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
@@ -208,6 +234,8 @@ class AndroidWorkflowTest {
 
     @Test
     fun liveNativePositioningConsumesAndroidSensorsAndRecordsSeparateOutput() {
+        org.junit.Assume.assumeTrue("Requires a controlled live GNSS/heading fixture; opt in with -e nativeGnssFixture true.",
+            InstrumentationRegistry.getArguments().getString("nativeGnssFixture") == "true")
         grantIfMissing(android.Manifest.permission.ACCESS_COARSE_LOCATION)
         grantIfMissing(android.Manifest.permission.ACCESS_FINE_LOCATION)
         val model = ViewModelProvider(compose.activity)[SetuViewModel::class.java]
@@ -229,7 +257,7 @@ class AndroidWorkflowTest {
             compose.onNodeWithTag("reading-Native speed").assert(hasAnyDescendant(hasText("mph", substring = true)))
             capture("29-live-native-diagnostics", "Actual Android sensor/GPS callbacks in emulator; native filter and delayed corrections; not a physical road drive")
             compose.onNodeWithContentDescription("Back").performClick()
-            compose.waitUntil(15000) { compose.onAllNodesWithText("GPS + IMU").fetchSemanticsNodes().isNotEmpty() }
+            compose.waitUntil(15000) { compose.onAllNodesWithText("Tracking").fetchSemanticsNodes().isNotEmpty() }
             capture("30-live-native-map", "Opted-in native estimate selected by real application map from emulator sensors; no physical accuracy claim")
             compose.runOnIdle {
                 check(!model.recording.value) { "The device already has an active recording" }
@@ -347,6 +375,7 @@ class AndroidWorkflowTest {
             compose.waitUntil(60000) { model.positioningDemo != null }
             compose.onNodeWithTag("demo-phase-2000").performScrollTo().performClick()
             compose.onNodeWithTag("position-demo-stage").assertTextEquals("GPS + motion")
+            waitForVisibleDemoRoute()
             capture("42-positioning-demo-lock", "Simulated GPS and IMU processed by the native engine; GPS-lock phase, not live sensor accuracy")
             compose.onNodeWithTag("demo-phase-10000").performScrollTo().performClick()
             compose.onNodeWithTag("position-demo-stage").assertTextEquals("GPS withheld · IMU tracking")
@@ -354,11 +383,14 @@ class AndroidWorkflowTest {
             compose.activityRule.scenario.recreate()
             compose.onNodeWithTag("position-demo-stage").assertTextEquals("GPS withheld · IMU tracking")
             check(!model.playing && model.replayPositionMs == 10000f)
+            waitForVisibleDemoRoute()
             capture("43-positioning-demo-gap", "Native output while synthetic GPS is withheld; paused state restored after Activity recreation")
             compose.onNodeWithTag("demo-phase-18000").performScrollTo().performClick()
             compose.onNodeWithTag("position-demo-stage").assertTextEquals("GPS reacquired")
+            waitForVisibleDemoRoute()
             capture("44-positioning-demo-recovery", "Native engine accepts synthetic GPS after the eight-second input gap")
             compose.runOnIdle { model.updateSettings(model.settings.value.copy(theme = "Dark")) }
+            waitForVisibleDemoRoute()
             capture("45-positioning-demo-dark", "Dark-theme presentation demo; synthetic inputs, native output")
             compose.onNodeWithContentDescription("Exit replay").performClick()
             compose.onNodeWithTag("start-tracking").assertExists()
@@ -382,7 +414,7 @@ class AndroidWorkflowTest {
         var sequence = 0
         val locations = object : Runnable {
             override fun run() {
-                model.repository.hub.onLocationChanged(Location("setu-demo-test").apply {
+                model.repository.hub.updateLocation(Location("setu-demo-test").apply {
                     latitude = 12.9753 + sequence * 0.000002
                     longitude = 77.6067 + sequence * 0.00004
                     elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
@@ -484,10 +516,75 @@ class AndroidWorkflowTest {
         }
     }
 
+    @Test
+    fun repeatedDemoAndThemeJourneysKeepMemoryBounded() {
+        val measurements = org.json.JSONArray()
+        val context = compose.activity
+        val output = File(context.getExternalFilesDir(null), "verification/user-journey-memory.json")
+        repeat(5) { cycle ->
+            compose.onNodeWithTag("tab-Drive").performClick()
+            compose.onNodeWithTag("positioning-demo").performScrollTo().performClick()
+            compose.waitUntil(20000) {
+                compose.onAllNodesWithTag("demo-phase-10000").fetchSemanticsNodes().isNotEmpty()
+            }
+            compose.onNodeWithTag("demo-phase-10000").performClick()
+            waitForVisibleDemoRoute()
+            compose.onNodeWithContentDescription("Exit replay").performClick()
+            compose.onNodeWithTag("tab-Settings").performClick()
+            compose.onNodeWithText("Theme").performScrollTo().performClick()
+            compose.onNodeWithTag("preference-option-${if (cycle % 2 == 0) "Dark" else "Light"}")
+                .performClick()
+            compose.onNodeWithTag("tab-Trips").performClick()
+            compose.onNodeWithTag("import-trip").assertIsDisplayed()
+            compose.waitForIdle()
+            Runtime.getRuntime().gc()
+            System.runFinalization()
+            SystemClock.sleep(2000)
+            val memory = android.os.Debug.MemoryInfo().also(android.os.Debug::getMemoryInfo)
+            measurements.put(JSONObject().put("cycle", cycle).put("pssKiB", memory.totalPss)
+                .put("nativeAllocatedBytes", android.os.Debug.getNativeHeapAllocatedSize()))
+            output.parentFile!!.mkdirs()
+            output.writeText(JSONObject().put("scenario", "Five real app demo/settings/trips journeys in one process")
+                .put("apkSha256", apkSha256).put("cycles", measurements).toString(2))
+            check(memory.totalPss < 700 * 1024) { "User journey memory exceeded budget: ${memory.totalPss} KiB" }
+        }
+    }
+
     private fun grantIfMissing(permission: String) {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         if (instrumentation.targetContext.checkSelfPermission(permission) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
             instrumentation.uiAutomation.grantRuntimePermission(BuildConfig.APPLICATION_ID, permission)
+        }
+    }
+
+    private fun waitForVisibleDemoRoute() {
+        fun findMap(view: android.view.View): org.maplibre.android.maps.MapView? {
+            if (view is org.maplibre.android.maps.MapView) return view
+            if (view is android.view.ViewGroup) for (index in 0 until view.childCount) {
+                findMap(view.getChildAt(index))?.let { return it }
+            }
+            return null
+        }
+        val current = java.util.concurrent.atomic.AtomicReference<org.maplibre.android.maps.MapLibreMap>()
+        compose.runOnUiThread {
+            checkNotNull(findMap(compose.activity.window.decorView)).getMapAsync { current.set(it) }
+        }
+        compose.waitUntil(45000) {
+            var visible = false
+            val header = compose.onAllNodesWithText("SIMULATED SENSOR INPUTS").fetchSemanticsNodes().firstOrNull()
+            if (header != null) compose.runOnUiThread {
+                current.get()?.let { map ->
+                    val density = compose.activity.resources.displayMetrics.density
+                    val bounds = android.graphics.RectF(0f, 0f, compose.activity.window.decorView.width.toFloat(),
+                        header.boundsInRoot.top - 24 * density)
+                    val dark = ViewModelProvider(compose.activity)[SetuViewModel::class.java].settings.value.theme == "Dark"
+                    val color = android.graphics.Color.parseColor(if (dark) "#A2D69B" else "#195A40")
+                    visible = map.style?.getLayerAs<org.maplibre.android.style.layers.LineLayer>("journey-line")?.lineColorAsInt == color &&
+                        map.queryRenderedFeatures(bounds, "journey-line").isNotEmpty() &&
+                        map.queryRenderedFeatures(bounds, "tracked-line").isNotEmpty()
+                }
+            }
+            visible
         }
     }
 

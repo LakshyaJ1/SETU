@@ -1,5 +1,49 @@
 # SETU — Seamless Egomotion Tracking under Unavailable-GNSS
 
+The [latest phone QA and beta distribution report](docs/28-rigorous-phone-qa.md)
+covers actual 90-second Location-off sensor continuity, six GPS-withheld replay
+durations, app journeys and retained regression failures. The
+[complete test PDF](docs/verification/android/rigorous-qa/report.pdf) distinguishes
+sensor continuity from position accuracy: **the 90%-within-10-m target is not met**.
+A verified-APK publisher now updates the sibling `../setu-website` beta site.
+Latest APK: `dist/android/SETU-qa-beta.apk`. It fixes compact map controls and
+loading visibility and keeps the screen on during foreground recording.
+Background sensor capture still has verified gaps; keep SETU visible for the demo.
+
+Android now includes a local [recording-to-training pipeline](docs/22-phone-training-pipeline.md):
+full-rate sensors, quality-marked GPS comparisons, independent GPS-withheld replay,
+and an offline fine-tuning workflow. Collection does not establish model accuracy.
+
+The [walking/stationary-speed investigation](docs/23-walking-fallback-investigation.md)
+adds an explicit step-based Walking mode, hides unusable research speeds and
+bounds uncalibrated vehicle fallback. This is not a claim of 90–95% field accuracy.
+The [walking follow-up build](docs/verification/android/walking-batches/README.md)
+fixes batched step rejection and pitch-related heading loss found in a real phone trial.
+
+The [scooter recording review](docs/24-scooter-data-review.md) uses only the three
+requested rides over 1 km. It separates scooter and car assumptions, repairs
+replay comparisons, and adds an explicit Two-wheeler research dataset target.
+The rides remain diagnostic data, not an approved training set or accuracy proof.
+
+The [navigation evaluation](docs/verification/android/road-stress/README.md) adds
+120-second GPS warmup, 675 paired synthetic stress trials and rigorous missing-output
+scoring. [metrics.pdf](metrics.pdf) compares the actual algorithms and model evidence.
+The agreed 90%-within-10-metres GPS-free target is **not yet met**; this report is
+not a final-release certificate.
+
+The [heading bootstrap improvement](docs/26-heading-bootstrap.md) pools gentle
+GPS-aided motion without relaxing navigation guards. Matched phone replay now
+provides estimates in 12 of 15 conditions rather than two; long outages still
+mostly lack predictions.
+
+The [curvier demo and local training follow-up](docs/27-demo-and-cpu-training.md)
+adds alternating bends, corner braking and a stop, and fixes routes disappearing
+after screen recreation. The preceding development APK is
+`dist/android/SETU-curvy-demo.apk`, not a final navigation release. A CPU model
+experiment finished in 6.8 minutes using the three selected rides; its checkpoint
+remains research-only because it still predicts motion at rest. The nine-page
+`metrics.pdf` includes the held-out speed results, not a position-accuracy claim.
+
 Dead reckoning for the minutes when satellites are not available: tunnels,
 multi-level car parks, urban canyons, dense tree cover, jamming.
 
@@ -18,7 +62,7 @@ that with measurements whose error does not accumulate with time.
 |---|---|
 | [`docs/`](docs/) | The full design: problem brief, landscape, approach, architecture, system design, tech stack, models, evaluation protocol, roadmap, 66 references |
 | [`setu/`](setu/) | The reference implementation of the estimation core |
-| [`tests/`](tests/) | 169 tests, run against closed-form physics rather than snapshots |
+| [`tests/`](tests/) | Physics, evaluation, collection and release-pipeline regression tests |
 | [`assets/`](assets/) | Deck figures and the presentation builders. The generated `.pptx`/`.pdf` decks are deliberately not tracked; run the builders to reproduce them |
 | [`PRODUCT.md`](PRODUCT.md) · [`DESIGN.md`](DESIGN.md) | Product truth and the visual system for the report surface |
 
@@ -62,10 +106,14 @@ as starting without a GPS fix.
 Implementation and verification are tracked in `docs/11-android-delivery.md`.
 The approved production continuation is tracked in `docs/18-production-delivery.md`.
 The model-integration preview connects the supplied HTTPS provider to opt-in,
-recording-only IMU evaluation. Its current validity-zero predictions are never
-used for navigation; offline weights and calibrated native fusion remain open.
+recording-only IMU evaluation. A bundled TensorFlow Lite speed model now runs
+offline, but its deployment approval and uncertainty gates are not met; its
+predictions remain evaluation-only and cannot control navigation.
 See `docs/verification/android/model-integration/README.md` for the APK and checks.
-The latest reliability build is `dist/android/SETU-reliability-preview.apk`.
+The current reviewed build is `dist/android/SETU-reviewed-preview.apk`.
+See `docs/21-upstream-review.md` for the teammate-change audit, regression fixes,
+device checks and remaining production gaps.
+The earlier reliability build is `dist/android/SETU-reliability-preview.apk`.
 It repairs incomplete offline tile storage, checks every packaged tile, adds a
 road-segment pruning index and improves native output cadence. Phone verification
 and the unresolved OEM background-freezing limitation are recorded in
@@ -75,12 +123,13 @@ The earlier `dist/android/SETU-routing-preview.apk` also includes compiled NCR g
 loading and connected-road entrance fallback. Its checks and remaining limits are
 in `docs/verification/android/compiled-routing/README.md`.
 Actual emulator captures live under `docs/verification/android/`; screenshots
-are not evidence of positioning accuracy. AI/ML models are not bundled. The
+are not evidence of positioning accuracy. The bundled speed model is not approved
+for positioning. The
 16-state C++20/Eigen kernel and a timestamped GNSS/IMU engine are packaged through
 JNI, with explicit experimental map opt-in and GPS fallback. The engine includes
 WGS84 conversion, WMM2025 reference coefficients and bounded delayed-GPS
 repropagation, but not the full road-constrained architecture. Physical validation,
-signal frontends, learned measurements and broader offline routing remain work;
+full road-constrained estimation, learned-model validation and broader offline routing remain work;
 see `core/README.md` and `core/STREAMING.md` for the exact boundary.
 
 ## Results

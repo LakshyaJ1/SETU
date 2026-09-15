@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -48,6 +49,8 @@ fun NavigationMap(
     trail: List<Pose> = emptyList(), comparisonPose: Pose? = null,
     recordedPath: List<Pose>? = null,
     followPosition: Boolean = false, onFollowInterrupted: () -> Unit = {},
+    referenceRoute: Boolean = false,
+    onRendered: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current.density
@@ -56,9 +59,13 @@ fun NavigationMap(
     var nativeMap by remember { mutableStateOf<MapLibreMap?>(null) }
     var styleReady by remember { mutableStateOf(false) }
     var mapRendered by remember { mutableStateOf(false) }
+    val reportRendered by rememberUpdatedState(onRendered)
+    LaunchedEffect(mapRendered) { reportRendered(mapRendered) }
     var mapError by remember { mutableStateOf<String?>(null) }
     var reload by remember { mutableIntStateOf(0) }
     var styleGeneration by remember { mutableIntStateOf(0) }
+    var readyGeneration by remember { mutableIntStateOf(0) }
+    var viewport by remember { mutableStateOf(androidx.compose.ui.unit.IntSize.Zero) }
     val interruptFollowing by rememberUpdatedState(onFollowInterrupted)
     val json = remember(dark) {
         val source = context.assets.open("map-style.json").bufferedReader().use { it.readText() }
@@ -139,14 +146,19 @@ fun NavigationMap(
                 }
             }
         },
-        modifier = Modifier.fillMaxSize().testTag(if (mapRendered) "offline-map-ready" else "offline-map-loading")
+        modifier = Modifier.fillMaxSize().onSizeChanged { viewport = it }
+            .testTag(if (mapRendered) "offline-map-ready" else "offline-map-loading")
             .semantics { contentDescription = "Offline map of ${maps.region.name}. Use destination search to plan a route." },
       )
       if (!mapRendered) Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surfaceContainer) {
-          Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-              if (mapError == null) CircularProgressIndicator(Modifier.size(28.dp), strokeWidth = 3.dp)
-              Text(mapError ?: "Preparing your offline map…", Modifier.padding(16.dp), style = MaterialTheme.typography.bodyMedium)
-              if (mapError != null) TextButton(onClick = { reload++ }) { Text("Try again") }
+          Box(Modifier.fillMaxSize().padding(top = if (reserveControls) 108.dp else 0.dp,
+              bottom = (bottomInset / density).dp), contentAlignment = Alignment.Center) {
+              Row(Modifier.padding(horizontal = 20.dp).testTag("map-loading-message"),
+                  verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                  if (mapError == null) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                  Text(mapError ?: "Preparing your offline map…", Modifier.weight(1f), style = MaterialTheme.typography.bodySmall)
+                  if (mapError != null) TextButton(onClick = { reload++ }) { Text("Try again") }
+              }
           }
       }
     }
@@ -216,6 +228,7 @@ fun NavigationMap(
                 iconAllowOverlap(true), iconIgnorePlacement(true), iconRotationAlignment(Property.ICON_ROTATION_ALIGNMENT_MAP),
                 iconRotate(Expression.get("bearing"))).withFilter(Expression.has("bearing")))
             styleReady = true
+            readyGeneration = generation
             if (!maps.region.bundled && mapView.width > 0 && mapView.height > 0) {
                 val area = maps.region.bounds
                 val bounds = LatLngBounds.from(area[2], area[3], area[0], area[1])
@@ -224,13 +237,18 @@ fun NavigationMap(
           }
         }
     }
-    LaunchedEffect(route, recordedPath, nativeMap, styleReady, bottomInset, originLabel, maps) {
+    LaunchedEffect(route, recordedPath, nativeMap, styleReady, readyGeneration, viewport,
+        bottomInset, originLabel, maps, referenceRoute) {
         val map = nativeMap ?: return@LaunchedEffect
         if (!styleReady) return@LaunchedEffect
+        map.style?.getLayerAs<LineLayer>("journey-line")?.setProperties(lineColor(
+            if (referenceRoute) { if (dark) "#A2D69B" else "#195A40" }
+            else if (dark) "#79B4FF" else "#1769E0"
+        ))
         map.style?.getSourceAs<GeoJsonSource>("journey")?.setGeoJson(recordedPath?.let(::recordedFeatures) ?: route?.takeIf { it.points.size > 1 }?.let { lineFeature(it.points) } ?: emptyFeatures())
         map.style?.getSourceAs<GeoJsonSource>("endpoints")?.setGeoJson(route?.let { endpointFeatures(it, originLabel) } ?: emptyFeatures())
         map.style?.getSourceAs<GeoJsonSource>("route-access")?.setGeoJson(route?.let(::accessFeatures) ?: emptyFeatures())
-        if (route != null && route.points.size > 1 && !followPosition) {
+        if (route != null && route.points.size > 1 && !followPosition && viewport.width > 0 && viewport.height > 0) {
             val bounds = LatLngBounds.Builder().includes(route.points.map { LatLng(it.latitude, it.longitude) }).build()
             map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,
                 (72 * density).roundToInt(), ((if (reserveControls) 140 else 30) * density).roundToInt(),
@@ -240,7 +258,7 @@ fun NavigationMap(
     // The position sources update at the estimator's 10 Hz. Building their GeoJSON on the main
     // thread put a marker document and a confidence ring through JSON assembly on every frame; the
     // work now happens on Dispatchers.Default and only the source hand-off stays on main.
-    LaunchedEffect(pose, nativeMap, styleReady) {
+    LaunchedEffect(pose, nativeMap, styleReady, readyGeneration) {
         val map = nativeMap ?: return@LaunchedEffect
         if (!styleReady) return@LaunchedEffect
         val (vehicle, uncertainty) = withContext(Dispatchers.Default) {
@@ -252,7 +270,7 @@ fun NavigationMap(
     }
     // The trail carries up to 1,200 samples, so serialising it inline stalled a frame every time a
     // new position was retained.
-    LaunchedEffect(trail, comparisonPose, nativeMap, styleReady) {
+    LaunchedEffect(trail, comparisonPose, nativeMap, styleReady, readyGeneration) {
         val map = nativeMap ?: return@LaunchedEffect
         if (!styleReady) return@LaunchedEffect
         val (path, reference) = withContext(Dispatchers.Default) {
@@ -267,7 +285,7 @@ fun NavigationMap(
         map.style?.getSourceAs<GeoJsonSource>("tracked-path")?.setGeoJson(path)
         map.style?.getSourceAs<GeoJsonSource>("gps-reference")?.setGeoJson(reference)
     }
-    LaunchedEffect(pose, followPosition, bottomInset, nativeMap, styleReady) {
+    LaunchedEffect(pose, followPosition, bottomInset, nativeMap, styleReady, readyGeneration, viewport) {
         val map = nativeMap ?: return@LaunchedEffect
         val position = pose ?: return@LaunchedEffect
         if (!styleReady || !followPosition) return@LaunchedEffect

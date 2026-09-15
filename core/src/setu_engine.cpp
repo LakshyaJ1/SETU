@@ -230,12 +230,31 @@ struct SpectralOdometer {
     }
 };
 
+struct Observation {
+    int type = 0;
+    int dimensions = 0;
+    std::array<double, 12> measurement{};
+    std::array<double, 3> sigma{};
+};
 struct Frame {
     int64_t timestamp = 0;
     Vector3 acceleration = Vector3::Zero();
     Vector3 gyro = Vector3::Zero();
     SetuFilter state;
+    std::array<Observation, 4> observations;
+    int observation_count = 0;
 };
+template <size_t measurement_size>
+int observe(Frame& frame, int type, const double (&measurement)[measurement_size], const double* sigma, int dimensions) {
+    if (frame.observation_count == static_cast<int>(frame.observations.size())) return 0;
+    Observation& observation = frame.observations[frame.observation_count++];
+    observation.type = type;
+    observation.dimensions = dimensions;
+    std::copy_n(measurement, measurement_size, observation.measurement.begin());
+    std::copy_n(sigma, dimensions, observation.sigma.begin());
+    double nis = 0;
+    return setu_filter_update(&frame.state, type, measurement, sigma, dimensions, &nis);
+}
 struct Fix {
     int64_t timestamp = 0;
     std::array<double, 10> values{};
@@ -332,6 +351,7 @@ struct SetuEngine {
     int svo_updates = 0;
     int cts_scale_updates = 0;
     int model_speed_updates = 0;
+    int64_t last_model_speed_ns = 0;
     int64_t last_zupt_ns = 0;
     int64_t last_nhc_ns = 0;
     int64_t last_cts_ns = 0;
@@ -363,11 +383,15 @@ struct SetuEngine {
         trim();
     }
     void invalidate(int reason) {
-        // The mount is a physical property of how the phone is sitting, so it survives a filter
-        // reset; the motion window describes a moment that has just been discarded, so it does not.
+        if (reason == 4 || reason == 6) {
+            mount_weight = mount_agreement = 0;
+            svo_scale = svo_scale_weight = svo_speed = svo_sigma = 0;
+            svo_speed_ns = last_mount_ns = attitude_ns = 0;
+        }
         motion.clear();
         spectral.clear();
         last_svo_ns = 0;
+        last_model_speed_ns = 0;
         stationary_since_ns = 0;
         last_zupt_ns = last_nhc_ns = last_cts_ns = 0;
         initialized = false;
@@ -394,6 +418,7 @@ bool advance(Frame& frame, int64_t destination_ns, const Vector3& destination_ac
     frame.acceleration = acceleration;
     frame.gyro = gyro;
     frame.timestamp = timestamp;
+    frame.observation_count = 0;
     return true;
 }
 bool advance(Frame& frame, const Frame& destination, int64_t timestamp) {
@@ -525,7 +550,6 @@ void constrain(SetuEngine& engine, Frame& frame) {
     const double rotation_rate = frame.gyro.norm();
     engine.motion.push(accel_magnitude, rotation_rate);
     if (constraint_mask() & 8) spectral_speed(engine, frame, accel_magnitude);
-    double ignored = 0;
 
     // An accelerometer cannot tell rest from constant velocity - that is Galilean invariance, not a
     // tuning problem - so the IMU signature alone must never assert a stop. On a smooth road at a
@@ -582,7 +606,7 @@ void constrain(SetuEngine& engine, Frame& frame) {
             const double zero[3] = {0, 0, 0};
             const double confident = 0.10;
             const double sigma[3] = {confident, confident, confident};
-            if (setu_filter_update(&state, SETU_ZUPT, zero, sigma, 3, &ignored) == 1) ++engine.zupts;
+            if (observe(frame, SETU_ZUPT, zero, sigma, 3) == 1) ++engine.zupts;
         }
         if (believes_stopped) return;
     }
@@ -598,7 +622,7 @@ void constrain(SetuEngine& engine, Frame& frame) {
             const Vector3 unit = up.normalized();
             const double vertical[4] = {0, unit.x(), unit.y(), unit.z()};
             const double vertical_sigma = 0.50;
-            if (setu_filter_update(&state, SETU_BODY_AXIS, vertical, &vertical_sigma, 1, &ignored) == 1) ++engine.nhcs;
+            if (observe(frame, SETU_BODY_AXIS, vertical, &vertical_sigma, 1) == 1) ++engine.nhcs;
         }
         return;
     }
@@ -644,7 +668,7 @@ void constrain(SetuEngine& engine, Frame& frame) {
         // A very wide forward sigma leaves that axis effectively unconstrained when the axle line
         // is unreadable - below about 4 m/s, per docs/03 3.3 - without a second code path.
         const double sigma[3] = {lateral_sigma, speed_fresh ? engine.svo_sigma : 1000.0, vertical_sigma};
-        if (setu_filter_update(&state, SETU_VEHICLE_VELOCITY, measurement, sigma, 3, &ignored) == 1) {
+        if (observe(frame, SETU_VEHICLE_VELOCITY, measurement, sigma, 3) == 1) {
             ++engine.nhcs;
             if (speed_fresh) ++engine.svo_updates;
         }
@@ -665,7 +689,7 @@ void constrain(SetuEngine& engine, Frame& frame) {
                 const double relative = std::hypot(accel_sigma / std::max(std::abs(lateral_force), 0.5), gyro_sigma / turn);
                 const double sigma = std::max(0.8, speed * relative);
                 const double measurement[4] = {speed, engine.mount_forward.x(), engine.mount_forward.y(), engine.mount_forward.z()};
-                if (setu_filter_update(&state, SETU_BODY_AXIS, measurement, &sigma, 1, &ignored) == 1) ++engine.cts_updates;
+                if (observe(frame, SETU_BODY_AXIS, measurement, &sigma, 1) == 1) ++engine.cts_updates;
 
                 // Keep the spectral scale honest while GNSS is gone.
                 //
@@ -769,7 +793,17 @@ int correct(SetuEngine& engine, const Fix& fix) {
         const int64_t target_ns = target.timestamp;
         const Vector3 target_acceleration = target.acceleration;
         const Vector3 target_gyro = target.gyro;
+        const auto observations = target.observations;
+        const int observation_count = target.observation_count;
         if (!advance(checkpoint, target_ns, target_acceleration, target_gyro, target_ns)) { engine.invalidate(4); return -1; }
+        for (int observation_index = 0; observation_index < observation_count; ++observation_index) {
+            const Observation& observation = observations[observation_index];
+            double nis = 0;
+            setu_filter_update(&checkpoint.state, observation.type, observation.measurement.data(),
+                               observation.sigma.data(), observation.dimensions, &nis);
+        }
+        checkpoint.observations = observations;
+        checkpoint.observation_count = observation_count;
         target = checkpoint;
     }
     engine.accepted_fix_ns = fix.timestamp;
@@ -808,6 +842,11 @@ int setu_engine_imu(SetuEngine* engine, int64_t timestamp, const double accelera
     }
     const Vector3 sample_acceleration = Eigen::Map<const Vector3>(acceleration);
     const Vector3 sample_gyro = Eigen::Map<const Vector3>(gyro);
+    if (engine->constraints_enabled && sample_gyro.norm() > 6.0) {
+        ++engine->rejected;
+        engine->invalidate(6);
+        return -1;
+    }
     if (engine->count && timestamp - engine->at(engine->count - 1).timestamp > maximum_gap_ns) engine->invalidate(4);
     if (engine->initialized) {
         // Seed the new ring slot from the previous frame and propagate it in place. `reserve` never
@@ -836,6 +875,7 @@ int setu_engine_imu(SetuEngine* engine, int64_t timestamp, const double accelera
         slot.acceleration = sample_acceleration;
         slot.gyro = sample_gyro;
         slot.state = SetuFilter{};
+        slot.observation_count = 0;
         engine->trim();
     }
     if (!engine->initialized) initialize(*engine);
@@ -848,17 +888,14 @@ int setu_engine_imu(SetuEngine* engine, int64_t timestamp, const double accelera
     // solution through a blackout. Both read the freshly propagated head frame.
     if (engine->initialized && engine->count) {
         Frame& latest = engine->at(engine->count - 1);
-        observe_mount(*engine, latest.state, latest.timestamp, (latest.timestamp - engine->accepted_fix_ns) * 1e-9);
+        if (engine->constraints_enabled) observe_mount(*engine, latest.state, latest.timestamp, (latest.timestamp - engine->accepted_fix_ns) * 1e-9);
         constrain(*engine, latest);
     }
-    // Previously this gave up ten seconds after the last fix, which made a GNSS-denied solution
-    // impossible by construction - the product's whole premise. With zero-velocity and
-    // non-holonomic constraints feeding the filter, the covariance now grows slowly enough that the
-    // honest limit is the uncertainty itself rather than a stopwatch. REQ-P3's tunnel is 1 km at
-    // 60 km/h, so a minute-scale ceiling would still cut the target case short; the time limit is
-    // kept only as a backstop against an unbounded stale solution.
-    if (engine->initialized && (timestamp - engine->accepted_fix_ns > 600000000000LL ||
-                                radius(engine->at(engine->count - 1).state) > 400)) {
+    const bool calibrated = engine->constraints_enabled && engine->mount_valid();
+    const int64_t outage_limit = calibrated ? 600000000000LL : 10000000000LL;
+    const double radius_limit = calibrated ? 400.0 : 150.0;
+    if (engine->initialized && (timestamp - engine->accepted_fix_ns > outage_limit ||
+                                radius(engine->at(engine->count - 1).state) > radius_limit)) {
         engine->invalidate(5);
     }
     return 1;
@@ -901,6 +938,7 @@ int setu_engine_poll(const SetuEngine* engine, double output[SETU_ESTIMATE_SIZE]
     output[24] = engine->svo_updates;
     output[25] = engine->svo_scale;
     output[29] = engine->model_speed_updates;
+    output[30] = engine->constraints_enabled && engine->mount_valid() ? 1.0 : 0.0;
     output[26] = engine->mount_forward.x();
     output[27] = engine->mount_forward.y();
     output[28] = engine->mount_forward.z();
@@ -929,17 +967,18 @@ int setu_engine_speed(SetuEngine* engine, int64_t timestamp, double speed, doubl
     if (!std::isfinite(sigma) || sigma <= 0 || sigma > 50) return -1;
     // Without the vehicle axes this is a speed along an unknown direction, which is not a usable
     // measurement - the engine would have to guess where "forward" points.
-    if (!engine->mount_valid()) return 0;
+    if (!engine->constraints_enabled || !engine->mount_valid()) return 0;
     Frame& latest = engine->at(engine->count - 1);
     if (!latest.state.initialized) return -1;
     // Stale measurements are worse than none: a learned speed is computed over a window that has
     // already passed, and applying it to a much later state asserts something about a moment the
     // filter has moved on from.
-    if (timestamp <= 0 || latest.timestamp - timestamp > 500000000LL) return 0;
+    if (timestamp <= 0 || timestamp > latest.timestamp || timestamp <= engine->last_model_speed_ns ||
+        latest.timestamp - timestamp > 500000000LL) return 0;
+    engine->last_model_speed_ns = timestamp;
     const double measurement[4] = {speed, engine->mount_forward.x(), engine->mount_forward.y(),
                                    engine->mount_forward.z()};
-    double nis = 0;
-    const int outcome = setu_filter_update(&latest.state, SETU_BODY_AXIS, measurement, &sigma, 1, &nis);
+    const int outcome = observe(latest, SETU_BODY_AXIS, measurement, &sigma, 1);
     if (outcome == 1) ++engine->model_speed_updates;
     return outcome;
 }

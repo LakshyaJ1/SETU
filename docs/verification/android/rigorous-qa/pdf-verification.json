@@ -1,0 +1,16 @@
+{
+  "schema": "setu.pdf-checks.v1",
+  "date": "2026-09-15",
+  "pages": 23,
+  "apkSha256": "410ca8d79d42780b3cb1c33c0d569c093e1216b257d9c2ccd10dc56e9a8db62b",
+  "pdfSha256": "b5c30430cf2e6733b56fd75e88261112353a21f613c9c0f87e8f5e26cb6a48a9",
+  "markdownSha256": "da87aaabbdb4ebc748a8efe26368b599fe10fa4c6e2f141a8442025161ca743a",
+  "outOfPageTextBlocks": 0,
+  "artifactHashesMatchReportJson": true,
+  "visuallyInspectedPages": [1, 3, 5],
+  "includesAllSixDurations": true,
+  "includesSourceApksForEarlierFailures": true,
+  "includesLatestCompleteDeviceInventory": true,
+  "includesBackgroundAndAccuracyFailures": true,
+  "independentMovingAccuracyClaimed": false
+}

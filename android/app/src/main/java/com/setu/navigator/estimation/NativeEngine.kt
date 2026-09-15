@@ -6,8 +6,8 @@ import com.setu.navigator.data.Pose
 import java.io.File
 import java.security.MessageDigest
 
-class NativeEngine(directory: File) : AutoCloseable {
-    private var handle = nativeCreate(directory.absolutePath).also { check(it != 0L) { "Native engine or WMM2025 data could not be loaded" } }
+class NativeEngine(directory: File, vehicleConstraints: Boolean = true) : AutoCloseable {
+    private var handle = nativeCreate(directory.absolutePath, vehicleConstraints).also { check(it != 0L) { "Native engine or WMM2025 data could not be loaded" } }
 
     @Synchronized
     fun imu(timestampNs: Long, acceleration: DoubleArray, angularRate: DoubleArray): Int {
@@ -27,6 +27,7 @@ class NativeEngine(directory: File) : AutoCloseable {
         return nativeSpeed(handle, timestampNs, speedMps, sigmaMps)
     }
 
+    @Synchronized
     fun attitude(timestampNs: Long, rotation: DoubleArray, sigma: Double): Int {
         check(handle != 0L) { "Engine is closed" }
         return nativeAttitude(handle, timestampNs, rotation, sigma)
@@ -66,7 +67,7 @@ class NativeEngine(directory: File) : AutoCloseable {
         handle = 0
     }
 
-    private external fun nativeCreate(directory: String): Long
+    private external fun nativeCreate(directory: String, vehicleConstraints: Boolean): Long
     private external fun nativeDestroy(handle: Long)
     private external fun nativeImu(handle: Long, timestampNs: Long, acceleration: DoubleArray, angularRate: DoubleArray): Int
     private external fun nativeAttitude(handle: Long, timestampNs: Long, rotation: DoubleArray, sigma: Double): Int

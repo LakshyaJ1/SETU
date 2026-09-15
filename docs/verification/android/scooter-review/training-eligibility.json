@@ -1,0 +1,17 @@
+[
+  {
+    "recordingId": "3c2fc68f-15c8-4e69-8839-1252724c1a22",
+    "trainingEligible": false,
+    "reason": "Session is ineligible: incomplete, changed configuration, drops or ['mount_unconfirmed']"
+  },
+  {
+    "recordingId": "605053b4-542f-4cbc-9c83-6b646fdaca07",
+    "trainingEligible": false,
+    "reason": "Session is ineligible: incomplete, changed configuration, drops or ['mount_unconfirmed']"
+  },
+  {
+    "recordingId": "673f47d7-f578-446d-84c7-d87b9c33470d",
+    "trainingEligible": false,
+    "reason": "Session is ineligible: incomplete, changed configuration, drops or ['mount_unconfirmed']"
+  }
+]

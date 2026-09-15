@@ -17,6 +17,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.4", "matplotlib>=3.7"]
 maps = ["osmium>=4.3,<5"]
+metrics = ["reportlab>=4.0,<5"]
 
 [project.scripts]
 setu = "setu.cli:main"

@@ -1,0 +1,20 @@
+{
+  "counts": {
+    "accelerometer": 6008,
+    "gyroscope": 6008,
+    "magnetometer": 1504,
+    "rotation_vector": 1502,
+    "game_rotation_vector": 1502,
+    "gnss_raw": 30,
+    "gnss_reference": 61,
+    "pose": 31,
+    "track_pose": 31,
+    "native_state": 30,
+    "end": 1
+  },
+  "peakStepSpeedMps": null,
+  "gpsOffStationaryChecks": 0,
+  "stepDetectorRegistered": true,
+  "carModelRunning": false,
+  "physicalWalkingAccuracyMeasured": false
+}

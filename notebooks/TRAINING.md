@@ -1,5 +1,17 @@
 # SETU speed-model training
 
+For new Android recordings, use the [phone collection pipeline](../docs/22-phone-training-pipeline.md)
+and `finetune_phone.py`. It consumes verified, explicitly split 400×6 datasets,
+requires an existing checkpoint, and writes a research candidate without changing
+the Android assets. Do not mix its GPS-reference metrics with the wheel-speed
+metrics of the historical IO-VNBD run below.
+
+Phone dataset conversion defaults to Car. Pass `--vehicle Two-wheeler` to
+`python -m setu.collection` to target a separate scooter research candidate, preserving
+activity/mount provenance and all quality/split gates. The selected scooter rides
+remain diagnostic-only; no new weights were trained or promoted from them. See
+the [scooter data review](../docs/24-scooter-data-review.md).
+
 The final `speed_int8.tflite` uses dynamic-range int8 weights with float activations and preprocessing. Export freezes trained variables to constants to avoid unresolved runtime variables. It passes the notebook's parity thresholds, while its mean error exceeds the stricter project target; the float reference is also included. The uncertainty coverage gate remains unmet, so neither export is approved for navigation.
 
 The final run changes batch-normalization momentum from 0.99 to 0.9. A checkpoint audit confirmed that the original running statistics retained enough initial variance to collapse inference to nearly constant speed, despite variable predictions in training mode. The original trained checkpoint is retained in `baseline-v3.zip`. Export uses an uncompiled model clone to avoid deserializing the training-only loss closure.

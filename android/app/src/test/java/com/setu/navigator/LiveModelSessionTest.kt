@@ -17,10 +17,12 @@ class LiveModelSessionTest {
         private val predict: suspend (ModelWindow) -> ModelResult = { window ->
             ModelResult(ModelMeasurement(window.samples.last().timestampNs, 12.0, 2.0, 0.0))
         },
-    ) : ModelProvider {
+    ) : ModelProvider, AutoCloseable {
+        val closed = CompletableDeferred<Unit>()
         val requests = CopyOnWriteArrayList<ModelWindow>()
         override suspend fun health() = availability
         override suspend fun infer(window: ModelWindow): ModelResult { requests.add(window); return predict(window) }
+        override fun close() { closed.complete(Unit) }
     }
 
     private fun session(provider: ModelProvider) = LiveModelSession(provider, "Car", clock::get, {}, records::add, 5)
@@ -47,7 +49,7 @@ class LiveModelSessionTest {
             assertEquals("Experimental; validity zero.", result.health!!.reason)
             assertEquals(100.0, provider.requests.single().rateHz, 1e-10)
             assertEquals(401, provider.requests.single().samples.size)
-            assertNotNull(result.recentMeasurement(clock.get()))
+            assertNull(result.recentMeasurement(clock.get()))
             assertNull(result.recentMeasurement(clock.get() + 3_000_000_000L))
         }
     }
@@ -114,8 +116,10 @@ class LiveModelSessionTest {
         feed(stream)
         withTimeout(3000) { entered.await() }
         stream.close()
+        assertFalse(provider.closed.isCompleted)
         release.complete(Unit)
         withTimeout(3000) { exited.await() }
+        withTimeout(3000) { provider.closed.await() }
         delay(30)
         feed(stream, 6_000_000_000L)
         assertTrue(records.isEmpty())

@@ -7,6 +7,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import org.tensorflow.lite.Interpreter
+import org.tensorflow.lite.DataType
 import java.io.Closeable
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -37,8 +38,7 @@ class OnDeviceModelProvider(context: Context, private val assetDirectory: String
         val canonicalRateHz: Double,
         val sigmaScale: Double,
         val version: String,
-        val coverage3Sigma: Double,
-        val gateG4Pass: Boolean,
+        val fusionApproved: Boolean,
         val vehicles: Set<String>,
     )
 
@@ -52,6 +52,7 @@ class OnDeviceModelProvider(context: Context, private val assetDirectory: String
     private fun load(): Bundle? {
         bundle?.let { return it }
         failure?.let { return null }
+        var opened: Interpreter? = null
         try {
             val manifest = JSONObject(read("$assetDirectory/manifest.json").toString(Charsets.UTF_8))
             require(manifest.getString("schema") == "setu.model-bundle.v1") { "unsupported bundle schema" }
@@ -67,19 +68,28 @@ class OnDeviceModelProvider(context: Context, private val assetDirectory: String
             require(actual == declared) {
                 "input spec hash mismatch: bundle declares $declared, computed $actual"
             }
-            require(spec.getJSONArray("channels").length() == CHANNELS) { "expected $CHANNELS channels" }
-            require(spec.getString("frame") == "phone_body") { "model expects phone-body samples" }
+            validateModelInputSpec(spec)
 
             val windowSamples = spec.getInt("window_samples")
             val rate = spec.getDouble("canonical_rate_hz")
             require(windowSamples in 1..4096 && rate > 0) { "implausible window spec" }
 
             val model = readMapped("$assetDirectory/speed_int8.tflite")
+            val hashes = manifest.getJSONObject("files")
+            require(model.remaining() > 0 && MessageDigest.getInstance("SHA-256")
+                .apply { update(model.asReadOnlyBuffer()) }.digest().joinToString("") { "%02x".format(it) } == hashes.getString("speed_int8.tflite")) { "Model checksum mismatch" }
+            val calibrationBytes = read("$assetDirectory/calibration.json")
+            require(MessageDigest.getInstance("SHA-256").digest(calibrationBytes)
+                .joinToString("") { "%02x".format(it) } == hashes.getString("calibration.json")) { "Calibration checksum mismatch" }
+            val calibration = JSONObject(calibrationBytes.toString(Charsets.UTF_8))
             val interpreter = Interpreter(model, Interpreter.Options().apply { numThreads = 2 })
+            opened = interpreter
             interpreter.resizeInput(0, intArrayOf(1, windowSamples, CHANNELS))
             interpreter.allocateTensors()
+            require(interpreter.getInputTensor(0).dataType() == DataType.FLOAT32 &&
+                interpreter.getOutputTensor(0).dataType() == DataType.FLOAT32 &&
+                interpreter.getOutputTensor(0).shape().contentEquals(intArrayOf(1, 2))) { "Unsupported model tensor contract" }
 
-            val calibration = JSONObject(read("$assetDirectory/calibration.json").toString(Charsets.UTF_8))
             val vehicles = mutableSetOf<String>()
             manifest.optJSONArray("vehicles")?.let { for (i in 0 until it.length()) vehicles.add(it.getString(i)) }
 
@@ -91,11 +101,13 @@ class OnDeviceModelProvider(context: Context, private val assetDirectory: String
                 canonicalRateHz = rate,
                 sigmaScale = calibration.optDouble("sigma_scale", 1.0).takeIf { it.isFinite() && it > 0 } ?: 1.0,
                 version = manifest.optString("version", "unknown"),
-                coverage3Sigma = calibration.optJSONObject("test_coverage")?.optDouble("3_sigma", 0.0) ?: 0.0,
-                gateG4Pass = calibration.optBoolean("gate_g4_pass", false),
+                fusionApproved = modelFusionApproved(manifest, calibration),
                 vehicles = if (vehicles.isEmpty()) setOf("Car") else vehicles,
             ).also { bundle = it }
         } catch (error: Throwable) {
+            opened?.close()
+            input = null
+            output = null
             failure = error.message ?: error::class.java.simpleName
             return null
         }
@@ -110,10 +122,8 @@ class OnDeviceModelProvider(context: Context, private val assetDirectory: String
                 ready = true,
                 name = "On-device speed ${loaded.version}",
                 capabilities = listOf("speed"),
-                reason = "Runs on this phone; no network. Trained on real drives, and its own " +
-                    "calibration reports ${"%.1f".format(loaded.coverage3Sigma * 100)} % three-sigma " +
-                    "coverage against a 98 % bar, so speed is fused with a wide uncertainty and " +
-                    "never drives navigation on its own.",
+                reason = if (loaded.fusionApproved) "Runs on this phone; approved measurements still require freshness and native innovation checks."
+                    else "Runs on this phone for evaluation. Deployment or uncertainty validation is incomplete; predictions do not control navigation.",
             )
         }
     }
@@ -127,12 +137,18 @@ class OnDeviceModelProvider(context: Context, private val assetDirectory: String
             }
             val samples = window.samples
             if (samples.size < 2) return@withLock ModelResult(reason = "Not enough samples.")
+            if (samples.any { sample -> sample.timestampNs <= 0 || sample.accelerationMps2.size != 3 ||
+                    sample.angularRateRps.size != 3 || sample.accelerationMps2.any { !it.isFinite() } ||
+                    sample.angularRateRps.any { !it.isFinite() } } ||
+                samples.zipWithNext().any { (before, after) -> after.timestampNs <= before.timestampNs }) {
+                return@withLock ModelResult(reason = "Invalid or nonmonotonic sensor window.")
+            }
 
             val firstNs = samples.first().timestampNs
             val lastNs = samples.last().timestampNs
             val spanSeconds = (lastNs - firstNs) / 1e9
             val neededSeconds = (loaded.windowSamples - 1) / loaded.canonicalRateHz
-            if (spanSeconds < neededSeconds - 0.1) {
+            if (spanSeconds < neededSeconds) {
                 return@withLock ModelResult(reason = "Needs ${"%.1f".format(neededSeconds)} s of continuous motion history.")
             }
             var largestGapNs = 0L
@@ -172,24 +188,21 @@ class OnDeviceModelProvider(context: Context, private val assetDirectory: String
                 return@withLock ModelResult(reason = "Inference failed: ${error.message ?: "unknown"}.")
             }
             val speed = result[0][0].toDouble()
-            val logVariance = result[0][1].toDouble().coerceIn(-6.0, 6.0)
+            val logVariance = result[0][1].toDouble()
             if (!speed.isFinite() || !logVariance.isFinite()) {
                 return@withLock ModelResult(reason = "Model produced a non-finite value.")
             }
-            val sigma = max(exp(0.5 * logVariance) * loaded.sigmaScale, 1e-3)
+            val sigma = max(exp(0.5 * logVariance.coerceIn(-6.0, 6.0)) * loaded.sigmaScale, 1e-3)
 
-            // Validity is zero unless every gate passes; it is not a confidence score on its own.
-            // A model whose own calibration misses the coverage bar never reaches full validity,
-            // which is what keeps a 2.9 m/s mean error from being trusted like a wheel sensor.
             val reasons = mutableListOf<String>()
+            if (!loaded.fusionApproved) reasons += "bundle is not approved for navigation fusion"
             if (measuredRate < MINIMUM_RATE_HZ || measuredRate > MAXIMUM_RATE_HZ) reasons += "sample rate outside the supported range"
             if (largestGapNs > MAXIMUM_GAP_NS) reasons += "a gap in the motion history"
             if (saturated) reasons += "sensor saturation"
             if (sigma > MAXIMUM_SIGMA_MPS) reasons += "uncertainty above the usable bound"
             if (speed < 0 || speed > MAXIMUM_SPEED_MPS) reasons += "speed outside the plausible range"
-            val ceiling = if (loaded.gateG4Pass) 1.0 else UNCALIBRATED_VALIDITY_CEILING
             val validity = if (reasons.isNotEmpty()) 0.0
-            else min(ceiling, max(0.0, 1.0 - sigma / MAXIMUM_SIGMA_MPS))
+            else max(0.0, 1.0 - sigma / MAXIMUM_SIGMA_MPS)
 
             ModelResult(
                 measurement = ModelMeasurement(lastNs, max(0.0, speed), sigma, validity),
@@ -214,24 +227,45 @@ class OnDeviceModelProvider(context: Context, private val assetDirectory: String
         }
     }
 
-    private companion object {
-        const val BUNDLE = "models/setu-speed-v1"
-        const val CHANNELS = 6
-        const val MINIMUM_RATE_HZ = 25.0
-        const val MAXIMUM_RATE_HZ = 500.0
-        const val MAXIMUM_GAP_NS = 50_000_000L
-        const val MAXIMUM_SIGMA_MPS = 6.0
-        const val MAXIMUM_SPEED_MPS = 60.0
-        const val ACCEL_SATURATION = 78.0
-        const val GYRO_SATURATION = 16.0
+    companion object {
+        private const val BUNDLE = "models/setu-speed-v1"
+        private const val CHANNELS = 6
+        private const val MINIMUM_RATE_HZ = 25.0
+        private const val MAXIMUM_RATE_HZ = 500.0
+        private const val MAXIMUM_GAP_NS = 50_000_000L
+        private const val MAXIMUM_SIGMA_MPS = 6.0
+        private const val MAXIMUM_SPEED_MPS = 60.0
+        private const val ACCEL_SATURATION = 78.0
+        private const val GYRO_SATURATION = 16.0
 
-        /**
-         * A model whose reported three-sigma coverage misses the 98 % gate is useful but not
-         * trustworthy enough to be treated as a full-confidence measurement, so its validity is
-         * capped. Raise this only when the bundle's own calibration says the gate passes.
-         */
-        const val UNCALIBRATED_VALIDITY_CEILING = 0.5
+        fun supportsVehicle(context: Context, vehicle: String): Boolean = runCatching {
+            context.assets.open("$BUNDLE/manifest.json").bufferedReader().use {
+                modelSupportsVehicle(JSONObject(it.readText()), vehicle)
+            }
+        }.getOrDefault(false)
+
     }
+}
+
+internal fun modelSupportsVehicle(manifest: JSONObject, vehicle: String): Boolean {
+    val vehicles = manifest.optJSONArray("vehicles") ?: return vehicle == "Car"
+    return (0 until vehicles.length()).any { vehicles.optString(it) == vehicle }
+}
+
+internal fun modelFusionApproved(manifest: JSONObject, calibration: JSONObject): Boolean {
+    val coverage = calibration.optJSONObject("test_coverage")?.optDouble("3_sigma", Double.NaN) ?: Double.NaN
+    return manifest.optBoolean("deployment_approved", false) && calibration.optBoolean("gate_g4_pass", false) &&
+        coverage.isFinite() && coverage in 0.98..1.0
+}
+
+internal fun validateModelInputSpec(spec: JSONObject) {
+    val channels = spec.getJSONArray("channels")
+    require((0 until channels.length()).map(channels::getString) == listOf("accel_x", "accel_y", "accel_z", "gyro_x", "gyro_y", "gyro_z")) { "Unsupported channel order" }
+    require(spec.getString("frame") == "phone_body") { "Unsupported sensor frame" }
+    require(spec.getJSONObject("units").getString("accel") == "m/s^2 including gravity" &&
+        spec.getJSONObject("units").getString("gyro") == "rad/s") { "Unsupported sensor units" }
+    require(spec.getInt("window_samples") == 400 && spec.getDouble("canonical_rate_hz") == 100.0 &&
+        spec.getDouble("window_seconds") == 4.0) { "Unsupported motion window" }
 }
 
 

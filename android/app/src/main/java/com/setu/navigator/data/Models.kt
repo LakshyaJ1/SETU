@@ -69,6 +69,8 @@ data class SensorState(
     val meanCn0: Float? = null,
     val sampleCount: Long = 0,
     val lastSampleNs: Long = 0,
+    val hasStepDetector: Boolean = false,
+    val stepDetectorActive: Boolean = false,
 ) {
     val tier: String get() = when {
         !hasGyroscope || achievedHz < 10 -> "D"
@@ -107,6 +109,7 @@ data class AppSettings(
      * GNSS blackout.
      */
     val onDeviceSpeedModel: Boolean = true,
+    val walkingStepLengthMeters: Double = 0.70,
 )
 
 data class ModelConnection(

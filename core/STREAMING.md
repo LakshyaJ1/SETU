@@ -34,8 +34,10 @@ an experimental safety boundary, not a claim of validated driving accuracy.
 - WMM2025 is valid for decimal years `[2025,2030)` here. Invalid dates/heights,
   near-pole inputs and a horizontal field below 2,000 nT cannot seed heading.
   Missing sensor accuracy does not become known north. A heading sample is not
-  proof of a rigid vehicle mount, so NHC, forward-speed and SVO constraints are
-  deliberately not enabled by this adapter.
+  proof of a rigid vehicle mount. The engine separately estimates vehicle axes
+  from GNSS-aided motion and gates forward/lateral constraints on mount agreement;
+  vertical and stationary constraints have their own input checks. Native SVO,
+  CTS, NHC and ZUPT are experimental, not field-validated measurements.
 - Hardware-reported heading uncertainty remains preferred. A missing fifth
   rotation-vector value, including Android's `-1` sentinel, now enters a separate
   checked-compass initialization path rather than permanently blocking fusion.
@@ -87,9 +89,21 @@ score. Subordinate altitude/velocity gates are not separately displayed yet.
 
 An IMU gap above 100 ms or an invalid integration sample clears the usable
 estimate and waits for fresh initialization inputs; the gap is never clipped.
-The estimate is withheld after ten seconds without an accepted fix or when its
-computed horizontal 95% radius exceeds 150 m. This is a bounded experimental
-outage policy, not a ten-second accuracy guarantee. A session stop closes its
+An uncalibrated vehicle estimate is withheld after 10 seconds without an accepted
+fix or when its computed horizontal 95% radius exceeds 150 m. Only motion-calibrated
+Car profiles with constraints enabled retain the 600-second / 400 m backstop. Angular rates above 6 rad/s
+invalidate the vehicle solution rather than clipping the measurement. Sensor gaps,
+invalid samples and rapid handling clear mount, vibration scale and heading calibration.
+
+Android disables these Car constraints for Two-wheeler and other non-Car profiles
+through `setu_engine_constraints`. In that profile, valid gyro pulses above 6 rad/s
+are propagated rather than misclassified as a Car mount change; the general
+finite/range and timing checks still apply. Mount inference, NHC, turn-speed,
+vibration-speed and learned-speed updates are disabled, and the 10-second / 150 m
+ceiling remains. A leaning scooter must not inherit a calibrated Car's assumptions
+or outage budget. This is bounded experimental inertial propagation, not a validated
+scooter odometer. Walking remains a separate step-based estimator.
+These are emergency withholding limits, not a validated duration or accuracy guarantee. A session stop closes its
 native handle; a later foreground/capture session initializes again.
 
 The 95% radius comes from the largest eigenvalue of the physical horizontal
@@ -99,6 +113,14 @@ not empirically calibrated**. Raw Android GPS accuracy and this radius are kept
 in separate fields and described separately in Diagnostics.
 
 ## C/JNI contract
+
+Delayed-GNSS repropagation retains the per-frame NHC, ZUPT, CTS/SVO and learned
+speed observations, including their original axes and uncertainty. It reapplies
+them after propagation instead of silently dropping those updates. Observation
+generation/calibration is not retroactively rerun; four observations per frame
+bound storage. Update counters count live accepted updates, not replay operations.
+Learned speed rejects future, repeated and older-than-500-ms timestamps. The
+Android provider must separately authorize deployment and pass validity gates.
 
 Calls for one engine must be serialized. Kotlin owns and synchronizes its native
 handle; double close is harmless and calls after close fail. Construction needs
@@ -113,14 +135,24 @@ Timestamps enter as signed 64-bit monotonic nanoseconds. Return -1 is invalid,
 0 is queued/rejected/gated, and 1 indicates accepted processing; consult counters
 and health rather than interpreting every 0 as a gate.
 
-`setu_engine_poll` returns 20 doubles: status, timestamp seconds, latitude,
+`setu_engine_poll` returns 31 doubles. The first 20 are: status, timestamp seconds, latitude,
 longitude, optional altitude, horizontal speed, optional course, 95% radius,
 accepted-GPS age seconds, mock flag, accepted count, gated count, rejected count,
 delayed corrections, resets, last position NIS, east velocity, north velocity,
 east displacement, north displacement. Status codes are 0 waiting for GPS/IMU,
-1 waiting for heading, 2 GPS-aided, 3 inertial, 4 sensor gap, 5 withheld. Unavailable
+1 waiting for heading, 2 GPS-aided, 3 inertial, 4 sensor gap, 5 withheld, 6 phone moved. Unavailable
 position fields are NaN. Timestamp seconds are for published UI/log output;
 input ordering and rewind operations retain integer nanoseconds internally.
+
+Indices 20–30 are ZUPT count, NHC count, turn-speed count, mount agreement,
+spectral-update count, spectral scale, mount-forward X/Y/Z, learned-speed update
+count and mount-valid flag. Recompile C callers against `SETU_ESTIMATE_SIZE`;
+allocating the old 20/30-double buffer is unsafe. JNI allocates from the header.
+
+Android Walking mode bypasses this vehicle filter. It uses platform step events,
+a calibrated step length, checked compass initialization and relative rotation;
+see `docs/23-walking-fallback-investigation.md`. It does not apply vehicle constraints
+or learned car speeds to a person walking.
 
 Raw GPS `pose` records remain unchanged as observations. `rotation_vector` and
 separately named `native_pose` records are added during capture; native output

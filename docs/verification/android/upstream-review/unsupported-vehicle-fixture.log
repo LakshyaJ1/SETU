@@ -1,0 +1,92 @@
+INSTRUMENTATION_STATUS: class=com.setu.navigator.MapRenderingTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stream=
+com.setu.navigator.MapRenderingTest:
+INSTRUMENTATION_STATUS: test=plannedNcrRouteRemainsRenderedWhenFollowingAndChangingTheme
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.MapRenderingTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=plannedNcrRouteRemainsRenderedWhenFollowingAndChangingTheme
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.PhysicalRecordingTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stream=
+com.setu.navigator.PhysicalRecordingTest:
+INSTRUMENTATION_STATUS: test=actualImuRecordingContinuesInForegroundWithoutLocationOrModelSharing
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.PhysicalRecordingTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Local model never returned an inference
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.setu.navigator.PhysicalRecordingTest.verifyRecording(PhysicalRecordingTest.kt:117)
+	at com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInForegroundWithoutLocationOrModelSharing(PhysicalRecordingTest.kt:26)
+
+INSTRUMENTATION_STATUS: stream=
+Error in actualImuRecordingContinuesInForegroundWithoutLocationOrModelSharing(com.setu.navigator.PhysicalRecordingTest):
+java.lang.AssertionError: Local model never returned an inference
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.setu.navigator.PhysicalRecordingTest.verifyRecording(PhysicalRecordingTest.kt:117)
+	at com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInForegroundWithoutLocationOrModelSharing(PhysicalRecordingTest.kt:26)
+
+INSTRUMENTATION_STATUS: test=actualImuRecordingContinuesInForegroundWithoutLocationOrModelSharing
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.setu.navigator.PhysicalRecordingTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.PhysicalRecordingTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Local model never returned an inference
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.setu.navigator.PhysicalRecordingTest.verifyRecording(PhysicalRecordingTest.kt:117)
+	at com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing(PhysicalRecordingTest.kt:23)
+
+INSTRUMENTATION_STATUS: stream=
+Error in actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing(com.setu.navigator.PhysicalRecordingTest):
+java.lang.AssertionError: Local model never returned an inference
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.setu.navigator.PhysicalRecordingTest.verifyRecording(PhysicalRecordingTest.kt:117)
+	at com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing(PhysicalRecordingTest.kt:23)
+
+INSTRUMENTATION_STATUS: test=actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 160.53
+There were 2 failures:
+1) actualImuRecordingContinuesInForegroundWithoutLocationOrModelSharing(com.setu.navigator.PhysicalRecordingTest)
+java.lang.AssertionError: Local model never returned an inference
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.setu.navigator.PhysicalRecordingTest.verifyRecording(PhysicalRecordingTest.kt:117)
+	at com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInForegroundWithoutLocationOrModelSharing(PhysicalRecordingTest.kt:26)
+2) actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing(com.setu.navigator.PhysicalRecordingTest)
+java.lang.AssertionError: Local model never returned an inference
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.setu.navigator.PhysicalRecordingTest.verifyRecording(PhysicalRecordingTest.kt:117)
+	at com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing(PhysicalRecordingTest.kt:23)
+
+FAILURES!!!
+Tests run: 3,  Failures: 2
+
+
+INSTRUMENTATION_CODE: -1

@@ -71,10 +71,12 @@ in Android Diagnostics and is explicitly labelled as synthetic.
 
 ## Still required
 
-The streaming layer does not complete the FIR/time-offset estimator, vehicle
-mount calibration, NHC/ZUPT decision logic, SVO/CTS/CSA frontends, particle road
-matching, arbitrary delayed/multi-source measurements, model-output consumption,
-format reconciliation, calibrated uncertainty, real-time scheduling or physical
-validation. Its two-second rewind is deterministic GNSS repropagation, not the
+The streaming layer now includes experimental mount estimation, NHC/ZUPT,
+SVO/CTS and timestamp-gated learned-speed ingestion. The Android bundle is not
+deployment-approved and cannot feed that ingestion path. Still required are the
+FIR/time-offset estimator, robust mount/handling validation, CSA, particle road
+matching, general delayed/multi-source fusion, format reconciliation, calibrated
+uncertainty, real-time scheduling and physical validation. Its two-second rewind
+retains constraint observations but is not the
 architecture's general stochastic-cloning implementation. These remain real
 requirements; an opt-in implementation is not their replacement.

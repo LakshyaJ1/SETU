@@ -72,8 +72,10 @@ fun TripsScreen(model: SetuViewModel, onImport: () -> Unit) {
 }
 
 @Composable
-fun TripDetailScreen(model: SetuViewModel, trip: Trip, onExport: (Trip) -> Unit) {
+fun TripDetailScreen(model: SetuViewModel, trip: Trip, onExport: (Trip) -> Unit, onTrainingExport: (Trip) -> Unit = {}) {
     var confirmDelete by remember { mutableStateOf(false) }
+    var confirmTrainingExport by remember { mutableStateOf(false) }
+    val recording by model.recording.collectAsStateWithLifecycle()
     val hasEstimates = trip.points.any { it.filterRadius95Meters != null }
     val dark = MaterialTheme.colorScheme.background.red < 0.3f
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding()) {
@@ -111,9 +113,21 @@ fun TripDetailScreen(model: SetuViewModel, trip: Trip, onExport: (Trip) -> Unit)
                 Icon(Icons.Outlined.IosShare, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)); Text("Export original recording")
             }
             InformationNote("Export includes raw sensors, precise GPS observations and any sensor-estimated trajectory. Share only with someone you trust. Gaps are not interpolated; path distance is not a validated odometer reading.")
+            OutlinedButton(onClick = { confirmTrainingExport = true }, enabled = !model.busy && !recording && !trip.synthetic,
+                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("export-training"), shape = SetuShape.action) {
+                Text(if (model.busy) "Preparing training data…" else "Export training bundle")
+            }
+            Text("Full-rate sensors, a 1-second comparison and a separate GPS-withheld replay. GPS stays a noisy reference, not exact truth.",
+                style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
+            model.trainingExportSummary?.let { InformationNote(it) }
             Spacer(Modifier.height(16.dp))
         }
     }
+    if (confirmTrainingExport) AlertDialog(onDismissRequest = { confirmTrainingExport = false },
+        title = { Text("Export location and sensor data?") },
+        text = { Text("This ZIP contains your precise route, timestamps, device details and a random installation ID. Choose a trusted storage location. Nothing is uploaded automatically. Preparing the replay can take a few minutes; keep SETU open.") },
+        confirmButton = { TextButton(onClick = { confirmTrainingExport = false; onTrainingExport(trip) }) { Text("Choose location") } },
+        dismissButton = { TextButton(onClick = { confirmTrainingExport = false }) { Text("Cancel") } })
     if (confirmDelete) AlertDialog(onDismissRequest = { confirmDelete = false },
         title = { Text("Delete this recording?") },
         text = { Text("“${trip.name}” and its original sensor log will be removed from this phone. This cannot be undone.") },

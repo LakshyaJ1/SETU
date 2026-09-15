@@ -1,0 +1,2083 @@
+{
+  "schema": "setu.phone-qa.v1",
+  "apkSha256": "410ca8d79d42780b3cb1c33c0d569c093e1216b257d9c2ccd10dc56e9a8db62b",
+  "deploymentApproved": false,
+  "protocol": "120 s GPS warmup; 10 Hz ticks in [0, duration); missing estimates count as failures",
+  "reference": "Withheld phone GNSS, not independent surveyed ground truth",
+  "limits": [
+    "Three same-phone/day development rides with unconfirmed mounts",
+    "Duration runs have different cycle counts; matched prefixes use 90 s runs",
+    "Ticks and duration prefixes are correlated, not independent trials",
+    "Conditional errors exclude missing predictions; joint success does not",
+    "Missing references are unknown: joint success is a verified lower bound",
+    "Low errors on rare outputs do not prove long-outage tracking",
+    "Physical Location-off continuity is not a moving accuracy experiment"
+  ],
+  "durations": [
+    {
+      "seconds": 10,
+      "expected": 2600,
+      "available": 377,
+      "referenceAvailable": 1613,
+      "comparable": 317,
+      "within10m": 285,
+      "jointSuccessPercent": 10.961538461538462,
+      "availabilityPercent": 14.5,
+      "conditionalRmseMeters": 5.938161927008762,
+      "conditionalMedianMeters": 3.2700816513242623,
+      "conditionalP90Meters": 10.208481631452237,
+      "conditionalMaxMeters": 17.95597540528662
+    },
+    {
+      "seconds": 20,
+      "expected": 4800,
+      "available": 342,
+      "referenceAvailable": 2575,
+      "comparable": 225,
+      "within10m": 183,
+      "jointSuccessPercent": 3.8125,
+      "availabilityPercent": 7.125,
+      "conditionalRmseMeters": 9.308694546035468,
+      "conditionalMedianMeters": 2.7149154058938296,
+      "conditionalP90Meters": 19.49650650958699,
+      "conditionalMaxMeters": 26.381350017021166
+    },
+    {
+      "seconds": 30,
+      "expected": 6900,
+      "available": 457,
+      "referenceAvailable": 3995,
+      "comparable": 408,
+      "within10m": 408,
+      "jointSuccessPercent": 5.913043478260869,
+      "availabilityPercent": 6.6231884057971016,
+      "conditionalRmseMeters": 4.646915984329116,
+      "conditionalMedianMeters": 2.8209312031336364,
+      "conditionalP90Meters": 8.435815393020187,
+      "conditionalMaxMeters": 9.13085888964017
+    },
+    {
+      "seconds": 40,
+      "expected": 8000,
+      "available": 445,
+      "referenceAvailable": 4826,
+      "comparable": 314,
+      "within10m": 232,
+      "jointSuccessPercent": 2.9,
+      "availabilityPercent": 5.5625,
+      "conditionalRmseMeters": 10.253209821486207,
+      "conditionalMedianMeters": 4.910477703657252,
+      "conditionalP90Meters": 19.7453244010009,
+      "conditionalMaxMeters": 25.50675749233769
+    },
+    {
+      "seconds": 50,
+      "expected": 10000,
+      "available": 190,
+      "referenceAvailable": 5878,
+      "comparable": 150,
+      "within10m": 130,
+      "jointSuccessPercent": 1.3,
+      "availabilityPercent": 1.9,
+      "conditionalRmseMeters": 5.679862379110961,
+      "conditionalMedianMeters": 2.840109910668818,
+      "conditionalP90Meters": 11.430370178439793,
+      "conditionalMaxMeters": 18.73274268258105
+    },
+    {
+      "seconds": 90,
+      "expected": 14400,
+      "available": 164,
+      "referenceAvailable": 7958,
+      "comparable": 92,
+      "within10m": 91,
+      "jointSuccessPercent": 0.6319444444444444,
+      "availabilityPercent": 1.1388888888888888,
+      "conditionalRmseMeters": 2.9553442321139305,
+      "conditionalMedianMeters": 0.9392262469766708,
+      "conditionalP90Meters": 1.505507450757997,
+      "conditionalMaxMeters": 26.66667574489525
+    }
+  ],
+  "matched90SecondPrefixes": [
+    {
+      "seconds": 10,
+      "expected": 1600,
+      "available": 164,
+      "referenceAvailable": 688,
+      "comparable": 92,
+      "within10m": 91,
+      "jointSuccessPercent": 5.6875,
+      "availabilityPercent": 10.25,
+      "conditionalRmseMeters": 2.9553442321139305,
+      "conditionalMedianMeters": 0.9392262469766708,
+      "conditionalP90Meters": 1.505507450757997,
+      "conditionalMaxMeters": 26.66667574489525
+    },
+    {
+      "seconds": 20,
+      "expected": 3200,
+      "available": 164,
+      "referenceAvailable": 1661,
+      "comparable": 92,
+      "within10m": 91,
+      "jointSuccessPercent": 2.84375,
+      "availabilityPercent": 5.125,
+      "conditionalRmseMeters": 2.9553442321139305,
+      "conditionalMedianMeters": 0.9392262469766708,
+      "conditionalP90Meters": 1.505507450757997,
+      "conditionalMaxMeters": 26.66667574489525
+    },
+    {
+      "seconds": 30,
+      "expected": 4800,
+      "available": 164,
+      "referenceAvailable": 2644,
+      "comparable": 92,
+      "within10m": 91,
+      "jointSuccessPercent": 1.8958333333333333,
+      "availabilityPercent": 3.4166666666666665,
+      "conditionalRmseMeters": 2.9553442321139305,
+      "conditionalMedianMeters": 0.9392262469766708,
+      "conditionalP90Meters": 1.505507450757997,
+      "conditionalMaxMeters": 26.66667574489525
+    },
+    {
+      "seconds": 40,
+      "expected": 6400,
+      "available": 164,
+      "referenceAvailable": 3634,
+      "comparable": 92,
+      "within10m": 91,
+      "jointSuccessPercent": 1.421875,
+      "availabilityPercent": 2.5625,
+      "conditionalRmseMeters": 2.9553442321139305,
+      "conditionalMedianMeters": 0.9392262469766708,
+      "conditionalP90Meters": 1.505507450757997,
+      "conditionalMaxMeters": 26.66667574489525
+    },
+    {
+      "seconds": 50,
+      "expected": 8000,
+      "available": 164,
+      "referenceAvailable": 4509,
+      "comparable": 92,
+      "within10m": 91,
+      "jointSuccessPercent": 1.1375,
+      "availabilityPercent": 2.05,
+      "conditionalRmseMeters": 2.9553442321139305,
+      "conditionalMedianMeters": 0.9392262469766708,
+      "conditionalP90Meters": 1.505507450757997,
+      "conditionalMaxMeters": 26.66667574489525
+    },
+    {
+      "seconds": 90,
+      "expected": 14400,
+      "available": 164,
+      "referenceAvailable": 7958,
+      "comparable": 92,
+      "within10m": 91,
+      "jointSuccessPercent": 0.6319444444444444,
+      "availabilityPercent": 1.1388888888888888,
+      "conditionalRmseMeters": 2.9553442321139305,
+      "conditionalMedianMeters": 0.9392262469766708,
+      "conditionalP90Meters": 1.505507450757997,
+      "conditionalMaxMeters": 26.66667574489525
+    }
+  ],
+  "matched90SecondPhases": [
+    {
+      "start": 0,
+      "end": 10,
+      "expected": 1600,
+      "available": 164,
+      "referenceAvailable": 688,
+      "comparable": 92,
+      "within10m": 91,
+      "jointSuccessPercent": 5.6875,
+      "availabilityPercent": 10.25,
+      "conditionalRmseMeters": 2.9553442321139305,
+      "conditionalMedianMeters": 0.9392262469766708,
+      "conditionalP90Meters": 1.505507450757997,
+      "conditionalMaxMeters": 26.66667574489525
+    },
+    {
+      "start": 10,
+      "end": 20,
+      "expected": 1600,
+      "available": 0,
+      "referenceAvailable": 973,
+      "comparable": 0,
+      "within10m": 0,
+      "jointSuccessPercent": 0.0,
+      "availabilityPercent": 0.0,
+      "conditionalRmseMeters": null,
+      "conditionalMedianMeters": null,
+      "conditionalP90Meters": null,
+      "conditionalMaxMeters": null
+    },
+    {
+      "start": 20,
+      "end": 30,
+      "expected": 1600,
+      "available": 0,
+      "referenceAvailable": 983,
+      "comparable": 0,
+      "within10m": 0,
+      "jointSuccessPercent": 0.0,
+      "availabilityPercent": 0.0,
+      "conditionalRmseMeters": null,
+      "conditionalMedianMeters": null,
+      "conditionalP90Meters": null,
+      "conditionalMaxMeters": null
+    },
+    {
+      "start": 30,
+      "end": 40,
+      "expected": 1600,
+      "available": 0,
+      "referenceAvailable": 990,
+      "comparable": 0,
+      "within10m": 0,
+      "jointSuccessPercent": 0.0,
+      "availabilityPercent": 0.0,
+      "conditionalRmseMeters": null,
+      "conditionalMedianMeters": null,
+      "conditionalP90Meters": null,
+      "conditionalMaxMeters": null
+    },
+    {
+      "start": 40,
+      "end": 50,
+      "expected": 1600,
+      "available": 0,
+      "referenceAvailable": 875,
+      "comparable": 0,
+      "within10m": 0,
+      "jointSuccessPercent": 0.0,
+      "availabilityPercent": 0.0,
+      "conditionalRmseMeters": null,
+      "conditionalMedianMeters": null,
+      "conditionalP90Meters": null,
+      "conditionalMaxMeters": null
+    },
+    {
+      "start": 50,
+      "end": 90,
+      "expected": 6400,
+      "available": 0,
+      "referenceAvailable": 3449,
+      "comparable": 0,
+      "within10m": 0,
+      "jointSuccessPercent": 0.0,
+      "availabilityPercent": 0.0,
+      "conditionalRmseMeters": null,
+      "conditionalMedianMeters": null,
+      "conditionalP90Meters": null,
+      "conditionalMaxMeters": null
+    }
+  ],
+  "rides": [
+    {
+      "ride": 3,
+      "outageSeconds": 10,
+      "sourceSha256": "e4b6afa950a8bbbdae36c05c709609e8b7824ee82cdc74a4ae827307597602a3",
+      "cycles": 14,
+      "traceSha256": "f98344c33a4929d549dad7bd89e79474b57a838d36bbf3e3a2a573ec97df274f",
+      "expected": 1400,
+      "available": 186,
+      "referenceAvailable": 878,
+      "comparable": 156,
+      "within10m": 156,
+      "jointSuccessPercent": 11.142857142857142,
+      "availabilityPercent": 13.285714285714286,
+      "conditionalRmseMeters": 3.4552734938374914,
+      "conditionalMedianMeters": 1.7922041805955156,
+      "conditionalP90Meters": 6.247870893127127,
+      "conditionalMaxMeters": 7.2528263215916775
+    },
+    {
+      "ride": 3,
+      "outageSeconds": 20,
+      "sourceSha256": "e4b6afa950a8bbbdae36c05c709609e8b7824ee82cdc74a4ae827307597602a3",
+      "cycles": 13,
+      "traceSha256": "fa1e1f64b58e6e24c492a1d1d43a057919d297eb5024c0ea37af15d86ac94c7f",
+      "expected": 2600,
+      "available": 169,
+      "referenceAvailable": 1567,
+      "comparable": 134,
+      "within10m": 93,
+      "jointSuccessPercent": 3.576923076923077,
+      "availabilityPercent": 6.5,
+      "conditionalRmseMeters": 11.744746163374836,
+      "conditionalMedianMeters": 3.818124169882908,
+      "conditionalP90Meters": 22.51033736979679,
+      "conditionalMaxMeters": 26.381350017021166
+    },
+    {
+      "ride": 3,
+      "outageSeconds": 30,
+      "sourceSha256": "e4b6afa950a8bbbdae36c05c709609e8b7824ee82cdc74a4ae827307597602a3",
+      "cycles": 12,
+      "traceSha256": "e599f5cebd6311f5e9d276fd1528cfcee49c50cf34cc40b311c3782117807a67",
+      "expected": 3600,
+      "available": 273,
+      "referenceAvailable": 2355,
+      "comparable": 254,
+      "within10m": 254,
+      "jointSuccessPercent": 7.055555555555555,
+      "availabilityPercent": 7.583333333333333,
+      "conditionalRmseMeters": 4.923199365893769,
+      "conditionalMedianMeters": 2.905681366682998,
+      "conditionalP90Meters": 8.666002928346265,
+      "conditionalMaxMeters": 9.13085888964017
+    },
+    {
+      "ride": 3,
+      "outageSeconds": 40,
+      "sourceSha256": "e4b6afa950a8bbbdae36c05c709609e8b7824ee82cdc74a4ae827307597602a3",
+      "cycles": 11,
+      "traceSha256": "14fcacd61315e16b6051194b65e26f8888e080fab228404fa3c1bef745ebe1d8",
+      "expected": 4400,
+      "available": 277,
+      "referenceAvailable": 2659,
+      "comparable": 198,
+      "within10m": 136,
+      "jointSuccessPercent": 3.090909090909091,
+      "availabilityPercent": 6.295454545454546,
+      "conditionalRmseMeters": 11.358704082792714,
+      "conditionalMedianMeters": 6.910638541639999,
+      "conditionalP90Meters": 20.91685136717692,
+      "conditionalMaxMeters": 25.50675749233769
+    },
+    {
+      "ride": 3,
+      "outageSeconds": 50,
+      "sourceSha256": "e4b6afa950a8bbbdae36c05c709609e8b7824ee82cdc74a4ae827307597602a3",
+      "cycles": 11,
+      "traceSha256": "12803d3332b4493e289c3c8045685e523b42124f7c28854db4d40673a78e23f5",
+      "expected": 5500,
+      "available": 93,
+      "referenceAvailable": 3093,
+      "comparable": 53,
+      "within10m": 33,
+      "jointSuccessPercent": 0.6,
+      "availabilityPercent": 1.690909090909091,
+      "conditionalRmseMeters": 8.860021454565704,
+      "conditionalMedianMeters": 5.857240698108744,
+      "conditionalP90Meters": 14.228695219886378,
+      "conditionalMaxMeters": 18.73274268258105
+    },
+    {
+      "ride": 3,
+      "outageSeconds": 90,
+      "sourceSha256": "e4b6afa950a8bbbdae36c05c709609e8b7824ee82cdc74a4ae827307597602a3",
+      "cycles": 8,
+      "traceSha256": "65add5b1e28692124c8fdc89642f038b373c43a83a25236a2e8dc61027a91d1c",
+      "expected": 7200,
+      "available": 73,
+      "referenceAvailable": 4024,
+      "comparable": 1,
+      "within10m": 0,
+      "jointSuccessPercent": 0.0,
+      "availabilityPercent": 1.0138888888888888,
+      "conditionalRmseMeters": 26.66667574489525,
+      "conditionalMedianMeters": 26.66667574489525,
+      "conditionalP90Meters": 26.66667574489525,
+      "conditionalMaxMeters": 26.66667574489525
+    },
+    {
+      "ride": 2,
+      "outageSeconds": 10,
+      "sourceSha256": "4a840386dfae396612e77381eeca70a8edfbe24bb6129605f1074b1a8adee7f9",
+      "cycles": 4,
+      "traceSha256": "e1717ffb024ab9205d73f726d8fc21b3574519de79f76ea00311674a4f96ead0",
+      "expected": 400,
+      "available": 97,
+      "referenceAvailable": 317,
+      "comparable": 97,
+      "within10m": 97,
+      "jointSuccessPercent": 24.25,
+      "availabilityPercent": 24.25,
+      "conditionalRmseMeters": 4.1362914708356096,
+      "conditionalMedianMeters": 2.9342334051737824,
+      "conditionalP90Meters": 7.236116081337345,
+      "conditionalMaxMeters": 8.3262354882301
+    },
+    {
+      "ride": 2,
+      "outageSeconds": 20,
+      "sourceSha256": "4a840386dfae396612e77381eeca70a8edfbe24bb6129605f1074b1a8adee7f9",
+      "cycles": 4,
+      "traceSha256": "5e90d7ab8dd22969c0645824143c8139f9005ac2ad1188e432eaf7f87eaa2ce3",
+      "expected": 800,
+      "available": 90,
+      "referenceAvailable": 443,
+      "comparable": 90,
+      "within10m": 90,
+      "jointSuccessPercent": 11.25,
+      "availabilityPercent": 11.25,
+      "conditionalRmseMeters": 2.574957627816288,
+      "conditionalMedianMeters": 1.5504758606539668,
+      "conditionalP90Meters": 4.573798515085883,
+      "conditionalMaxMeters": 5.730270868950345
+    },
+    {
+      "ride": 2,
+      "outageSeconds": 30,
+      "sourceSha256": "4a840386dfae396612e77381eeca70a8edfbe24bb6129605f1074b1a8adee7f9",
+      "cycles": 4,
+      "traceSha256": "28ab88600ac613f3ddc193b9ea44888be933cb4a92894fc1fd21bb40a45accc3",
+      "expected": 1200,
+      "available": 92,
+      "referenceAvailable": 597,
+      "comparable": 92,
+      "within10m": 92,
+      "jointSuccessPercent": 7.666666666666667,
+      "availabilityPercent": 7.666666666666667,
+      "conditionalRmseMeters": 1.8879962607575151,
+      "conditionalMedianMeters": 1.559616644393007,
+      "conditionalP90Meters": 2.8704556617782315,
+      "conditionalMaxMeters": 3.494515823431226
+    },
+    {
+      "ride": 2,
+      "outageSeconds": 40,
+      "sourceSha256": "4a840386dfae396612e77381eeca70a8edfbe24bb6129605f1074b1a8adee7f9",
+      "cycles": 3,
+      "traceSha256": "1abf097bc3b9beb5cbb1a74ca61971b7ca136007f9f7aba34495806a855679a3",
+      "expected": 1200,
+      "available": 96,
+      "referenceAvailable": 863,
+      "comparable": 96,
+      "within10m": 96,
+      "jointSuccessPercent": 8.0,
+      "availabilityPercent": 8.0,
+      "conditionalRmseMeters": 2.2943969518190226,
+      "conditionalMedianMeters": 1.6514367725969157,
+      "conditionalP90Meters": 3.7628602180259496,
+      "conditionalMaxMeters": 4.403053331382097
+    },
+    {
+      "ride": 2,
+      "outageSeconds": 50,
+      "sourceSha256": "4a840386dfae396612e77381eeca70a8edfbe24bb6129605f1074b1a8adee7f9",
+      "cycles": 3,
+      "traceSha256": "edc092dea30119732de89c01c7347592eac86fa65748349fd9c8db4ac19d1321",
+      "expected": 1500,
+      "available": 97,
+      "referenceAvailable": 1160,
+      "comparable": 97,
+      "within10m": 97,
+      "jointSuccessPercent": 6.466666666666667,
+      "availabilityPercent": 6.466666666666667,
+      "conditionalRmseMeters": 2.645023624612757,
+      "conditionalMedianMeters": 2.076290235215992,
+      "conditionalP90Meters": 4.209904487721577,
+      "conditionalMaxMeters": 5.051932112379985
+    },
+    {
+      "ride": 2,
+      "outageSeconds": 90,
+      "sourceSha256": "4a840386dfae396612e77381eeca70a8edfbe24bb6129605f1074b1a8adee7f9",
+      "cycles": 3,
+      "traceSha256": "c657f073b3446e26de7ccba05767dbe56fc010777cab983079d2012816e40ced",
+      "expected": 2700,
+      "available": 91,
+      "referenceAvailable": 1640,
+      "comparable": 91,
+      "within10m": 91,
+      "jointSuccessPercent": 3.3703703703703702,
+      "availabilityPercent": 3.3703703703703702,
+      "conditionalRmseMeters": 1.0077822539933188,
+      "conditionalMedianMeters": 0.9342437289041239,
+      "conditionalP90Meters": 1.427225454917703,
+      "conditionalMaxMeters": 2.1444567483692873
+    },
+    {
+      "ride": 1,
+      "outageSeconds": 10,
+      "sourceSha256": "071d2590117086f1a0929161a18a5878d4f361e3dd34dac75a63135bd751fa40",
+      "cycles": 8,
+      "traceSha256": "9f970760b3de8149dab73b2b0f0a38b63e2aaee5f44ba50c6b37857e447e1090",
+      "expected": 800,
+      "available": 94,
+      "referenceAvailable": 418,
+      "comparable": 64,
+      "within10m": 32,
+      "jointSuccessPercent": 4.0,
+      "availabilityPercent": 11.75,
+      "conditionalRmseMeters": 10.937282456954442,
+      "conditionalMedianMeters": 10.058690041047686,
+      "conditionalP90Meters": 16.385052232121172,
+      "conditionalMaxMeters": 17.95597540528662
+    },
+    {
+      "ride": 1,
+      "outageSeconds": 20,
+      "sourceSha256": "071d2590117086f1a0929161a18a5878d4f361e3dd34dac75a63135bd751fa40",
+      "cycles": 7,
+      "traceSha256": "f6b62c325c021c73158ddac68e6cac29612b70e3df4ed3ead054149479619c54",
+      "expected": 1400,
+      "available": 83,
+      "referenceAvailable": 565,
+      "comparable": 1,
+      "within10m": 0,
+      "jointSuccessPercent": 0.0,
+      "availabilityPercent": 5.928571428571429,
+      "conditionalRmseMeters": 20.398105455310315,
+      "conditionalMedianMeters": 20.398105455310315,
+      "conditionalP90Meters": 20.398105455310315,
+      "conditionalMaxMeters": 20.398105455310315
+    },
+    {
+      "ride": 1,
+      "outageSeconds": 30,
+      "sourceSha256": "071d2590117086f1a0929161a18a5878d4f361e3dd34dac75a63135bd751fa40",
+      "cycles": 7,
+      "traceSha256": "f869424bea756fb32cefb15ae76428b3fd2a9dd979ca48e56012f0c79cf887b6",
+      "expected": 2100,
+      "available": 92,
+      "referenceAvailable": 1043,
+      "comparable": 62,
+      "within10m": 62,
+      "jointSuccessPercent": 2.9523809523809526,
+      "availabilityPercent": 4.380952380952381,
+      "conditionalRmseMeters": 6.124936570311159,
+      "conditionalMedianMeters": 5.681172725913575,
+      "conditionalP90Meters": 7.466924457299405,
+      "conditionalMaxMeters": 7.518268266340889
+    },
+    {
+      "ride": 1,
+      "outageSeconds": 40,
+      "sourceSha256": "071d2590117086f1a0929161a18a5878d4f361e3dd34dac75a63135bd751fa40",
+      "cycles": 6,
+      "traceSha256": "8b864d09c879ceb9d7807b16bbe161919805a691b5f119486b244eaa47592a05",
+      "expected": 2400,
+      "available": 72,
+      "referenceAvailable": 1304,
+      "comparable": 20,
+      "within10m": 0,
+      "jointSuccessPercent": 0.0,
+      "availabilityPercent": 3.0,
+      "conditionalRmseMeters": 18.653323801756105,
+      "conditionalMedianMeters": 19.092813228256162,
+      "conditionalP90Meters": 21.43285510388768,
+      "conditionalMaxMeters": 21.687234648556785
+    },
+    {
+      "ride": 1,
+      "outageSeconds": 50,
+      "sourceSha256": "071d2590117086f1a0929161a18a5878d4f361e3dd34dac75a63135bd751fa40",
+      "cycles": 6,
+      "traceSha256": "1ef212bf7302443cceab4ac76c73dfbc6865d8aec10998d0ebdcd5eee8288543",
+      "expected": 3000,
+      "available": 0,
+      "referenceAvailable": 1625,
+      "comparable": 0,
+      "within10m": 0,
+      "jointSuccessPercent": 0.0,
+      "availabilityPercent": 0.0,
+      "conditionalRmseMeters": null,
+      "conditionalMedianMeters": null,
+      "conditionalP90Meters": null,
+      "conditionalMaxMeters": null
+    },
+    {
+      "ride": 1,
+      "outageSeconds": 90,
+      "sourceSha256": "071d2590117086f1a0929161a18a5878d4f361e3dd34dac75a63135bd751fa40",
+      "cycles": 5,
+      "traceSha256": "af9e2242a126acc2072be16ea02ef220a21c5449c868d755590b6875c48d9499",
+      "expected": 4500,
+      "available": 0,
+      "referenceAvailable": 2294,
+      "comparable": 0,
+      "within10m": 0,
+      "jointSuccessPercent": 0.0,
+      "availabilityPercent": 0.0,
+      "conditionalRmseMeters": null,
+      "conditionalMedianMeters": null,
+      "conditionalP90Meters": null,
+      "conditionalMaxMeters": null
+    }
+  ],
+  "suites": [
+    {
+      "log": "baseline-all-device-tests.log",
+      "sha256": "81c5af0226cc988b42fcebae82567feb1e85de0b9fd51138b31f4436e5439e8c",
+      "cases": [
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.liveNativePositioningConsumesAndroidSensorsAndRecordsSeparateOutput",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: Requires a controlled live GNSS/heading fixture; opt in with -e nativeGnssFixture true."
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.offlineJourneyAndSettingsRemainUsable",
+          "status": "failed",
+          "detail": "java.lang.IllegalStateException: No compose hierarchies found in the app. Possible reasons include: (1) the Activity that calls setContent did not launch; (2) setContent was not called; (3) setContent was called before the ComposeTestRule ran. If setContent is called by the Activity, make sure the Activity is launched after the ComposeTestRule runs"
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.presentationDemoShowsNativeLossRecoveryAndSurvivesRecreation",
+          "status": "failed",
+          "detail": "java.lang.IllegalStateException: No compose hierarchies found in the app. Possible reasons include: (1) the Activity that calls setContent did not launch; (2) setContent was not called; (3) setContent was called before the ComposeTestRule ran. If setContent is called by the Activity, make sure the Activity is launched after the ComposeTestRule runs"
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.liveTrackingFollowsMockFixesRecordsAndSavesWithoutADestination",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.missingMeasuredAndStaleGpsStayDistinct",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.sensorSubscriptionsCanBeRepeatedlyStoppedAndRestarted",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.regionalMapsInstallSwitchRouteRejectAndRemove",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.CompiledRoadGraphTest.pythonCompiledFixtureMatchesJsonRoutesAndOneWaySemantics",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.CompiledRoadGraphTest.ncrColdAndWarmRoutesUseMappedGraphAndRecoverCorruptCacheWithoutJsonParsing",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.GnssObservationTest.duplicateDelayedAndFutureFixesDoNotReplaceLatestOrEnterLog",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.GnssObservationTest.malformedMeasurementMetadataIsRejected",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.GnssObservationTest.invalidOrOrphanMeasurementsCannotBecomeObservations",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.GnssObservationTest.optionalMeasurementsPreserveMissingAndMeasuredZero",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.GnssObservationTest.legacyZeroMeasurementsAreUnknownAndNonzeroValuesSurvive",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.LocationLifecycleTest.coldStartWithLocationOffObservesReenableWithoutRestart",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.invalidGeometryMetadataAndGraphAreRejected",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.includedNcrUsesBoundedLocalVectorTiles",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.corruptInstalledMapCannotActivateAndRestoresFallback",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.installActivateRestoreAndRemovePreserveFallback",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.includedNcrCoversCitiesAndRoutesShahdaraToMait",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.revisionsNeverSilentlyReplaceOrDowngrade",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.directDownloadChecksHashAndDoesNotActivateAutomatically",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.badArchivesAndChecksumsLeaveNoInstalledFiles",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.cancellationKeepsThePreviousMapAndCleansStaging",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.failedDownloadsNeverInstallOrFollowRedirects",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapRenderingTest.ncrTilesRenderAcrossZoomsAndRepeatedMapDisposalWithoutHeapGrowth",
+          "status": "failed",
+          "detail": "java.lang.AssertionError: Map renderer memory is not bounded: 1854612 KiB"
+        },
+        {
+          "test": "com.setu.navigator.MapRenderingTest.plannedNcrRouteRemainsRenderedWhenFollowingAndChangingTheme",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelConsentTest.legacyFlagDoesNotAuthorizeUploadsAndChangingServersRevokesConsent",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelProviderTest.unavailableRetainsReasonRatherThanPretendingTheVehicleStopped",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelProviderTest.malformedAndOutOfWindowMeasurementsAreRejected",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelProviderTest.cancellingADownloadDoesNotWaitForTheReadTimeout",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelProviderTest.healthPreservesExperimentalWarningAndInferenceContainsNoLocation",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelProviderTest.urlAndWindowValidationHappenBeforeNetworkTraffic",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelProviderTest.redirectsOversizedResponsesAndUnknownHealthAreRejected",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.stationaryUncalibratedVehicleDoesNotRunIndefinitely",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.horizontalVelocityUpdateDoesNotInventVerticalSpeed",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.rapidPhoneRotationClearsVehicleMountAndRequiresFreshAlignment",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.magneticDeclinationMatchesPublishedNoaaWmm2025Examples",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.pendingFixDoesNotResetTheFilterAndOutageEventuallyWithholdsOutput",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.measuredStopWithoutCourseUsesItsSpeedUncertainty",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.delayedCorrectionsMatchOnTimePropagationAndGeographicDisplacement",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.gapsWithholdTheEstimateAndRequireNewAlignmentInputs",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.nonCarProfileKeepsRawRotationButNeverBorrowsCarConstraintsOrOutageBudget",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.learnedSpeedRejectsFutureDuplicateAndStaleMeasurements",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.initializationNeedsHeadingAndMissingAltitudeDoesNotBecomeSeaLevel",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.gatesAndInvalidTimestampsDoNotMoveTheState",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeFilterTest.matchesPythonAcrossPropagationAndEveryMeasurementChannel",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeFilterTest.invalidSamplesDoNotCorruptStateAndClosedHandlesAreSafe",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.OfflineMapTest.outOfCoverageOriginIsRejected",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.OfflineMapTest.includedDestinationsHaveDrivableRoutes",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.OfflineTilesTest.missingTruncatedAndSameSizeCorruptTilesAreRepairedDespiteACompleteMarker",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.OnDeviceModelProviderTest.actualPackagedModelRunsLocallyButUnapprovedPredictionsCannotFuse",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInForegroundWithoutLocationOrModelSharing",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.PositioningDemoTest.nativeEngineTracksThroughWithheldGpsAndAcceptsRecovery",
+          "status": "failed",
+          "detail": "java.lang.AssertionError"
+        },
+        {
+          "test": "com.setu.navigator.PositioningDemoTest.cancelledPreparationDoesNotContinueGeneratingFrames",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ScooterCaptureReviewTest.changingCarToScooterReconfiguresSensorsAndDoesNotStartCarModel",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ScooterCaptureReviewTest.exportSelectedRidesAndMeasureIndependentBlackouts",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: Select existing recordings explicitly; originals are read only."
+        },
+        {
+          "test": "com.setu.navigator.ScooterCaptureReviewTest.measureLongWarmupBlackoutsWithoutChangingRecordings",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: Select existing recordings explicitly; originals are read only."
+        },
+        {
+          "test": "com.setu.navigator.SensorFallbackTest.missingHardwareHeadingAccuracyStillUsesRealSensorPipelineThroughTurns",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.SensorFallbackTest.capturedPhysicalSensorsCanBeReplayedWithoutLeakingCoordinates",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: got: <false>, expected: is <true>"
+        },
+        {
+          "test": "com.setu.navigator.SensorFallbackTest.nativePositionsPublishAtTenHertzDuringGpsAndSensorOnlySegments",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.SensorFallbackTest.gpsMotionCalibratesThroughAccelerationAndTurnsWithoutACompassHeading",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.SensorFallbackTest.coldStartWithoutGpsNeverInventsAnAbsolutePosition",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.SensorFallbackTest.disturbedMagnetometerDoesNotBypassHeadingChecks",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TrainingCollectionTest.phoneRecordsAndExportsPortableTrainingBundle",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TrainingCollectionTest.gpsReferenceChangesCannotLeakIntoTheWithheldTrajectory",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TrainingCollectionTest.shadowReplayWorksAcrossRebootsAndReportsMissingHeadingHonestly",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TrainingCollectionUiTest.trainingControlsExplainCollectionAndRequireExplicitExport",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.malformedImportsLeaveNoOrphanFiles",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.importExportAndDeleteRoundTrip",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.recordedTrajectoryRetainsInertialPointsAndUncertaintySeparatelyFromRawGps",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.invalidTrajectoryUncertaintyAndUnknownStreamsAreRejected",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.optionalMeasurementsSurviveImportAndStoredMetadata",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.activeRecordingIsNotRecovered",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.interruptedFinalRecordIsRecoveredAndExportsCleanly",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.WalkingIntegrationTest.physicalWalkingProfileRecordsImuWithoutRunningCarModel",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.WalkingIntegrationTest.physicalWalkingEstimateSurvivesGpsOffAtRest",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: got: <false>, expected: is <true>"
+        },
+        {
+          "test": "com.setu.navigator.WalkingIntegrationTest.replayCapturedStepBatchesWithRecordedInitialHeading",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: Opt in with a captured walking recording ID."
+        },
+        {
+          "test": "com.setu.navigator.WalkingIntegrationTest.syntheticPlatformCallbacksUseStepsAndWithholdWithoutPermission",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.WalkingIntegrationTest.replayPrivateWalkingRecordingsChecksTheUncalibratedCeiling",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: Opt in with existing recording IDs; originals are read only."
+        }
+      ],
+      "counts": {
+        "skipped": 7,
+        "failed": 4,
+        "passed": 70
+      },
+      "runnerCompleted": true
+    },
+    {
+      "log": "actual-location-off.log",
+      "sha256": "c17dfb325579943205afe734dfd1bcc8f87750b3ff87a8e412ee70e85a0263dd",
+      "cases": [
+        {
+          "test": "com.setu.navigator.LocationOffDurationTest.realSensorsContinueForNinetySecondsWithSystemLocationOff",
+          "status": "passed",
+          "detail": null
+        }
+      ],
+      "counts": {
+        "passed": 1
+      },
+      "runnerCompleted": true
+    },
+    {
+      "log": "latest-six-duration-replay.log",
+      "sha256": "8b9360bda2e9d2128dbdfb64ef5cc521327500ed725035decb06444167505d3b",
+      "cases": [
+        {
+          "test": "com.setu.navigator.ScooterCaptureReviewTest.measureLongWarmupBlackoutsWithoutChangingRecordings",
+          "status": "passed",
+          "detail": null
+        }
+      ],
+      "counts": {
+        "passed": 1
+      },
+      "runnerCompleted": true
+    },
+    {
+      "log": "internet-location-off-recording.log",
+      "sha256": "3c6c652a3a3e67cda1c4f018e7cadcc9da55068b442219801b45dc979927c524",
+      "cases": [
+        {
+          "test": "com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInForegroundWithoutLocationOrModelSharing",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing",
+          "status": "failed",
+          "detail": "java.lang.AssertionError: Process was suspended for 412991 ms"
+        }
+      ],
+      "counts": {
+        "passed": 1,
+        "failed": 1
+      },
+      "runnerCompleted": true
+    },
+    {
+      "log": "internet-location-off-no-saver.log",
+      "sha256": "d8d7a4b1bea373999539f6d5a128bbc8d48720db6d12a802294604cc56cb1d6f",
+      "cases": [
+        {
+          "test": "com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInForegroundWithoutLocationOrModelSharing",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing",
+          "status": "failed",
+          "detail": "java.lang.AssertionError: Process was suspended for 155377 ms"
+        }
+      ],
+      "counts": {
+        "passed": 1,
+        "failed": 1
+      },
+      "runnerCompleted": true
+    },
+    {
+      "log": "special-use-background.log",
+      "sha256": "07c45d547794f97266b77147e20e2752183b7ce1f4a34fa8c2702820e6a4fada",
+      "cases": [
+        {
+          "test": "com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing",
+          "status": "failed",
+          "detail": "java.lang.AssertionError: Process was suspended for 159940 ms"
+        }
+      ],
+      "counts": {
+        "failed": 1
+      },
+      "runnerCompleted": true
+    },
+    {
+      "log": "Isolated device test methods",
+      "cases": [
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.liveNativePositioningConsumesAndroidSensorsAndRecordsSeparateOutput",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: Requires a controlled live GNSS/heading fixture; opt in with -e nativeGnssFixture true."
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.offlineJourneyAndSettingsRemainUsable",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.presentationDemoShowsNativeLossRecoveryAndSurvivesRecreation",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.liveTrackingFollowsMockFixesRecordsAndSavesWithoutADestination",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.missingMeasuredAndStaleGpsStayDistinct",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.sensorSubscriptionsCanBeRepeatedlyStoppedAndRestarted",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.regionalMapsInstallSwitchRouteRejectAndRemove",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.repeatedDemoAndThemeJourneysKeepMemoryBounded",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.AndroidWorkflowTest.compactMapControlsStayAboveTheDriveSheet",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.CompiledRoadGraphTest.pythonCompiledFixtureMatchesJsonRoutesAndOneWaySemantics",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.CompiledRoadGraphTest.ncrColdAndWarmRoutesUseMappedGraphAndRecoverCorruptCacheWithoutJsonParsing",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.GnssObservationTest.duplicateDelayedAndFutureFixesDoNotReplaceLatestOrEnterLog",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.GnssObservationTest.malformedMeasurementMetadataIsRejected",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.GnssObservationTest.invalidOrOrphanMeasurementsCannotBecomeObservations",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.GnssObservationTest.optionalMeasurementsPreserveMissingAndMeasuredZero",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.GnssObservationTest.legacyZeroMeasurementsAreUnknownAndNonzeroValuesSurvive",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.LocationLifecycleTest.coldStartWithLocationOffObservesReenableWithoutRestart",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.LocationOffDurationTest.realSensorsContinueForNinetySecondsWithSystemLocationOff",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.invalidGeometryMetadataAndGraphAreRejected",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.includedNcrUsesBoundedLocalVectorTiles",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.corruptInstalledMapCannotActivateAndRestoresFallback",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.installActivateRestoreAndRemovePreserveFallback",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.includedNcrCoversCitiesAndRoutesShahdaraToMait",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.revisionsNeverSilentlyReplaceOrDowngrade",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.directDownloadChecksHashAndDoesNotActivateAutomatically",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.badArchivesAndChecksumsLeaveNoInstalledFiles",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.cancellationKeepsThePreviousMapAndCleansStaging",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapPackStoreTest.failedDownloadsNeverInstallOrFollowRedirects",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapRenderingTest.ncrTilesRenderAcrossZoomsAndRepeatedMapDisposalWithoutHeapGrowth",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.MapRenderingTest.plannedNcrRouteRemainsRenderedWhenFollowingAndChangingTheme",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelConsentTest.legacyFlagDoesNotAuthorizeUploadsAndChangingServersRevokesConsent",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelProviderTest.unavailableRetainsReasonRatherThanPretendingTheVehicleStopped",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelProviderTest.malformedAndOutOfWindowMeasurementsAreRejected",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelProviderTest.cancellingADownloadDoesNotWaitForTheReadTimeout",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelProviderTest.healthPreservesExperimentalWarningAndInferenceContainsNoLocation",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelProviderTest.urlAndWindowValidationHappenBeforeNetworkTraffic",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ModelProviderTest.redirectsOversizedResponsesAndUnknownHealthAreRejected",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.stationaryUncalibratedVehicleDoesNotRunIndefinitely",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.horizontalVelocityUpdateDoesNotInventVerticalSpeed",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.rapidPhoneRotationClearsVehicleMountAndRequiresFreshAlignment",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.magneticDeclinationMatchesPublishedNoaaWmm2025Examples",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.pendingFixDoesNotResetTheFilterAndOutageEventuallyWithholdsOutput",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.measuredStopWithoutCourseUsesItsSpeedUncertainty",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.delayedCorrectionsMatchOnTimePropagationAndGeographicDisplacement",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.gapsWithholdTheEstimateAndRequireNewAlignmentInputs",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.nonCarProfileKeepsRawRotationButNeverBorrowsCarConstraintsOrOutageBudget",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.learnedSpeedRejectsFutureDuplicateAndStaleMeasurements",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.initializationNeedsHeadingAndMissingAltitudeDoesNotBecomeSeaLevel",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeEngineTest.gatesAndInvalidTimestampsDoNotMoveTheState",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeFilterTest.matchesPythonAcrossPropagationAndEveryMeasurementChannel",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.NativeFilterTest.invalidSamplesDoNotCorruptStateAndClosedHandlesAreSafe",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.OfflineMapTest.outOfCoverageOriginIsRejected",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.OfflineMapTest.includedDestinationsHaveDrivableRoutes",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.OfflineTilesTest.missingTruncatedAndSameSizeCorruptTilesAreRepairedDespiteACompleteMarker",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.OnDeviceModelProviderTest.actualPackagedModelRunsLocallyButUnapprovedPredictionsCannotFuse",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInForegroundWithoutLocationOrModelSharing",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.PhysicalRecordingTest.actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.PositioningDemoTest.nativeEngineTracksThroughWithheldGpsAndAcceptsRecovery",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.PositioningDemoTest.cancelledPreparationDoesNotContinueGeneratingFrames",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ScooterCaptureReviewTest.changingCarToScooterReconfiguresSensorsAndDoesNotStartCarModel",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.ScooterCaptureReviewTest.exportSelectedRidesAndMeasureIndependentBlackouts",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: Select existing recordings explicitly; originals are read only."
+        },
+        {
+          "test": "com.setu.navigator.ScooterCaptureReviewTest.measureLongWarmupBlackoutsWithoutChangingRecordings",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: Select existing recordings explicitly; originals are read only."
+        },
+        {
+          "test": "com.setu.navigator.SensorFallbackTest.missingHardwareHeadingAccuracyStillUsesRealSensorPipelineThroughTurns",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.SensorFallbackTest.capturedPhysicalSensorsCanBeReplayedWithoutLeakingCoordinates",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: got: <false>, expected: is <true>"
+        },
+        {
+          "test": "com.setu.navigator.SensorFallbackTest.nativePositionsPublishAtTenHertzDuringGpsAndSensorOnlySegments",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.SensorFallbackTest.gpsMotionCalibratesThroughAccelerationAndTurnsWithoutACompassHeading",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.SensorFallbackTest.coldStartWithoutGpsNeverInventsAnAbsolutePosition",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.SensorFallbackTest.disturbedMagnetometerDoesNotBypassHeadingChecks",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TrainingCollectionTest.phoneRecordsAndExportsPortableTrainingBundle",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TrainingCollectionTest.gpsReferenceChangesCannotLeakIntoTheWithheldTrajectory",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TrainingCollectionTest.shadowReplayWorksAcrossRebootsAndReportsMissingHeadingHonestly",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TrainingCollectionUiTest.trainingControlsExplainCollectionAndRequireExplicitExport",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.malformedImportsLeaveNoOrphanFiles",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.importExportAndDeleteRoundTrip",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.recordedTrajectoryRetainsInertialPointsAndUncertaintySeparatelyFromRawGps",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.invalidTrajectoryUncertaintyAndUnknownStreamsAreRejected",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.optionalMeasurementsSurviveImportAndStoredMetadata",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.activeRecordingIsNotRecovered",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.TripStoreTest.interruptedFinalRecordIsRecoveredAndExportsCleanly",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.WalkingIntegrationTest.physicalWalkingProfileRecordsImuWithoutRunningCarModel",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.WalkingIntegrationTest.physicalWalkingEstimateSurvivesGpsOffAtRest",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: got: <false>, expected: is <true>"
+        },
+        {
+          "test": "com.setu.navigator.WalkingIntegrationTest.replayCapturedStepBatchesWithRecordedInitialHeading",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: Opt in with a captured walking recording ID."
+        },
+        {
+          "test": "com.setu.navigator.WalkingIntegrationTest.syntheticPlatformCallbacksUseStepsAndWithholdWithoutPermission",
+          "status": "passed",
+          "detail": null
+        },
+        {
+          "test": "com.setu.navigator.WalkingIntegrationTest.replayPrivateWalkingRecordingsChecksTheUncalibratedCeiling",
+          "status": "skipped",
+          "detail": "org.junit.AssumptionViolatedException: Opt in with existing recording IDs; originals are read only."
+        }
+      ],
+      "runnerCompleted": true,
+      "counts": {
+        "skipped": 7,
+        "passed": 77
+      },
+      "sourceLogs": [
+        {
+          "log": "001-AndroidWorkflowTest-liveNativePositioningConsumesAndroidSensorsAndRecordsSeparateOutput.log",
+          "sha256": "1d583a4059d7c67289e4a173260e8302eeeb34852703495cbed4e8192b50eb21"
+        },
+        {
+          "log": "002-AndroidWorkflowTest-offlineJourneyAndSettingsRemainUsable.log",
+          "sha256": "c19b2369ef6d329c3334fa2acc4754d6fa65bf44d6eb84a448adcafdc425c260"
+        },
+        {
+          "log": "003-AndroidWorkflowTest-presentationDemoShowsNativeLossRecoveryAndSurvivesRecreation.log",
+          "sha256": "133129e33899064723c577c197252f326b8e694f3a7bdff21e35b54eff7e6214"
+        },
+        {
+          "log": "004-AndroidWorkflowTest-liveTrackingFollowsMockFixesRecordsAndSavesWithoutADestination.log",
+          "sha256": "0e8b272a39746c5385284f3c11da8bd6ec945fdd9c149ea43b92d7128d9326b3"
+        },
+        {
+          "log": "005-AndroidWorkflowTest-missingMeasuredAndStaleGpsStayDistinct.log",
+          "sha256": "4868d9356929a5da487e7cfcb1d0f15955d2625afe4e0780ca4ede81977b70b5"
+        },
+        {
+          "log": "006-AndroidWorkflowTest-sensorSubscriptionsCanBeRepeatedlyStoppedAndRestarted.log",
+          "sha256": "32adf20283dc89f4563c241e952fbfd7c31eec7a02b2736392f62f8bc2ae0622"
+        },
+        {
+          "log": "007-AndroidWorkflowTest-regionalMapsInstallSwitchRouteRejectAndRemove.log",
+          "sha256": "a3515bfb504fa851271715081f5423c74385e8815a65bf0a8d6baec830f38bfd"
+        },
+        {
+          "log": "008-AndroidWorkflowTest-repeatedDemoAndThemeJourneysKeepMemoryBounded.log",
+          "sha256": "e5488fc6485a35384de367aedff672462e4eae5ed8be0e60c35b680b4570d9e4"
+        },
+        {
+          "log": "009-AndroidWorkflowTest-compactMapControlsStayAboveTheDriveSheet.log",
+          "sha256": "6528f7fbdd0e01c84dd2046baf07affa44b684cf2f3b32570335f01ce17d856a"
+        },
+        {
+          "log": "010-CompiledRoadGraphTest-pythonCompiledFixtureMatchesJsonRoutesAndOneWaySemantics.log",
+          "sha256": "ece84f235e9493384654f3700d0c8bf792bed48266207f53d6e9786a3fdf3088"
+        },
+        {
+          "log": "011-CompiledRoadGraphTest-ncrColdAndWarmRoutesUseMappedGraphAndRecoverCorruptCacheWithoutJsonParsing.log",
+          "sha256": "006eb42f82a3ccd00d9628ca3e4b21695ee1d0bf2b1ba8955de7eb5a3df584b4"
+        },
+        {
+          "log": "012-GnssObservationTest-duplicateDelayedAndFutureFixesDoNotReplaceLatestOrEnterLog.log",
+          "sha256": "21f6cbeafa9aeda5cc8adad1fa6c067e353f647da29953599f9b09d0ea3092e4"
+        },
+        {
+          "log": "013-GnssObservationTest-malformedMeasurementMetadataIsRejected.log",
+          "sha256": "bba4dcd125cf5cca21e93bed7de7077e6b9da971987c9fc7928f4cb7bfab45bb"
+        },
+        {
+          "log": "014-GnssObservationTest-invalidOrOrphanMeasurementsCannotBecomeObservations.log",
+          "sha256": "b51274201945415ad90c51e7b51a70a4b84cd244afae6b4ed6c9da9668d586d6"
+        },
+        {
+          "log": "015-GnssObservationTest-optionalMeasurementsPreserveMissingAndMeasuredZero.log",
+          "sha256": "5b9080eb2a8de34ff7c0413bf82da2f8b08c9362b4f76f51a7bca8d437fc6fec"
+        },
+        {
+          "log": "016-GnssObservationTest-legacyZeroMeasurementsAreUnknownAndNonzeroValuesSurvive.log",
+          "sha256": "e90693d4d9cb58792329d426a746edc7952f942f2ad8db22cb847c0ef5e00148"
+        },
+        {
+          "log": "017-LocationLifecycleTest-coldStartWithLocationOffObservesReenableWithoutRestart.log",
+          "sha256": "24e8181d971a71d17670310513f81dc3ecb68a44dcb2f0c359aae93cda727019"
+        },
+        {
+          "log": "018-LocationOffDurationTest-realSensorsContinueForNinetySecondsWithSystemLocationOff.log",
+          "sha256": "bbcdf89e852c8fa12781d6ce130514e3808ddfacc069b4b8afac1311e73dc0db"
+        },
+        {
+          "log": "019-MapPackStoreTest-invalidGeometryMetadataAndGraphAreRejected.log",
+          "sha256": "a497d1695c7ef786ab5f437fb9962aa15120653c110250634edc43ff4ced10e8"
+        },
+        {
+          "log": "020-MapPackStoreTest-includedNcrUsesBoundedLocalVectorTiles.log",
+          "sha256": "085ed88795b7b078d4ade68c77ab54fdb0691e8c4d587cad4cfc03a72e9ad204"
+        },
+        {
+          "log": "021-MapPackStoreTest-corruptInstalledMapCannotActivateAndRestoresFallback.log",
+          "sha256": "492933321a64ea84b1c221dd67308a5833053625e72969b3eea1a4755d0edaa4"
+        },
+        {
+          "log": "022-MapPackStoreTest-installActivateRestoreAndRemovePreserveFallback.log",
+          "sha256": "f4e1fbf43d4fdf5d1b256cd3c171bc234925664712bfeafd817581f25f44ce87"
+        },
+        {
+          "log": "023-MapPackStoreTest-includedNcrCoversCitiesAndRoutesShahdaraToMait.log",
+          "sha256": "ebc986a331c779080a9d9f207dc81d7b8119f72286415a2f5b00427df291dc08"
+        },
+        {
+          "log": "024-MapPackStoreTest-revisionsNeverSilentlyReplaceOrDowngrade.log",
+          "sha256": "0e43548b87fb09e269195c699d3b82866b204866731162d1fd1519ca2b27d8f8"
+        },
+        {
+          "log": "025-MapPackStoreTest-directDownloadChecksHashAndDoesNotActivateAutomatically.log",
+          "sha256": "55dca958759e98d3e8e940895564b3d3b21cc2a0badec49e261a8557f095b358"
+        },
+        {
+          "log": "026-MapPackStoreTest-badArchivesAndChecksumsLeaveNoInstalledFiles.log",
+          "sha256": "1146448e1a4a03d285ff482fa0d083a2bc8d7039a9900b19dc777ed540778c37"
+        },
+        {
+          "log": "027-MapPackStoreTest-cancellationKeepsThePreviousMapAndCleansStaging.log",
+          "sha256": "81144260bee20dbd05a79609e6c7349199087542b53accbf4edaea89ab9f8921"
+        },
+        {
+          "log": "028-MapPackStoreTest-failedDownloadsNeverInstallOrFollowRedirects.log",
+          "sha256": "f7c97784f7de6b89c156dbcfab622b537457ac39e7beb903652d75630169933a"
+        },
+        {
+          "log": "029-MapRenderingTest-ncrTilesRenderAcrossZoomsAndRepeatedMapDisposalWithoutHeapGrowth.log",
+          "sha256": "1d2b84f266ff083f8b2f2c61923c965d5a25254935e43ae65d549b14652e186d"
+        },
+        {
+          "log": "030-MapRenderingTest-plannedNcrRouteRemainsRenderedWhenFollowingAndChangingTheme.log",
+          "sha256": "8fcc6032c16f52dae10166a83aeb6db2645644ac81d9b4c828171163bd8e1095"
+        },
+        {
+          "log": "031-ModelConsentTest-legacyFlagDoesNotAuthorizeUploadsAndChangingServersRevokesConsent.log",
+          "sha256": "4f9de8e3190c99ca61df8161bb2957962386eb6007a13c40fdead06a315fbb4c"
+        },
+        {
+          "log": "032-ModelProviderTest-unavailableRetainsReasonRatherThanPretendingTheVehicleStopped.log",
+          "sha256": "ccdf1ef300e81c302eaa4371d4cddec78d95044e24d1954679447c3283465cf2"
+        },
+        {
+          "log": "033-ModelProviderTest-malformedAndOutOfWindowMeasurementsAreRejected.log",
+          "sha256": "1100fcf70c9e34cf8104f0e1478a1b9e0fe4325c0a5db4e7ab99cff0a2ca2054"
+        },
+        {
+          "log": "034-ModelProviderTest-cancellingADownloadDoesNotWaitForTheReadTimeout.log",
+          "sha256": "ee9601e6aed7c1a50c780635577e7130de99cb636428b8abe2912f50658e4ff4"
+        },
+        {
+          "log": "035-ModelProviderTest-healthPreservesExperimentalWarningAndInferenceContainsNoLocation.log",
+          "sha256": "045b16250aced2bf3f981b4d998d23498224db49f06ee876bc2f49d2f1f51a38"
+        },
+        {
+          "log": "036-ModelProviderTest-urlAndWindowValidationHappenBeforeNetworkTraffic.log",
+          "sha256": "010da9ef23b99b66b0d37fb649cc8f8bffc2e141b6094fc0479932f21281157f"
+        },
+        {
+          "log": "037-ModelProviderTest-redirectsOversizedResponsesAndUnknownHealthAreRejected.log",
+          "sha256": "3a8395993ba37ea1a46ba667984d8ce3e05867ef806abdff959bb8b4950caebf"
+        },
+        {
+          "log": "038-NativeEngineTest-stationaryUncalibratedVehicleDoesNotRunIndefinitely.log",
+          "sha256": "5d285c2816b94166112d3382afd2c3a5dd2fc6851d428c948353351b9d873260"
+        },
+        {
+          "log": "039-NativeEngineTest-horizontalVelocityUpdateDoesNotInventVerticalSpeed.log",
+          "sha256": "13ca9d43cc59916236792f55a90b8000da00976989f6eb87c632e11c4c9867fe"
+        },
+        {
+          "log": "040-NativeEngineTest-rapidPhoneRotationClearsVehicleMountAndRequiresFreshAlignment.log",
+          "sha256": "a996af732a78b789ac4ad06328605fcc158072e2422fc99b2542d2e998cad3b7"
+        },
+        {
+          "log": "041-NativeEngineTest-magneticDeclinationMatchesPublishedNoaaWmm2025Examples.log",
+          "sha256": "d7c72f1559424720f043f57256685959fe86e0cf7ac62243f4b90386059b09f0"
+        },
+        {
+          "log": "042-NativeEngineTest-pendingFixDoesNotResetTheFilterAndOutageEventuallyWithholdsOutput.log",
+          "sha256": "0710004e31e050d5c35415f7c438e89c513ff070be78278ee6690d2f2f9d6a51"
+        },
+        {
+          "log": "043-NativeEngineTest-measuredStopWithoutCourseUsesItsSpeedUncertainty.log",
+          "sha256": "b2a02bea5512720b4f2523d94f6207b3e610bfc762e5c6f6b73a20b64805ae96"
+        },
+        {
+          "log": "044-NativeEngineTest-delayedCorrectionsMatchOnTimePropagationAndGeographicDisplacement.log",
+          "sha256": "857e90ae7951907f158aabc208a0ce339c1fc83df0b67551650ea5d5d1e75469"
+        },
+        {
+          "log": "045-NativeEngineTest-gapsWithholdTheEstimateAndRequireNewAlignmentInputs.log",
+          "sha256": "89d61f7419d43d21e645e2c86900e0555fb52e36318e604a703ca5200b996f63"
+        },
+        {
+          "log": "046-NativeEngineTest-nonCarProfileKeepsRawRotationButNeverBorrowsCarConstraintsOrOutageBudget.log",
+          "sha256": "fceae46b355245d42fc150388ab4a78e05bf3786ca2315be2a4612c7d9512b12"
+        },
+        {
+          "log": "047-NativeEngineTest-learnedSpeedRejectsFutureDuplicateAndStaleMeasurements.log",
+          "sha256": "1391da996bc68a79771de010fab23fe3c6cf6ca0eb8e071afea50119aaa0ff21"
+        },
+        {
+          "log": "048-NativeEngineTest-initializationNeedsHeadingAndMissingAltitudeDoesNotBecomeSeaLevel.log",
+          "sha256": "350bc5f0ad914746f8796fb19aa7d0283a9720e81ca7d685f91a64b492326f14"
+        },
+        {
+          "log": "049-NativeEngineTest-gatesAndInvalidTimestampsDoNotMoveTheState.log",
+          "sha256": "71555777ba6f29f2b4290bf9188703f4e7cc7fbb178e33db4324d67ced426f32"
+        },
+        {
+          "log": "050-NativeFilterTest-matchesPythonAcrossPropagationAndEveryMeasurementChannel.log",
+          "sha256": "c2a73a0401dd0a576f05210c90a8aa199eb6eaaae236a3c6fb58ad80b1445f89"
+        },
+        {
+          "log": "051-NativeFilterTest-invalidSamplesDoNotCorruptStateAndClosedHandlesAreSafe.log",
+          "sha256": "c921a0332323157eef383ea1a515b96075e77b9974fb844917b91bb366fcb642"
+        },
+        {
+          "log": "052-OfflineMapTest-outOfCoverageOriginIsRejected.log",
+          "sha256": "63b21664b48649b4a23da1a0c5bc3e68beec68a25d4783d377a54b28a804fece"
+        },
+        {
+          "log": "053-OfflineMapTest-includedDestinationsHaveDrivableRoutes.log",
+          "sha256": "74675638f4cd7f25f591736acabee8ff9a6ae6c23b7c4447b7e2b392fe5023ff"
+        },
+        {
+          "log": "054-OfflineTilesTest-missingTruncatedAndSameSizeCorruptTilesAreRepairedDespiteACompleteMarker.log",
+          "sha256": "adf5f39defbf535659b453ff1929ba6e570a43df6e4c34273b35a9cc18593c18"
+        },
+        {
+          "log": "055-OnDeviceModelProviderTest-actualPackagedModelRunsLocallyButUnapprovedPredictionsCannotFuse.log",
+          "sha256": "3cd28cf7ff99ce212f153f4f3804c893ab08bc050a7994a184d256d3d23202a6"
+        },
+        {
+          "log": "056-PhysicalRecordingTest-actualImuRecordingContinuesInForegroundWithoutLocationOrModelSharing.log",
+          "sha256": "c2fd8dd109daf30504c849d74d310ac2b7fddf48f3b63ae4e9cf0af796fb40ef"
+        },
+        {
+          "log": "057-PhysicalRecordingTest-actualImuRecordingContinuesInBackgroundWithoutLocationOrModelSharing.log",
+          "sha256": "805277fc2d4bfa14f2a5df56c15f6a46820cde42835b520d6ae504bc0e0269d9"
+        },
+        {
+          "log": "058-PositioningDemoTest-nativeEngineTracksThroughWithheldGpsAndAcceptsRecovery.log",
+          "sha256": "c87e9f54c1de4e15eb04e5c5cf1fc26864ff5afc092af702fcb6e1819a8f295b"
+        },
+        {
+          "log": "059-PositioningDemoTest-cancelledPreparationDoesNotContinueGeneratingFrames.log",
+          "sha256": "d924cf047586ff6a4a49821f30e3b070d15b0a7e93350c7850d65c556018e6a5"
+        },
+        {
+          "log": "060-ScooterCaptureReviewTest-changingCarToScooterReconfiguresSensorsAndDoesNotStartCarModel.log",
+          "sha256": "557f38e2284590e055296fbff06991a8abf0705cf01c827737efae7ac2f155db"
+        },
+        {
+          "log": "061-ScooterCaptureReviewTest-exportSelectedRidesAndMeasureIndependentBlackouts.log",
+          "sha256": "5ae37cd76566ae13d12953fc70dc5028e16f4270f15203b9edf5991f1f285287"
+        },
+        {
+          "log": "062-ScooterCaptureReviewTest-measureLongWarmupBlackoutsWithoutChangingRecordings.log",
+          "sha256": "fbc2c791310c5a7bda027bead4586b0ba05d1e2e335b2064dd64d343d28ba36e"
+        },
+        {
+          "log": "063-SensorFallbackTest-missingHardwareHeadingAccuracyStillUsesRealSensorPipelineThroughTurns.log",
+          "sha256": "89c06f614e3e2cd77f419f2727ebd2481e38942afe416d5023f4d3998dce5896"
+        },
+        {
+          "log": "064-SensorFallbackTest-capturedPhysicalSensorsCanBeReplayedWithoutLeakingCoordinates.log",
+          "sha256": "a562b5ba429800f1cc7764072b101169cf474aac5da008d115dafff592db7dbc"
+        },
+        {
+          "log": "065-SensorFallbackTest-nativePositionsPublishAtTenHertzDuringGpsAndSensorOnlySegments.log",
+          "sha256": "f59690e2c0b9b9ba6ae50cc519036df71a139486b30f3b0837a2a6ea4b01b04f"
+        },
+        {
+          "log": "066-SensorFallbackTest-gpsMotionCalibratesThroughAccelerationAndTurnsWithoutACompassHeading.log",
+          "sha256": "705e425228856000884eb87261c9e064b476b60357e34233f4e0174220a211d7"
+        },
+        {
+          "log": "067-SensorFallbackTest-coldStartWithoutGpsNeverInventsAnAbsolutePosition.log",
+          "sha256": "8315d6004a637e653545985ec526bcc018f39d984a34af7a52804b43c4f3ff50"
+        },
+        {
+          "log": "068-SensorFallbackTest-disturbedMagnetometerDoesNotBypassHeadingChecks.log",
+          "sha256": "b3d51db9df90364e718ce127b96c15487c69e38ec105bccbfe81b3eb963077a8"
+        },
+        {
+          "log": "069-TrainingCollectionTest-phoneRecordsAndExportsPortableTrainingBundle.log",
+          "sha256": "8588a20f7db90a95ea5545d5a2940be16670ae3bce2e245c98d90e9a4dd87e20"
+        },
+        {
+          "log": "070-TrainingCollectionTest-gpsReferenceChangesCannotLeakIntoTheWithheldTrajectory.log",
+          "sha256": "5ab0d947901c087489d75246c22d01db4bb03d6ed3f2aac5efaf7278c222dcb6"
+        },
+        {
+          "log": "071-TrainingCollectionTest-shadowReplayWorksAcrossRebootsAndReportsMissingHeadingHonestly.log",
+          "sha256": "586e91e4283ef68a56d643624769ba588eaa0b7bdb61fac646725dbe35348697"
+        },
+        {
+          "log": "072-TrainingCollectionUiTest-trainingControlsExplainCollectionAndRequireExplicitExport.log",
+          "sha256": "4af8e82b5c0f5b9e394c4224a25fb5bd38117fb83b6f3fa4176c765097792d93"
+        },
+        {
+          "log": "073-TripStoreTest-malformedImportsLeaveNoOrphanFiles.log",
+          "sha256": "1d8845e75e5f88dda6d9aa9441c557d874c5e5022e19cf44764275309639300c"
+        },
+        {
+          "log": "074-TripStoreTest-importExportAndDeleteRoundTrip.log",
+          "sha256": "2662b453c72f0a6c357c2514254a3cd987ed7dfdcfbd9d66154de8645b443262"
+        },
+        {
+          "log": "075-TripStoreTest-recordedTrajectoryRetainsInertialPointsAndUncertaintySeparatelyFromRawGps.log",
+          "sha256": "a1d7f9ec8e5b0ef8e9b6b7e17218e563aeff9dc6dbfc34880e6c1ca39bfe12dc"
+        },
+        {
+          "log": "076-TripStoreTest-invalidTrajectoryUncertaintyAndUnknownStreamsAreRejected.log",
+          "sha256": "95514c4402e127544eeb67e7ee2d0ec8cf69790fa5ee7b44b0269b4f5d3f56fc"
+        },
+        {
+          "log": "077-TripStoreTest-optionalMeasurementsSurviveImportAndStoredMetadata.log",
+          "sha256": "98ac67b7ba97323cddf3bd4fb5a6a01fd6592312546bdbf2657f2c492ba36aa3"
+        },
+        {
+          "log": "078-TripStoreTest-activeRecordingIsNotRecovered.log",
+          "sha256": "7030f268ef58a7de6511825feb3c73f5192bcdeddeda90e7141daca17c2a0008"
+        },
+        {
+          "log": "079-TripStoreTest-interruptedFinalRecordIsRecoveredAndExportsCleanly.log",
+          "sha256": "6d7dbdac7f56e828684e13cab45de67a50fa5b748a7a3ceb7a86364c991ac6a2"
+        },
+        {
+          "log": "080-WalkingIntegrationTest-physicalWalkingProfileRecordsImuWithoutRunningCarModel.log",
+          "sha256": "9dfb41bb0e96ad6ed9b8c0c87e1043d527c6519a15c1c75c4a30cfc1979613df"
+        },
+        {
+          "log": "081-WalkingIntegrationTest-physicalWalkingEstimateSurvivesGpsOffAtRest.log",
+          "sha256": "df7038a9ab2ee07272544ee9cb7a668a2cec887bc2a4e2db39991bc22969d8ef"
+        },
+        {
+          "log": "082-WalkingIntegrationTest-replayCapturedStepBatchesWithRecordedInitialHeading.log",
+          "sha256": "bbeb7398841c1fe9b7cd5f5d24fb1b1853b4633d1cbee3de057bfb612d137874"
+        },
+        {
+          "log": "083-WalkingIntegrationTest-syntheticPlatformCallbacksUseStepsAndWithholdWithoutPermission.log",
+          "sha256": "edaa0e35e313e009dfb8a9ead32cab900e2cff963feca49b697e076ef184b7e7"
+        },
+        {
+          "log": "084-WalkingIntegrationTest-replayPrivateWalkingRecordingsChecksTheUncalibratedCeiling.log",
+          "sha256": "95056eec4b1513ac5b26fa859ba1401141c38f7505494d271c91c3d21bb5b769"
+        }
+      ]
+    }
+  ],
+  "supplementaryChecks": {
+    "schema": "setu.qa-checks.v1",
+    "date": "2026-09-15",
+    "apkSha256": "410ca8d79d42780b3cb1c33c0d569c093e1216b257d9c2ccd10dc56e9a8db62b",
+    "suiteApks": {
+      "baseline-all-device-tests.log": "aee9c5706879a44790b62d4347df75e6bbe3366e08c1d564e6d4fa437a208d5b",
+      "actual-location-off.log": "aee9c5706879a44790b62d4347df75e6bbe3366e08c1d564e6d4fa437a208d5b",
+      "internet-location-off-recording.log": "aee9c5706879a44790b62d4347df75e6bbe3366e08c1d564e6d4fa437a208d5b",
+      "internet-location-off-no-saver.log": "aee9c5706879a44790b62d4347df75e6bbe3366e08c1d564e6d4fa437a208d5b",
+      "special-use-background.log": "bf4ec19ae8b6aff661e9dc5653373f093310e046de77d0399163cd1bf33f0475",
+      "latest-six-duration-replay.log": "410ca8d79d42780b3cb1c33c0d569c093e1216b257d9c2ccd10dc56e9a8db62b",
+      "Isolated device test methods": "410ca8d79d42780b3cb1c33c0d569c093e1216b257d9c2ccd10dc56e9a8db62b"
+    },
+    "checks": [
+      {
+        "name": "APK identity",
+        "result": "PASS",
+        "detail": "212,472,310 bytes; signature and 16 KiB alignment verified; installed app and website HTTP download match SHA-256."
+      },
+      {
+        "name": "Python regressions",
+        "result": "PASS",
+        "detail": "265 passed, 2 skipped in 229.86 s. Skips require optional osmium. One ReportLab deprecation warning."
+      },
+      {
+        "name": "Android JVM tests",
+        "result": "PASS",
+        "detail": "102 tests, zero failures/errors/skips. Unit tests and both APK builds succeed in 64 s."
+      },
+      {
+        "name": "Android lint",
+        "result": "WARN",
+        "detail": "Zero errors, 25 existing warnings. Final separate lint invocation succeeds in 75 s; an earlier slow invocation was cancelled."
+      },
+      {
+        "name": "Latest phone inventory",
+        "result": "PASS",
+        "detail": "84 discovered methods completed on the latest APK: 77 passed, 7 controlled/opt-in fixtures skipped, zero failures/errors. Each method uses a fresh instrumentation process without clearing user data. The six-duration replay runs separately with selected private rides."
+      },
+      {
+        "name": "User recording preservation",
+        "result": "PASS",
+        "detail": "All 37 original SETULOG files remain byte-identical after the final complete device run. Only test-owned fixtures are removed."
+      },
+      {
+        "name": "Foreground screen wake",
+        "result": "PASS",
+        "detail": "Production FLAG_KEEP_SCREEN_ON is asserted during recording and released after Stop. The 38.035-second physical foreground regression passes without a test-forced screen flag."
+      },
+      {
+        "name": "Normal-radio sensor capture",
+        "result": "PASS",
+        "detail": "Latest 30-second foreground and 15-second background checks pass with Location enabled and Battery saver disabled. Maximum IMU gaps are 5.009 and 5.006 ms. These do not supersede the all-radios-off background failures."
+      },
+      {
+        "name": "Baseline focused phone tests",
+        "result": "PASS",
+        "detail": "On the preceding aee9c570 build: 11 passed, 1 controlled-native-GNSS fixture skipped. Includes map rendering, settings, recording and curved native demo."
+      },
+      {
+        "name": "Baseline repeated journeys",
+        "result": "PASS",
+        "detail": "Five demo/theme/settings/trips cycles in one process; baseline PSS 276,405-605,640 KiB; focused repeat 587,855-619,599 KiB. Both below unchanged 716,800 KiB cap."
+      },
+      {
+        "name": "Latest repeated journeys",
+        "result": "PASS",
+        "detail": "Five journeys in the latest APK remain below the unchanged 716,800 KiB cap: PSS 609,280; 613,850; 612,414; 475,666; 608,178 KiB."
+      },
+      {
+        "name": "Compact map controls",
+        "result": "PASS",
+        "detail": "The latest APK passes the new 8.665-second regression: all three map controls remain below the header and above attribution."
+      },
+      {
+        "name": "Native/model integrity",
+        "result": "PASS",
+        "detail": "All nine packaged native-library and model files match the preceding APK byte-for-byte. The six-duration replay is repeated against the latest APK and yields the same counts."
+      },
+      {
+        "name": "Real Location-off continuity",
+        "result": "PASS",
+        "detail": "90-second actual OS switch test; fresh paired IMU at all six checkpoints. No initialized native position or independent moving reference."
+      },
+      {
+        "name": "Beta website",
+        "result": "PASS",
+        "detail": "Desktop and 360/390 px layouts, keyboard focus, reduced motion, denied clipboard, malformed release metadata, actual APK download and PDF HTTP checks. Local hosting only."
+      },
+      {
+        "name": "Background capture",
+        "result": "FAIL",
+        "detail": "With Location and internet off, baseline background probes stall even with Battery saver off and battery exemptions enabled. A normal 45.71-second background recording has a 15.95-second IMU gap. Keep SETU visible; background capture is not certified."
+      },
+      {
+        "name": "90% within 10 m",
+        "result": "FAIL",
+        "detail": "All six GPS-withheld replay durations fail the target. Availability itself is too low. This is development data, not independent field validation."
+      }
+    ],
+    "findings": [
+      "The original combined 81-test run has four retained failures: two Compose-root lifecycle failures, a 1,854,612 KiB map-memory reading against a 716,800 KiB ceiling, and an obsolete straight-chord assertion for the curved demo.",
+      "Use fresh instrumentation processes per method without clearing user data. Isolated focused tests and a five-cycle actual app soak pass; this supports fixture/process accumulation as a contributor, not a proof that every long app session is leak-free.",
+      "The curved-demo test now sums travelled distance along the path. Its travelled-distance and under-5-m synthetic error guards remain unchanged. No production estimator guard or model weight is relaxed.",
+      "Compact map controls were covered by attribution and initial loading feedback sat behind the task sheet. The latest APK reserves visible map space, lays compact controls out horizontally, and shows loading feedback in that visible area.",
+      "The latest APK keeps the screen on only during visible recording and releases that flag on stop/background. This is a foreground mitigation, not a claim that screen-off recording is reliable.",
+      "Background probes with Location, Wi-Fi and mobile data off stalled for 412,991 ms, and 155,377 ms with Battery saver disabled; foreground recovery was used for cleanup. A special-use service candidate also failed and was reverted. The normal app independently shows a roughly 15.95-second sensor gap in a 45.71-second background interval. These failures remain disclosed with their source APKs.",
+      "Replay now scores exactly duration-times-10 ticks, excludes the GPS recovery boundary and compares position with the reference at the scoring timestamp. Missing predictions count as failures; missing references remain unknown, not successes.",
+      "The HTML regression test permits only the intentional trusted sweep script and rejects route-name script injection. The beta publisher rejects mismatched evidence, retains the preceding release after failure and optionally watches verified artifacts every 30 seconds.",
+      "Three same-phone/day scooter rides cannot establish independent accuracy. Repeated ticks are correlated. Conditional low errors on rare surviving estimates are not whole-outage accuracy. All matched ninety-second-cohort predictions cease after ten seconds.",
+      "Sustained GPS-free navigation and heading initialization remain release blockers. The earlier CPU-trained model still predicts motion at rest and remains research-only. Collect rigid-mount, multi-day rides with independent position reference before making accuracy claims."
+    ]
+  },
+  "physicalLocationOff": {
+    "schema": "setu.location-off-continuity.v1",
+    "device": "CPH2467",
+    "stages": [
+      {
+        "seconds": 10,
+        "elapsedMs": 10001,
+        "systemLocationEnabled": false,
+        "observedLocationEnabled": false,
+        "sensorEventsInPhase": 5445,
+        "pairedImuInPhase": 2000,
+        "lastSensorAgeMs": 102.048007,
+        "nativeStatus": "Calibrating sensors",
+        "hasNativePosition": false,
+        "nativeSpeedMps": null,
+        "positionAccuracy": null
+      },
+      {
+        "seconds": 20,
+        "elapsedMs": 20000,
+        "systemLocationEnabled": false,
+        "observedLocationEnabled": false,
+        "sensorEventsInPhase": 5501,
+        "pairedImuInPhase": 2000,
+        "lastSensorAgeMs": 90.579306,
+        "nativeStatus": "Calibrating sensors",
+        "hasNativePosition": false,
+        "nativeSpeedMps": null,
+        "positionAccuracy": null
+      },
+      {
+        "seconds": 30,
+        "elapsedMs": 30000,
+        "systemLocationEnabled": false,
+        "observedLocationEnabled": false,
+        "sensorEventsInPhase": 5500,
+        "pairedImuInPhase": 2000,
+        "lastSensorAgeMs": 80.184041,
+        "nativeStatus": "Calibrating sensors",
+        "hasNativePosition": false,
+        "nativeSpeedMps": null,
+        "positionAccuracy": null
+      },
+      {
+        "seconds": 40,
+        "elapsedMs": 40000,
+        "systemLocationEnabled": false,
+        "observedLocationEnabled": false,
+        "sensorEventsInPhase": 5501,
+        "pairedImuInPhase": 2000,
+        "lastSensorAgeMs": 70.325833,
+        "nativeStatus": "Calibrating sensors",
+        "hasNativePosition": false,
+        "nativeSpeedMps": null,
+        "positionAccuracy": null
+      },
+      {
+        "seconds": 50,
+        "elapsedMs": 50001,
+        "systemLocationEnabled": false,
+        "observedLocationEnabled": false,
+        "sensorEventsInPhase": 5500,
+        "pairedImuInPhase": 1980,
+        "lastSensorAgeMs": 60.50885,
+        "nativeStatus": "Calibrating sensors",
+        "hasNativePosition": false,
+        "nativeSpeedMps": null,
+        "positionAccuracy": null
+      },
+      {
+        "seconds": 90,
+        "elapsedMs": 90001,
+        "systemLocationEnabled": false,
+        "observedLocationEnabled": false,
+        "sensorEventsInPhase": 22002,
+        "pairedImuInPhase": 8000,
+        "lastSensorAgeMs": 21.414094,
+        "nativeStatus": "Calibrating sensors",
+        "hasNativePosition": false,
+        "nativeSpeedMps": null,
+        "positionAccuracy": null
+      }
+    ],
+    "reference": "No independent moving reference; continuity only, not navigation accuracy",
+    "deploymentApproved": false
+  },
+  "artifacts": {
+    "markdownSha256": "da87aaabbdb4ebc748a8efe26368b599fe10fa4c6e2f141a8442025161ca743a",
+    "pdfSha256": "b5c30430cf2e6733b56fd75e88261112353a21f613c9c0f87e8f5e26cb6a48a9"
+  }
+}

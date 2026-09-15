@@ -1,0 +1,425 @@
+[
+    {
+        "ride":  "9.007 km",
+        "sourceSha256":  "e4b6afa950a8bbbdae36c05c709609e8b7824ee82cdc74a4ae827307597602a3",
+        "warmupSeconds":  120,
+        "outageSeconds":  10,
+        "scoreHz":  10,
+        "cycles":  14,
+        "outputs":  1414,
+        "available":  93,
+        "referenceAvailable":  884,
+        "comparable":  93,
+        "within10Meters":  93,
+        "jointSuccessLowerBound":  0.06577086280056577,
+        "conditionalErrorP90Meters":  5.191176710767941,
+        "aidedOutputs":  17007,
+        "aidedAvailable":  1017,
+        "statuses":  {
+                         "missing_output":  35,
+                         "Calibrating sensors":  1279,
+                         "GPS + IMU estimate":  13,
+                         "Inertial estimate":  80,
+                         "Estimate withheld":  7
+                     },
+        "headingSources":  {
+                               "none":  35,
+                               "null":  1279,
+                               "Checked compass Â· estimated uncertainty":  100
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "9.007 km",
+        "sourceSha256":  "e4b6afa950a8bbbdae36c05c709609e8b7824ee82cdc74a4ae827307597602a3",
+        "warmupSeconds":  120,
+        "outageSeconds":  30,
+        "scoreHz":  10,
+        "cycles":  12,
+        "outputs":  3612,
+        "available":  93,
+        "referenceAvailable":  2360,
+        "comparable":  93,
+        "within10Meters":  93,
+        "jointSuccessLowerBound":  0.02574750830564784,
+        "conditionalErrorP90Meters":  3.0860059941346223,
+        "aidedOutputs":  14808,
+        "aidedAvailable":  1165,
+        "statuses":  {
+                         "missing_output":  70,
+                         "Calibrating sensors":  3243,
+                         "GPS + IMU estimate":  13,
+                         "Inertial estimate":  80,
+                         "Estimate withheld":  206
+                     },
+        "headingSources":  {
+                               "none":  70,
+                               "null":  3218,
+                               "Checked compass Â· estimated uncertainty":  324
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "9.007 km",
+        "sourceSha256":  "e4b6afa950a8bbbdae36c05c709609e8b7824ee82cdc74a4ae827307597602a3",
+        "warmupSeconds":  120,
+        "outageSeconds":  60,
+        "scoreHz":  10,
+        "cycles":  10,
+        "outputs":  6010,
+        "available":  0,
+        "referenceAvailable":  3731,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  12422,
+        "aidedAvailable":  0,
+        "statuses":  {
+                         "missing_output":  101,
+                         "Calibrating sensors":  5909
+                     },
+        "headingSources":  {
+                               "none":  101,
+                               "null":  5584,
+                               "Checked compass Â· estimated uncertainty":  325
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "9.007 km",
+        "sourceSha256":  "e4b6afa950a8bbbdae36c05c709609e8b7824ee82cdc74a4ae827307597602a3",
+        "warmupSeconds":  120,
+        "outageSeconds":  120,
+        "scoreHz":  10,
+        "cycles":  7,
+        "outputs":  8407,
+        "available":  0,
+        "referenceAvailable":  5802,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  9364,
+        "aidedAvailable":  0,
+        "statuses":  {
+                         "missing_output":  107,
+                         "Calibrating sensors":  8300
+                     },
+        "headingSources":  {
+                               "none":  107,
+                               "null":  7377,
+                               "Checked compass Â· estimated uncertainty":  923
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "9.007 km",
+        "sourceSha256":  "e4b6afa950a8bbbdae36c05c709609e8b7824ee82cdc74a4ae827307597602a3",
+        "warmupSeconds":  120,
+        "outageSeconds":  180,
+        "scoreHz":  10,
+        "cycles":  6,
+        "outputs":  10806,
+        "available":  0,
+        "referenceAvailable":  6771,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  7727,
+        "aidedAvailable":  0,
+        "statuses":  {
+                         "missing_output":  96,
+                         "Calibrating sensors":  10710
+                     },
+        "headingSources":  {
+                               "none":  96,
+                               "null":  9187,
+                               "Checked compass Â· estimated uncertainty":  1523
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "2.387 km",
+        "sourceSha256":  "4a840386dfae396612e77381eeca70a8edfbe24bb6129605f1074b1a8adee7f9",
+        "warmupSeconds":  120,
+        "outageSeconds":  10,
+        "scoreHz":  10,
+        "cycles":  4,
+        "outputs":  404,
+        "available":  0,
+        "referenceAvailable":  320,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  5831,
+        "aidedAvailable":  0,
+        "statuses":  {
+                         "missing_output":  8,
+                         "Calibrating sensors":  396
+                     },
+        "headingSources":  {
+                               "none":  8,
+                               "null":  396
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "2.387 km",
+        "sourceSha256":  "4a840386dfae396612e77381eeca70a8edfbe24bb6129605f1074b1a8adee7f9",
+        "warmupSeconds":  120,
+        "outageSeconds":  30,
+        "scoreHz":  10,
+        "cycles":  4,
+        "outputs":  1204,
+        "available":  0,
+        "referenceAvailable":  599,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  5056,
+        "aidedAvailable":  0,
+        "statuses":  {
+                         "missing_output":  14,
+                         "Calibrating sensors":  1190
+                     },
+        "headingSources":  {
+                               "none":  14,
+                               "null":  1190
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "2.387 km",
+        "sourceSha256":  "4a840386dfae396612e77381eeca70a8edfbe24bb6129605f1074b1a8adee7f9",
+        "warmupSeconds":  120,
+        "outageSeconds":  60,
+        "scoreHz":  10,
+        "cycles":  3,
+        "outputs":  1803,
+        "available":  0,
+        "referenceAvailable":  1449,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  4488,
+        "aidedAvailable":  0,
+        "statuses":  {
+                         "missing_output":  13,
+                         "Calibrating sensors":  1790
+                     },
+        "headingSources":  {
+                               "none":  13,
+                               "null":  1790
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "2.387 km",
+        "sourceSha256":  "4a840386dfae396612e77381eeca70a8edfbe24bb6129605f1074b1a8adee7f9",
+        "warmupSeconds":  120,
+        "outageSeconds":  120,
+        "scoreHz":  10,
+        "cycles":  2,
+        "outputs":  2402,
+        "available":  0,
+        "referenceAvailable":  1812,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  3539,
+        "aidedAvailable":  0,
+        "statuses":  {
+                         "missing_output":  22,
+                         "Calibrating sensors":  2380
+                     },
+        "headingSources":  {
+                               "none":  22,
+                               "null":  2380
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "2.387 km",
+        "sourceSha256":  "4a840386dfae396612e77381eeca70a8edfbe24bb6129605f1074b1a8adee7f9",
+        "warmupSeconds":  120,
+        "outageSeconds":  180,
+        "scoreHz":  10,
+        "cycles":  2,
+        "outputs":  3602,
+        "available":  0,
+        "referenceAvailable":  2538,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  2698,
+        "aidedAvailable":  0,
+        "statuses":  {
+                         "missing_output":  40,
+                         "Calibrating sensors":  3562
+                     },
+        "headingSources":  {
+                               "none":  40,
+                               "null":  3562
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "3.423 km",
+        "sourceSha256":  "071d2590117086f1a0929161a18a5878d4f361e3dd34dac75a63135bd751fa40",
+        "warmupSeconds":  120,
+        "outageSeconds":  10,
+        "scoreHz":  10,
+        "cycles":  8,
+        "outputs":  808,
+        "available":  0,
+        "referenceAvailable":  421,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  9685,
+        "aidedAvailable":  167,
+        "statuses":  {
+                         "missing_output":  23,
+                         "Calibrating sensors":  687,
+                         "Estimate withheld":  98
+                     },
+        "headingSources":  {
+                               "none":  23,
+                               "Checked compass Â· estimated uncertainty":  197,
+                               "null":  588
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "3.423 km",
+        "sourceSha256":  "071d2590117086f1a0929161a18a5878d4f361e3dd34dac75a63135bd751fa40",
+        "warmupSeconds":  120,
+        "outageSeconds":  30,
+        "scoreHz":  10,
+        "cycles":  7,
+        "outputs":  2107,
+        "available":  0,
+        "referenceAvailable":  1044,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  8408,
+        "aidedAvailable":  169,
+        "statuses":  {
+                         "missing_output":  44,
+                         "Calibrating sensors":  1768,
+                         "Estimate withheld":  295
+                     },
+        "headingSources":  {
+                               "none":  44,
+                               "Checked compass Â· estimated uncertainty":  592,
+                               "null":  1471
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "3.423 km",
+        "sourceSha256":  "071d2590117086f1a0929161a18a5878d4f361e3dd34dac75a63135bd751fa40",
+        "warmupSeconds":  120,
+        "outageSeconds":  60,
+        "scoreHz":  10,
+        "cycles":  5,
+        "outputs":  3005,
+        "available":  0,
+        "referenceAvailable":  1750,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  7047,
+        "aidedAvailable":  169,
+        "statuses":  {
+                         "missing_output":  25,
+                         "Calibrating sensors":  2980
+                     },
+        "headingSources":  {
+                               "none":  25,
+                               "Checked compass Â· estimated uncertainty":  597,
+                               "null":  2383
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "3.423 km",
+        "sourceSha256":  "071d2590117086f1a0929161a18a5878d4f361e3dd34dac75a63135bd751fa40",
+        "warmupSeconds":  120,
+        "outageSeconds":  120,
+        "scoreHz":  10,
+        "cycles":  4,
+        "outputs":  4804,
+        "available":  0,
+        "referenceAvailable":  2601,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  5810,
+        "aidedAvailable":  169,
+        "statuses":  {
+                         "missing_output":  43,
+                         "Calibrating sensors":  4761
+                     },
+        "headingSources":  {
+                               "none":  43,
+                               "Checked compass Â· estimated uncertainty":  1334,
+                               "null":  3427
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    },
+    {
+        "ride":  "3.423 km",
+        "sourceSha256":  "071d2590117086f1a0929161a18a5878d4f361e3dd34dac75a63135bd751fa40",
+        "warmupSeconds":  120,
+        "outageSeconds":  180,
+        "scoreHz":  10,
+        "cycles":  3,
+        "outputs":  5403,
+        "available":  0,
+        "referenceAvailable":  3321,
+        "comparable":  0,
+        "within10Meters":  0,
+        "jointSuccessLowerBound":  0,
+        "conditionalErrorP90Meters":  null,
+        "aidedOutputs":  4712,
+        "aidedAvailable":  169,
+        "statuses":  {
+                         "missing_output":  37,
+                         "Calibrating sensors":  5366
+                     },
+        "headingSources":  {
+                               "none":  37,
+                               "Checked compass Â· estimated uncertainty":  1794,
+                               "null":  3572
+                           },
+        "reference":  "Withheld phone GNSS, not independent survey truth",
+        "deploymentApproved":  false
+    }
+]

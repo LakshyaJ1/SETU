@@ -1,0 +1,412 @@
+INSTRUMENTATION_STATUS: class=com.setu.navigator.OnDeviceModelProviderTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+com.setu.navigator.OnDeviceModelProviderTest:
+INSTRUMENTATION_STATUS: test=actualPackagedModelRunsLocallyButUnapprovedPredictionsCannotFuse
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.OnDeviceModelProviderTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=actualPackagedModelRunsLocallyButUnapprovedPredictionsCannotFuse
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeFilterTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+com.setu.navigator.NativeFilterTest:
+INSTRUMENTATION_STATUS: test=matchesPythonAcrossPropagationAndEveryMeasurementChannel
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeFilterTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=matchesPythonAcrossPropagationAndEveryMeasurementChannel
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeFilterTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=invalidSamplesDoNotCorruptStateAndClosedHandlesAreSafe
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeFilterTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=invalidSamplesDoNotCorruptStateAndClosedHandlesAreSafe
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+com.setu.navigator.NativeEngineTest:
+INSTRUMENTATION_STATUS: test=horizontalVelocityUpdateDoesNotInventVerticalSpeed
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=horizontalVelocityUpdateDoesNotInventVerticalSpeed
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=5
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=magneticDeclinationMatchesPublishedNoaaWmm2025Examples
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=5
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=magneticDeclinationMatchesPublishedNoaaWmm2025Examples
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=6
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=pendingFixDoesNotResetTheFilterAndOutageEventuallyWithholdsOutput
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=6
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError
+	at org.junit.Assert.fail(Assert.java:87)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at org.junit.Assert.assertTrue(Assert.java:53)
+	at com.setu.navigator.NativeEngineTest.pendingFixDoesNotResetTheFilterAndOutageEventuallyWithholdsOutput(NativeEngineTest.kt:172)
+
+INSTRUMENTATION_STATUS: stream=
+Error in pendingFixDoesNotResetTheFilterAndOutageEventuallyWithholdsOutput(com.setu.navigator.NativeEngineTest):
+java.lang.AssertionError
+	at org.junit.Assert.fail(Assert.java:87)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at org.junit.Assert.assertTrue(Assert.java:53)
+	at com.setu.navigator.NativeEngineTest.pendingFixDoesNotResetTheFilterAndOutageEventuallyWithholdsOutput(NativeEngineTest.kt:172)
+
+INSTRUMENTATION_STATUS: test=pendingFixDoesNotResetTheFilterAndOutageEventuallyWithholdsOutput
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=7
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=measuredStopWithoutCourseUsesItsSpeedUncertainty
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=7
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=measuredStopWithoutCourseUsesItsSpeedUncertainty
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=8
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=delayedCorrectionsMatchOnTimePropagationAndGeographicDisplacement
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=8
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Field 4 expected:<1.5019167682428977E-5> but was:<1.3400701666536963E-5>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:555)
+	at com.setu.navigator.NativeEngineTest.delayedCorrectionsMatchOnTimePropagationAndGeographicDisplacement(NativeEngineTest.kt:86)
+
+INSTRUMENTATION_STATUS: stream=
+Error in delayedCorrectionsMatchOnTimePropagationAndGeographicDisplacement(com.setu.navigator.NativeEngineTest):
+java.lang.AssertionError: Field 4 expected:<1.5019167682428977E-5> but was:<1.3400701666536963E-5>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:555)
+	at com.setu.navigator.NativeEngineTest.delayedCorrectionsMatchOnTimePropagationAndGeographicDisplacement(NativeEngineTest.kt:86)
+
+INSTRUMENTATION_STATUS: test=delayedCorrectionsMatchOnTimePropagationAndGeographicDisplacement
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=9
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=gapsWithholdTheEstimateAndRequireNewAlignmentInputs
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=9
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=gapsWithholdTheEstimateAndRequireNewAlignmentInputs
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=10
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=learnedSpeedRejectsFutureDuplicateAndStaleMeasurements
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=10
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=learnedSpeedRejectsFutureDuplicateAndStaleMeasurements
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=11
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=initializationNeedsHeadingAndMissingAltitudeDoesNotBecomeSeaLevel
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=11
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=initializationNeedsHeadingAndMissingAltitudeDoesNotBecomeSeaLevel
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=12
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=gatesAndInvalidTimestampsDoNotMoveTheState
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.NativeEngineTest
+INSTRUMENTATION_STATUS: current=12
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=gatesAndInvalidTimestampsDoNotMoveTheState
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.GnssObservationTest
+INSTRUMENTATION_STATUS: current=13
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+com.setu.navigator.GnssObservationTest:
+INSTRUMENTATION_STATUS: test=duplicateDelayedAndFutureFixesDoNotReplaceLatestOrEnterLog
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.GnssObservationTest
+INSTRUMENTATION_STATUS: current=13
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: expected:<1> but was:<0>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:120)
+	at org.junit.Assert.assertEquals(Assert.java:146)
+	at com.setu.navigator.GnssObservationTest.duplicateDelayedAndFutureFixesDoNotReplaceLatestOrEnterLog(GnssObservationTest.kt:118)
+
+INSTRUMENTATION_STATUS: stream=
+Error in duplicateDelayedAndFutureFixesDoNotReplaceLatestOrEnterLog(com.setu.navigator.GnssObservationTest):
+java.lang.AssertionError: expected:<1> but was:<0>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:120)
+	at org.junit.Assert.assertEquals(Assert.java:146)
+	at com.setu.navigator.GnssObservationTest.duplicateDelayedAndFutureFixesDoNotReplaceLatestOrEnterLog(GnssObservationTest.kt:118)
+
+INSTRUMENTATION_STATUS: test=duplicateDelayedAndFutureFixesDoNotReplaceLatestOrEnterLog
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.setu.navigator.GnssObservationTest
+INSTRUMENTATION_STATUS: current=14
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=malformedMeasurementMetadataIsRejected
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.GnssObservationTest
+INSTRUMENTATION_STATUS: current=14
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=malformedMeasurementMetadataIsRejected
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.GnssObservationTest
+INSTRUMENTATION_STATUS: current=15
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=invalidOrOrphanMeasurementsCannotBecomeObservations
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.GnssObservationTest
+INSTRUMENTATION_STATUS: current=15
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=invalidOrOrphanMeasurementsCannotBecomeObservations
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.GnssObservationTest
+INSTRUMENTATION_STATUS: current=16
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=optionalMeasurementsPreserveMissingAndMeasuredZero
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.GnssObservationTest
+INSTRUMENTATION_STATUS: current=16
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=optionalMeasurementsPreserveMissingAndMeasuredZero
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.GnssObservationTest
+INSTRUMENTATION_STATUS: current=17
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=legacyZeroMeasurementsAreUnknownAndNonzeroValuesSurvive
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.GnssObservationTest
+INSTRUMENTATION_STATUS: current=17
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=legacyZeroMeasurementsAreUnknownAndNonzeroValuesSurvive
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelConsentTest
+INSTRUMENTATION_STATUS: current=18
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+com.setu.navigator.ModelConsentTest:
+INSTRUMENTATION_STATUS: test=legacyFlagDoesNotAuthorizeUploadsAndChangingServersRevokesConsent
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelConsentTest
+INSTRUMENTATION_STATUS: current=18
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=legacyFlagDoesNotAuthorizeUploadsAndChangingServersRevokesConsent
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelProviderTest
+INSTRUMENTATION_STATUS: current=19
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+com.setu.navigator.ModelProviderTest:
+INSTRUMENTATION_STATUS: test=unavailableRetainsReasonRatherThanPretendingTheVehicleStopped
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelProviderTest
+INSTRUMENTATION_STATUS: current=19
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=unavailableRetainsReasonRatherThanPretendingTheVehicleStopped
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelProviderTest
+INSTRUMENTATION_STATUS: current=20
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=malformedAndOutOfWindowMeasurementsAreRejected
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelProviderTest
+INSTRUMENTATION_STATUS: current=20
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=malformedAndOutOfWindowMeasurementsAreRejected
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelProviderTest
+INSTRUMENTATION_STATUS: current=21
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=cancellingADownloadDoesNotWaitForTheReadTimeout
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelProviderTest
+INSTRUMENTATION_STATUS: current=21
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=cancellingADownloadDoesNotWaitForTheReadTimeout
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelProviderTest
+INSTRUMENTATION_STATUS: current=22
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=healthPreservesExperimentalWarningAndInferenceContainsNoLocation
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelProviderTest
+INSTRUMENTATION_STATUS: current=22
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=healthPreservesExperimentalWarningAndInferenceContainsNoLocation
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelProviderTest
+INSTRUMENTATION_STATUS: current=23
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=urlAndWindowValidationHappenBeforeNetworkTraffic
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelProviderTest
+INSTRUMENTATION_STATUS: current=23
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=urlAndWindowValidationHappenBeforeNetworkTraffic
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelProviderTest
+INSTRUMENTATION_STATUS: current=24
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=redirectsOversizedResponsesAndUnknownHealthAreRejected
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.ModelProviderTest
+INSTRUMENTATION_STATUS: current=24
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=24
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=redirectsOversizedResponsesAndUnknownHealthAreRejected
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 1.126
+There were 3 failures:
+1) pendingFixDoesNotResetTheFilterAndOutageEventuallyWithholdsOutput(com.setu.navigator.NativeEngineTest)
+java.lang.AssertionError
+	at org.junit.Assert.fail(Assert.java:87)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at org.junit.Assert.assertTrue(Assert.java:53)
+	at com.setu.navigator.NativeEngineTest.pendingFixDoesNotResetTheFilterAndOutageEventuallyWithholdsOutput(NativeEngineTest.kt:172)
+2) delayedCorrectionsMatchOnTimePropagationAndGeographicDisplacement(com.setu.navigator.NativeEngineTest)
+java.lang.AssertionError: Field 4 expected:<1.5019167682428977E-5> but was:<1.3400701666536963E-5>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:555)
+	at com.setu.navigator.NativeEngineTest.delayedCorrectionsMatchOnTimePropagationAndGeographicDisplacement(NativeEngineTest.kt:86)
+3) duplicateDelayedAndFutureFixesDoNotReplaceLatestOrEnterLog(com.setu.navigator.GnssObservationTest)
+java.lang.AssertionError: expected:<1> but was:<0>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:120)
+	at org.junit.Assert.assertEquals(Assert.java:146)
+	at com.setu.navigator.GnssObservationTest.duplicateDelayedAndFutureFixesDoNotReplaceLatestOrEnterLog(GnssObservationTest.kt:118)
+
+FAILURES!!!
+Tests run: 24,  Failures: 3
+
+
+INSTRUMENTATION_CODE: -1

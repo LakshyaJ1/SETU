@@ -1,9 +1,14 @@
 package com.setu.navigator
 
 import com.setu.navigator.model.canonicalModelSpec
+import com.setu.navigator.model.modelFusionApproved
+import com.setu.navigator.model.modelSupportsVehicle
+import com.setu.navigator.model.validateModelInputSpec
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import java.io.File
 import java.security.MessageDigest
@@ -20,6 +25,41 @@ import java.security.MessageDigest
  * so the two cannot drift apart unnoticed.
  */
 class OnDeviceModelSpecTest {
+    @Test fun unsupportedActivityDoesNotStartTheCarModel() {
+        val manifest = JSONObject().put("vehicles", org.json.JSONArray(listOf("Car")))
+        assertTrue(modelSupportsVehicle(manifest, "Car"))
+        assertFalse(modelSupportsVehicle(manifest, "Two-wheeler"))
+        assertFalse(modelSupportsVehicle(manifest, "Walking"))
+        assertFalse(modelSupportsVehicle(JSONObject().put("vehicles", org.json.JSONArray()), "Car"))
+    }
+
+    @Test
+    fun fusionRequiresDeploymentApprovalAndPassingCalibration() {
+        val manifest = manifest()
+        val calibration = JSONObject(File("src/main/assets/models/setu-speed-v1/calibration.json").readText())
+        assertFalse(modelFusionApproved(manifest, calibration))
+        manifest.put("deployment_approved", true)
+        assertFalse(modelFusionApproved(manifest, calibration))
+        calibration.put("gate_g4_pass", true)
+        assertFalse(modelFusionApproved(manifest, calibration))
+        calibration.getJSONObject("test_coverage").put("3_sigma", 0.98)
+        assertTrue(modelFusionApproved(manifest, calibration))
+        calibration.remove("test_coverage")
+        assertFalse(modelFusionApproved(manifest, calibration))
+    }
+
+    @Test
+    fun changedInputContractsAreRejectedEvenIfSelfConsistent() {
+        validateModelInputSpec(manifest().getJSONObject("input_spec"))
+        val reordered = manifest().getJSONObject("input_spec")
+        reordered.getJSONArray("channels").put(0, "gyro_x")
+        assertThrows(IllegalArgumentException::class.java) { validateModelInputSpec(reordered) }
+        val wrongUnits = manifest().getJSONObject("input_spec")
+        wrongUnits.getJSONObject("units").put("gyro", "deg/s")
+        assertThrows(IllegalArgumentException::class.java) { validateModelInputSpec(wrongUnits) }
+        val wrongWindow = manifest().getJSONObject("input_spec").put("window_samples", 200)
+        assertThrows(IllegalArgumentException::class.java) { validateModelInputSpec(wrongWindow) }
+    }
 
     private val manifestFile = File("src/main/assets/models/setu-speed-v1/manifest.json")
 

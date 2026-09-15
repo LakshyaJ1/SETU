@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
@@ -47,6 +48,14 @@ fun SetuApp(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Unit) 
         if (uri != null) exportTarget?.let { model.exportTrip(it, uri) }
     }
     val launchExport: (Trip) -> Unit = { trip -> exportTarget = trip; exportFile.launch("setu-${trip.id.take(8)}.setulog") }
+    var trainingTargetId by rememberSaveable { mutableStateOf<String?>(null) }
+    val trainingFile = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
+        if (uri != null) {
+            val trip = model.trips.value.find { it.id == trainingTargetId }
+            if (trip != null) model.exportTrainingTrip(trip, uri) else model.notify("Recording is not available. Open Trips and retry the export.")
+        }
+    }
+    val launchTrainingExport: (Trip) -> Unit = { trip -> trainingTargetId = trip.id; trainingFile.launch("setu-training-${trip.id.take(8)}.zip") }
     LaunchedEffect(model) { model.messages.collect { snackbar.showSnackbar(it) } }
     DisposableEffect(settings.keepScreenOn, model.navigating, model.playing, recording, model.positioningDemo) {
         val window = (context as? Activity)?.window
@@ -101,7 +110,7 @@ fun SetuApp(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Unit) 
                             "models" -> ModelSettingsScreen(model)
                             "offline" -> OfflineScreen(model)
                             "about" -> AboutScreen(model)
-                            "trip" -> model.selectedTrip?.let { TripDetailScreen(model, it, launchExport) }
+                            "trip" -> model.selectedTrip?.let { TripDetailScreen(model, it, launchExport, launchTrainingExport) }
                             else -> when (model.tab) {
                                 "Drive" -> DriveScreen(model, withLocationPermission, dark, onFinish = { confirmEnd = true })
                                 "Record" -> RecordScreen(model, withLocationPermission)

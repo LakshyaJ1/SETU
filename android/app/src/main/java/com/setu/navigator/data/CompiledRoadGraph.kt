@@ -8,15 +8,6 @@ import java.security.MessageDigest
 import java.util.zip.GZIPInputStream
 
 object CompiledRoadGraph {
-    /**
-     * Checksums of extracted graphs this process has already digested in full.
-     *
-     * The extracted graph is 238 MB, and hashing it took seconds on every launch's first route.
-     * The file lives in app-private storage and nothing outside this object writes it, so once a
-     * process has verified it the result holds for that process; a restart verifies again.
-     */
-    private val verified = HashSet<String>()
-
     @Synchronized
     fun load(context: Context, region: MapRegion, checkpoint: () -> Unit): RoadGraph? {
         if (region.roadChecksum == null) return null
@@ -47,8 +38,7 @@ object CompiledRoadGraph {
             }
             return hash.digest().joinToString("") { "%02x".format(it) }
         }
-        val trusted = checksum in verified && target.isFile && target.length() == size
-        if (!trusted && (!target.isFile || target.length() != size || digest(target) != checksum)) {
+        if (!target.isFile || target.length() != size || digest(target) != checksum) {
             val atomic = AtomicFile(target)
             val output = atomic.startWrite()
             try {
@@ -73,7 +63,6 @@ object CompiledRoadGraph {
                 throw failure
             }
         }
-        verified.add(checksum)
         return GraphBinary.read(target, checkpoint).also {
             require(it.nodeCount == metadata.getInt("nodes") && it.edgeCount == metadata.getInt("edges")) { "Compiled graph counts do not match." }
         }

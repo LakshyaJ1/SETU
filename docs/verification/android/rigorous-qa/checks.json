@@ -1,0 +1,45 @@
+{
+  "schema": "setu.qa-checks.v1",
+  "date": "2026-09-15",
+  "apkSha256": "410ca8d79d42780b3cb1c33c0d569c093e1216b257d9c2ccd10dc56e9a8db62b",
+  "suiteApks": {
+    "baseline-all-device-tests.log": "aee9c5706879a44790b62d4347df75e6bbe3366e08c1d564e6d4fa437a208d5b",
+    "actual-location-off.log": "aee9c5706879a44790b62d4347df75e6bbe3366e08c1d564e6d4fa437a208d5b",
+    "internet-location-off-recording.log": "aee9c5706879a44790b62d4347df75e6bbe3366e08c1d564e6d4fa437a208d5b",
+    "internet-location-off-no-saver.log": "aee9c5706879a44790b62d4347df75e6bbe3366e08c1d564e6d4fa437a208d5b",
+    "special-use-background.log": "bf4ec19ae8b6aff661e9dc5653373f093310e046de77d0399163cd1bf33f0475",
+    "latest-six-duration-replay.log": "410ca8d79d42780b3cb1c33c0d569c093e1216b257d9c2ccd10dc56e9a8db62b",
+    "Isolated device test methods": "410ca8d79d42780b3cb1c33c0d569c093e1216b257d9c2ccd10dc56e9a8db62b"
+  },
+  "checks": [
+    {"name": "APK identity", "result": "PASS", "detail": "212,472,310 bytes; signature and 16 KiB alignment verified; installed app and website HTTP download match SHA-256."},
+    {"name": "Python regressions", "result": "PASS", "detail": "265 passed, 2 skipped in 229.86 s. Skips require optional osmium. One ReportLab deprecation warning."},
+    {"name": "Android JVM tests", "result": "PASS", "detail": "102 tests, zero failures/errors/skips. Unit tests and both APK builds succeed in 64 s."},
+    {"name": "Android lint", "result": "WARN", "detail": "Zero errors, 25 existing warnings. Final separate lint invocation succeeds in 75 s; an earlier slow invocation was cancelled."},
+    {"name": "Latest phone inventory", "result": "PASS", "detail": "84 discovered methods completed on the latest APK: 77 passed, 7 controlled/opt-in fixtures skipped, zero failures/errors. Each method uses a fresh instrumentation process without clearing user data. The six-duration replay runs separately with selected private rides."},
+    {"name": "User recording preservation", "result": "PASS", "detail": "All 37 original SETULOG files remain byte-identical after the final complete device run. Only test-owned fixtures are removed."},
+    {"name": "Foreground screen wake", "result": "PASS", "detail": "Production FLAG_KEEP_SCREEN_ON is asserted during recording and released after Stop. The 38.035-second physical foreground regression passes without a test-forced screen flag."},
+    {"name": "Normal-radio sensor capture", "result": "PASS", "detail": "Latest 30-second foreground and 15-second background checks pass with Location enabled and Battery saver disabled. Maximum IMU gaps are 5.009 and 5.006 ms. These do not supersede the all-radios-off background failures."},
+    {"name": "Baseline focused phone tests", "result": "PASS", "detail": "On the preceding aee9c570 build: 11 passed, 1 controlled-native-GNSS fixture skipped. Includes map rendering, settings, recording and curved native demo."},
+    {"name": "Baseline repeated journeys", "result": "PASS", "detail": "Five demo/theme/settings/trips cycles in one process; baseline PSS 276,405-605,640 KiB; focused repeat 587,855-619,599 KiB. Both below unchanged 716,800 KiB cap."},
+    {"name": "Latest repeated journeys", "result": "PASS", "detail": "Five journeys in the latest APK remain below the unchanged 716,800 KiB cap: PSS 609,280; 613,850; 612,414; 475,666; 608,178 KiB."},
+    {"name": "Compact map controls", "result": "PASS", "detail": "The latest APK passes the new 8.665-second regression: all three map controls remain below the header and above attribution."},
+    {"name": "Native/model integrity", "result": "PASS", "detail": "All nine packaged native-library and model files match the preceding APK byte-for-byte. The six-duration replay is repeated against the latest APK and yields the same counts."},
+    {"name": "Real Location-off continuity", "result": "PASS", "detail": "90-second actual OS switch test; fresh paired IMU at all six checkpoints. No initialized native position or independent moving reference."},
+    {"name": "Beta website", "result": "PASS", "detail": "Desktop and 360/390 px layouts, keyboard focus, reduced motion, denied clipboard, malformed release metadata, actual APK download and PDF HTTP checks. Local hosting only."},
+    {"name": "Background capture", "result": "FAIL", "detail": "With Location and internet off, baseline background probes stall even with Battery saver off and battery exemptions enabled. A normal 45.71-second background recording has a 15.95-second IMU gap. Keep SETU visible; background capture is not certified."},
+    {"name": "90% within 10 m", "result": "FAIL", "detail": "All six GPS-withheld replay durations fail the target. Availability itself is too low. This is development data, not independent field validation."}
+  ],
+  "findings": [
+    "The original combined 81-test run has four retained failures: two Compose-root lifecycle failures, a 1,854,612 KiB map-memory reading against a 716,800 KiB ceiling, and an obsolete straight-chord assertion for the curved demo.",
+    "Use fresh instrumentation processes per method without clearing user data. Isolated focused tests and a five-cycle actual app soak pass; this supports fixture/process accumulation as a contributor, not a proof that every long app session is leak-free.",
+    "The curved-demo test now sums travelled distance along the path. Its travelled-distance and under-5-m synthetic error guards remain unchanged. No production estimator guard or model weight is relaxed.",
+    "Compact map controls were covered by attribution and initial loading feedback sat behind the task sheet. The latest APK reserves visible map space, lays compact controls out horizontally, and shows loading feedback in that visible area.",
+    "The latest APK keeps the screen on only during visible recording and releases that flag on stop/background. This is a foreground mitigation, not a claim that screen-off recording is reliable.",
+    "Background probes with Location, Wi-Fi and mobile data off stalled for 412,991 ms, and 155,377 ms with Battery saver disabled; foreground recovery was used for cleanup. A special-use service candidate also failed and was reverted. The normal app independently shows a roughly 15.95-second sensor gap in a 45.71-second background interval. These failures remain disclosed with their source APKs.",
+    "Replay now scores exactly duration-times-10 ticks, excludes the GPS recovery boundary and compares position with the reference at the scoring timestamp. Missing predictions count as failures; missing references remain unknown, not successes.",
+    "The HTML regression test permits only the intentional trusted sweep script and rejects route-name script injection. The beta publisher rejects mismatched evidence, retains the preceding release after failure and optionally watches verified artifacts every 30 seconds.",
+    "Three same-phone/day scooter rides cannot establish independent accuracy. Repeated ticks are correlated. Conditional low errors on rare surviving estimates are not whole-outage accuracy. All matched ninety-second-cohort predictions cease after ten seconds.",
+    "Sustained GPS-free navigation and heading initialization remain release blockers. The earlier CPU-trained model still predicts motion at rest and remains research-only. Collect rigid-mount, multi-day rides with independent position reference before making accuracy claims."
+  ]
+}

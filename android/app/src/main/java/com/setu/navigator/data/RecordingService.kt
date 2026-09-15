@@ -35,9 +35,11 @@ class RecordingService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == "STOP") {
-            repository.finishRecording()
-            stopForeground(STOP_FOREGROUND_REMOVE)
-            stopSelf()
+            scope.launch {
+                withContext(Dispatchers.IO) { repository.finishRecording() }
+                stopForeground(STOP_FOREGROUND_REMOVE)
+                stopSelf()
+            }
             return START_NOT_STICKY
         }
         if (!repository.hub.hasLocationPermission()) {
@@ -58,7 +60,7 @@ class RecordingService : Service() {
                 .apply { acquire(6 * 60 * 60 * 1000L) }
         }
         try {
-            repository.beginRecording(intent?.getStringExtra("name") ?: "My drive")
+            repository.beginRecording(intent?.getStringExtra("name") ?: "My drive", intent?.getBooleanExtra("fixedMount", false) == true)
         } catch (error: Exception) {
             repository.reportError("Recording could not start: ${error.message}. Check available phone storage.")
             stopForeground(STOP_FOREGROUND_REMOVE)

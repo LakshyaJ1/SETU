@@ -1,0 +1,11 @@
+{
+  "artifact": "dist/android/SETU-scooter-review.apk",
+  "bytes": 212472310,
+  "sha256": "dca73580e84cfd89efd7bdbd51cb169a4d3157d23f1946d2718b375cc0751539",
+  "installedPackage": "com.setu.navigator",
+  "installedHashMatches": true,
+  "signatureVerified": true,
+  "zipAlignment16KiB": true,
+  "buildType": "debug",
+  "fieldAccuracyValidated": false
+}

@@ -1,31 +1,17 @@
-// GNSS-denied dead-reckoning benchmark for the SETU engine.
-//
-// Runs the shipping engine against synthetic drives with known ground truth, cuts GNSS partway
-// through, and measures what the requirements actually ask for:
-//
-//   REQ-P1  horizontal drift < 10 % of distance travelled during the blackout
-//   REQ-P2  < 5 m final error over a 50 m creep in under a minute
-//   REQ-P3  < 100 m final error over 1 km at 60 km/h
-//
-// The phone is given a random, unknown mount rotation in every run, so the engine has to work out
-// the vehicle axes for itself; nothing here tells it how the phone is sitting. IMU samples carry
-// MEMS-grade white noise, a turn-on bias and a bias random walk.
-//
-// Build for the device (see core/test/README.md) and run it there: it exercises the same
-// arm64-v8a code path the app ships.
-
 #include "setu_engine.h"
 
 #include <GeographicLib/LocalCartesian.hpp>
 #include <Eigen/Geometry>
-
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
+#include <limits>
 #include <numbers>
 #include <random>
+#include <stdexcept>
+#include <string>
 #include <vector>
 
 using Vector3 = Eigen::Vector3d;
@@ -33,300 +19,338 @@ using Matrix3 = Eigen::Matrix3d;
 using RowMatrix3 = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
 
 namespace {
-constexpr double g0 = 9.80665;
+constexpr double gravity = 9.80665;
 constexpr double pi = std::numbers::pi;
-constexpr double origin_latitude = 28.6139;    // Delhi, inside the bundled region
-constexpr double origin_longitude = 77.2090;
-
-struct Segment {
-    double seconds;
-    double target_speed;   // m/s
-    double yaw_rate;       // rad/s
-};
+constexpr double interval = 0.005;
+constexpr int rate = 200;
+constexpr int warmup_seconds = 120;
+constexpr double acceleration_range = 156.9064;
+constexpr double gyro_range = 34.90656;
+constexpr double missing = std::numeric_limits<double>::quiet_NaN();
 
 struct Profile {
     const char* name;
-    const char* requirement;
-    double blackout_after;          // seconds of GNSS before the cut
-    double limit_metres;            // absolute final-error limit, or 0 to use the ratio only
-    double ratio_limit;             // drift / distance, or 0 to skip
-    std::vector<Segment> segments;
+    bool stopped = false;
+    bool turns = false;
+    bool rough = false;
+    bool potholes = false;
+    bool lean = false;
+    bool clipping = false;
+    bool gap = false;
+    bool handling = false;
 };
 
-struct Result {
-    double distance = 0;
-    double final_error = 0;
-    double peak_error = 0;
-    double reported_radius = 0;
-    double blackout_seconds = 0;
-    double along_track = 0, cross_track = 0, speed_error = 0;
-    int zupts = 0, nhcs = 0, cts = 0, svo = 0;
-    double mount_weight = 0, svo_scale = 0, mount_error_degrees = 0;
-    bool held = false;              // engine still produced a position at the end
-};
+const std::array<Profile, 9> profiles{{
+    {"stationary", true},
+    {"smooth_cruise"},
+    {"turns_and_stops", false, true},
+    {"rough_turns", false, true, true},
+    {"potholes_turns", false, true, true, true},
+    {"scooter_lean_potholes", false, true, true, true, true},
+    {"scooter_sensor_clipping", false, true, true, true, true, true},
+    {"rough_imu_gap", false, true, true, true, true, false, true},
+    {"phone_handling", false, true, true, true, true, false, false, true},
+}};
 
-// Random but plausible phone mount: any yaw, modest pitch and roll.
-Matrix3 random_mount(std::mt19937_64& generator) {
-    std::uniform_real_distribution<double> yaw(-pi, pi), tilt(-0.45, 0.45);
-    return (Eigen::AngleAxisd(yaw(generator), Vector3::UnitZ()) *
-            Eigen::AngleAxisd(tilt(generator), Vector3::UnitY()) *
-            Eigen::AngleAxisd(tilt(generator), Vector3::UnitX())).toRotationMatrix();
+Matrix3 attitude(double heading, double roll) {
+    return (Eigen::AngleAxisd(-heading, Vector3::UnitZ()) *
+            Eigen::AngleAxisd(roll, Vector3::UnitY())).toRotationMatrix();
 }
 
-Result run(const Profile& profile, uint64_t seed, const char* geophysics, bool constraints) {
-    Result result;
-    std::mt19937_64 generator(seed);
-    std::normal_distribution<double> unit(0.0, 1.0);
+Vector3 angular_velocity(const Matrix3& previous, const Matrix3& current) {
+    const Eigen::AngleAxisd change(previous.transpose() * current);
+    return change.axis() * (change.angle() / interval);
+}
 
-    SetuEngine* engine = setu_engine_create(geophysics);
-    if (!engine) { std::printf("  engine_create failed (geophysics path %s)\n", geophysics); return result; }
+double smooth_step(double fraction) {
+    const double bounded = std::clamp(fraction, 0.0, 1.0);
+    return bounded * bounded * (3.0 - 2.0 * bounded);
+}
 
-    setu_engine_constraints(engine, constraints ? 1 : 0);
-    GeographicLib::LocalCartesian frame(origin_latitude, origin_longitude, 0);
+double pothole_height(double elapsed, bool severe) {
+    const double phase = std::fmod(elapsed + 1.0, 7.0);
+    const double duration = severe ? 0.08 : 0.25;
+    if (phase >= duration) return 0.0;
+    return -(severe ? 0.08 : 0.035) * std::pow(std::sin(pi * phase / duration), 4);
+}
 
-    const double rate = 200.0, dt = 1.0 / rate;
-    const Matrix3 mount = random_mount(generator);      // phone <- vehicle
-
-    // MEMS error model: turn-on bias plus a slow random walk, both unknown to the engine.
-    Vector3 accel_bias(unit(generator) * 0.08, unit(generator) * 0.08, unit(generator) * 0.08);
-    Vector3 gyro_bias(unit(generator) * 0.004, unit(generator) * 0.004, unit(generator) * 0.004);
-
-    Vector3 position = Vector3::Zero();       // ENU, metres
-    Vector3 velocity = Vector3::Zero();
-    double heading = 0;                        // radians, 0 = +North
-    double speed = 0;
-
-    int64_t t = 1000000000LL;                  // start away from zero; engine rejects t <= 0
-    double elapsed = 0, blackout_elapsed = 0;
-    int64_t last_fix_ns = 0;
-    bool blackout = false;
-    double axle_phase = 0, engine_phase = 0;
-    Vector3 blackout_start_position = Vector3::Zero();
-    double estimate[SETU_ESTIMATE_SIZE] = {0};
-
-    for (const Segment& segment : profile.segments) {
-        const int steps = static_cast<int>(segment.seconds * rate);
-        for (int step = 0; step < steps; ++step) {
-            // --- truth propagation ------------------------------------------------------------
-            const double previous_speed = speed;
-            const double command = std::clamp(segment.target_speed - speed, -3.5 * dt, 2.5 * dt);
-            speed = std::max(0.0, speed + command);
-            // Tyres cap lateral acceleration; a stopped vehicle cannot yaw.
-            double yaw_rate = segment.yaw_rate;
-            if (speed > 0.1) {
-                const double bound = 0.45 * g0 / std::max(speed, 0.1);
-                yaw_rate = std::clamp(yaw_rate, -bound, bound);
-            } else {
-                yaw_rate = 0;
-            }
-            heading += yaw_rate * dt;
-
-            const Vector3 forward(std::sin(heading), std::cos(heading), 0);
-            // right = forward x up, which keeps the vehicle triad right-handed. Using "left" here
-            // gave a determinant of -1 and the engine rightly refused the attitude.
-            const Vector3 right(std::cos(heading), -std::sin(heading), 0);
-            const Vector3 next_velocity = forward * speed;
-            const Vector3 world_acceleration = (next_velocity - velocity) / dt;
-            velocity = next_velocity;
-            position += velocity * dt;
-            if (blackout) blackout_elapsed += dt;
-            (void)previous_speed;
-
-            // Vehicle attitude: x = right, y = forward, z = up, matching the ENU convention the
-            // engine reports bearings in (atan2(vx, vy)).
-            Matrix3 vehicle;
-            vehicle.col(0) = right;
-            vehicle.col(1) = forward;
-            vehicle.col(2) = Vector3::UnitZ();
-
-            // --- synthesise the phone IMU ------------------------------------------------------
-            Vector3 specific_force = vehicle.transpose() * (world_acceleration + Vector3(0, 0, g0));
-            const Vector3 body_rate = vehicle.transpose() * Vector3(0, 0, yaw_rate);
-            // Road and engine vibration. This is not decoration: a smooth constant-velocity cruise
-            // with no vibration is, to an accelerometer, exactly a vehicle standing still, so a
-            // simulator without it cannot exercise the stop detector honestly. Amplitude grows with
-            // speed; the axle line sits at v / (2*pi*R).
-            const double axle_hz = speed / (2 * pi * 0.31);
-            axle_phase += 2 * pi * axle_hz * dt;
-            engine_phase += 2 * pi * (speed > 0.3 ? 28.0 : 11.0) * dt;
-            const double road = 0.18 + 0.085 * speed;
-            for (int axis = 0; axis < 3; ++axis) {
-                specific_force(axis) += road * (0.6 * std::sin(axle_phase + axis) +
-                                                0.3 * std::sin(2 * axle_phase + axis) +
-                                                0.2 * std::sin(engine_phase + axis)) +
-                                        road * 0.35 * unit(generator);
-            }
-            accel_bias += Vector3(unit(generator), unit(generator), unit(generator)) * 1.6e-3 * std::sqrt(dt);
-            gyro_bias += Vector3(unit(generator), unit(generator), unit(generator)) * 5e-5 * std::sqrt(dt);
-            const Vector3 phone_accel = mount * specific_force + accel_bias +
-                Vector3(unit(generator), unit(generator), unit(generator)) * 0.05;
-            const Vector3 phone_gyro = mount * body_rate + gyro_bias +
-                Vector3(unit(generator), unit(generator), unit(generator)) * 0.004;
-
-            // --- feed the engine ---------------------------------------------------------------
-            // Attitude comes from the fused rotation vector in the real app; here it is the true
-            // phone attitude with realistic noise, refreshed at 10 Hz.
-            if (step % 20 == 0) {
-                const Matrix3 phone_attitude = vehicle * mount.transpose();
-                const Matrix3 noisy = phone_attitude *
-                    Eigen::AngleAxisd(unit(generator) * 0.02, Vector3::UnitZ()).toRotationMatrix();
-                const RowMatrix3 row = noisy;
-                setu_engine_attitude(engine, t, row.data(), 0.08);
-            }
-            setu_engine_imu(engine, t, phone_accel.data(), phone_gyro.data());
-
-            if (!blackout && elapsed >= profile.blackout_after) {
-                blackout = true;
-                blackout_start_position = position;
-            }
-            if (!blackout && t - last_fix_ns >= 1000000000LL) {
-                last_fix_ns = t;
-                double latitude, longitude, altitude;
-                frame.Reverse(position.x(), position.y(), position.z(), latitude, longitude, altitude);
-                const double course = std::fmod(heading / pi * 180 + 360, 360);
-                const double values[10] = {latitude, longitude, altitude, 4.0, 6.0,
-                                           speed, course, 0.3, 5.0, 0.0};
-                setu_engine_gnss(engine, t, values);
-            }
-
-            // --- score --------------------------------------------------------------------------
-            if (blackout && step % 20 == 0) {
-                if (setu_engine_poll(engine, estimate) == 1 && std::isfinite(estimate[2])) {
-                    double east, north, up;
-                    frame.Forward(estimate[2], estimate[3], std::isfinite(estimate[4]) ? estimate[4] : 0,
-                                  east, north, up);
-                    const double error = std::hypot(east - position.x(), north - position.y());
-                    result.final_error = error;
-                    result.peak_error = std::max(result.peak_error, error);
-                    result.reported_radius = estimate[7];
-                    result.held = true;
-                    // Split the error into along-track and cross-track relative to the true
-                    // heading: NHC and ZUPT bound the cross-track term, so if the total is
-                    // dominated by along-track the missing ingredient is a speed observation.
-                    const Vector3 offset(east - position.x(), north - position.y(), 0);
-                    result.along_track = std::abs(offset.dot(forward));
-                    result.cross_track = std::abs(offset.dot(right));
-                    result.speed_error = estimate[5] - speed;
-                } else {
-                    result.held = false;
-                }
-                result.zupts = static_cast<int>(estimate[20]);
-                result.nhcs = static_cast<int>(estimate[21]);
-                result.cts = static_cast<int>(estimate[22]);
-                result.mount_weight = estimate[23];
-                result.svo = static_cast<int>(estimate[24]);
-                result.svo_scale = estimate[25];
-                // The truth is known here: the vehicle forward axis is e_y, so in phone
-                // coordinates it is mount * e_y. Comparing tells us whether the estimated axes are
-                // the source of the heading error or merely carrying it.
-                const Vector3 true_forward = mount * Vector3::UnitY();
-                const Vector3 got(estimate[26], estimate[27], estimate[28]);
-                if (got.norm() > 0.5) {
-                    result.mount_error_degrees =
-                        std::acos(std::clamp(true_forward.normalized().dot(got.normalized()), -1.0, 1.0)) * 180 / pi;
-                }
-            }
-            if (getenv("SETU_TRACE") && step % 400 == 0) {
-                double probe[SETU_ESTIMATE_SIZE];
-                setu_engine_poll(engine, probe);
-                double truth_latitude, truth_longitude, truth_altitude;
-                frame.Reverse(position.x(), position.y(), position.z(),
-                              truth_latitude, truth_longitude, truth_altitude);
-                std::printf("    t=%6.1fs status=%.0f acc=%.0f gated=%.0f lat=%.6f trueLat=%.6f v=%.1f trueV=%.1f nhc=%.0f cts=%.0f\n",
-                            elapsed, probe[0], probe[10], probe[11], probe[2], truth_latitude,
-                            probe[5], speed, probe[21], probe[22]);
-            }
-            t += static_cast<int64_t>(dt * 1e9);
-            elapsed += dt;
-        }
+std::array<double, 2> command(double elapsed, const Profile& profile) {
+    if (elapsed < 15) return {0, 0};
+    if (elapsed < 105) {
+        const double phase = std::fmod(elapsed - 15, 30.0);
+        return {phase < 20 ? 10.0 : 3.0, phase < 10 ? 0.0 : (phase < 20 ? 0.15 : -0.2)};
     }
-    result.distance = (position - blackout_start_position).norm();
-    result.blackout_seconds = blackout_elapsed;
-    setu_engine_destroy(engine);
-    return result;
+    if (profile.stopped) return {0, 0};
+    if (elapsed < warmup_seconds || !profile.turns) return {12, 0};
+    const double phase = std::fmod(elapsed - warmup_seconds, 60.0);
+    if (phase < 12) return {10, 0};
+    if (phase < 20) return {6, 0.25};
+    if (phase < 30) return {0, 0};
+    if (phase < 45) return {8, -0.15};
+    return {12, 0};
 }
 
 double percentile(std::vector<double> values, double fraction) {
-    if (values.empty()) return 0;
+    if (values.empty()) return missing;
     std::sort(values.begin(), values.end());
-    size_t index = static_cast<size_t>(fraction * (values.size() - 1) + 0.5);
-    return values[std::min(index, values.size() - 1)];
+    const auto index = static_cast<size_t>(std::ceil(fraction * values.size()));
+    return values[std::clamp<size_t>(index, 1, values.size()) - 1];
 }
-}  // namespace
+
+std::string number(double value) {
+    if (!std::isfinite(value)) return "null";
+    char output[64];
+    std::snprintf(output, sizeof(output), "%.10g", value);
+    return output;
+}
+
+struct Score {
+    int outputs = 0;
+    int available = 0;
+    int within_five = 0;
+    int within_ten = 0;
+    int covered = 0;
+    int radii = 0;
+    double final_error = missing;
+    double final_along = missing;
+    double final_cross = missing;
+    double distance = 0;
+    double peak_acceleration = 0;
+    double peak_rotation = 0;
+    int clipped_samples = 0;
+    int dropped_samples = 0;
+    std::vector<double> errors;
+    std::vector<double> speed_errors;
+
+    void observe(double error, double radius = missing) {
+        outputs++;
+        final_error = error;
+        if (!std::isfinite(error)) return;
+        available++;
+        within_five += error <= 5;
+        within_ten += error <= 10;
+        errors.push_back(error);
+        if (std::isfinite(radius)) { radii++; covered += error <= radius; }
+    }
+
+    double success_rate() const { return outputs ? static_cast<double>(within_ten) / outputs : 0; }
+    bool meets_point_target() const { return outputs > 0 && success_rate() >= 0.9 && std::isfinite(final_error); }
+};
+
+void require(bool condition, const char* message) {
+    if (!condition) throw std::runtime_error(message);
+}
+
+void self_test() {
+    const Matrix3 previous = attitude(0, 0);
+    const Matrix3 current = attitude(0.2 * interval, 0);
+    require(std::abs(angular_velocity(previous, current).z() + 0.2) < 1e-10,
+            "Clockwise navigation heading must give negative ENU gyro Z");
+    require(std::abs(attitude(0.7, 0.4).determinant() - 1) < 1e-12, "Attitude must be a proper rotation");
+    const Matrix3 mount = Eigen::AngleAxisd(0.6, Vector3::UnitX()).toRotationMatrix();
+    require((angular_velocity(previous * mount.transpose(), current * mount.transpose()) -
+            mount * Vector3(0, 0, -0.2)).norm() < 1e-9, "Mount transform must preserve body angular velocity");
+    require(pothole_height(6, false) == 0 && std::abs(pothole_height(6.25, false)) < 1e-12,
+            "Pothole must join the road continuously");
+    require(std::abs(pothole_height(6.125, false) + 0.035) < 1e-12, "Pothole depth must match the fixture");
+    Score score;
+    for (int index = 0; index < 9; index++) score.observe(1);
+    score.observe(missing);
+    require(std::abs(score.success_rate() - 0.9) < 1e-12, "Missing predictions belong in the denominator");
+    require(!score.meets_point_target(), "An unavailable endpoint must not masquerade as a final error");
+    require(std::isnan(percentile({}, 0.9)), "Missing errors must not produce zero error");
+    require(percentile({1, 2, 3, 4, 5}, 0.9) == 5, "Use documented nearest-rank quantiles");
+    double travelled = 0;
+    Vector3 position = Vector3::Zero();
+    for (int index = 0; index < 2000; index++) {
+        const Vector3 delta(std::sin(index * 2 * pi / 2000), std::cos(index * 2 * pi / 2000), 0);
+        position += delta;
+        travelled += delta.head<2>().norm();
+    }
+    require(travelled > 1999 && position.norm() < 1e-8, "Travelled distance is not endpoint displacement");
+    std::puts("{\"type\":\"self_test\",\"passed\":true,\"checks\":10}");
+}
+
+Score run(const Profile& profile, int duration, uint64_t seed, const char* directory, const std::string& algorithm) {
+    SetuEngine* engine = algorithm == "cv" ? nullptr : setu_engine_create(directory);
+    require(algorithm == "cv" || engine != nullptr, "Could not create native engine");
+    if (engine) setu_engine_constraints(engine, algorithm == "car" ? 1 : 0);
+    GeographicLib::LocalCartesian frame(28.6139, 77.2090, 0);
+    std::mt19937_64 generator(seed);
+    std::normal_distribution<double> normal(0, 1);
+    std::uniform_real_distribution<double> mount_yaw(-pi, pi), mount_tilt(-0.45, 0.45);
+    const Matrix3 mount = (Eigen::AngleAxisd(mount_yaw(generator), Vector3::UnitZ()) *
+        Eigen::AngleAxisd(mount_tilt(generator), Vector3::UnitY()) *
+        Eigen::AngleAxisd(mount_tilt(generator), Vector3::UnitX())).toRotationMatrix();
+    Vector3 acceleration_bias(normal(generator) * 0.08, normal(generator) * 0.08, normal(generator) * 0.08);
+    Vector3 gyro_bias(normal(generator) * 0.004, normal(generator) * 0.004, normal(generator) * 0.004);
+    Vector3 chassis = Vector3::Zero(), position = Vector3::Zero(), velocity = Vector3::Zero();
+    Vector3 previous_position = Vector3::Zero(), previous_velocity = Vector3::Zero();
+    Matrix3 previous_rotation = mount.transpose();
+    Vector3 reference_position = Vector3::Zero(), reference_velocity = Vector3::Zero();
+    int64_t reference_ns = 0;
+    double heading = 0, speed = 0, yaw_rate = 0, lean_angle = 0;
+    Score score;
+    const bool trace = std::getenv("SETU_TRACE") != nullptr;
+
+    for (int step = 0; step <= (warmup_seconds + duration) * rate; step++) {
+        const double elapsed = step * interval;
+        const bool blackout = step >= warmup_seconds * rate;
+        const auto desired = command(elapsed, profile);
+        speed = std::max(0.0, speed + std::clamp(desired[0] - speed, -3.5 * interval, 2.5 * interval));
+        const double target_yaw = speed < 0.1 ? 0 : std::clamp(desired[1], -0.45 * gravity / speed, 0.45 * gravity / speed);
+        yaw_rate += std::clamp(target_yaw - yaw_rate, -0.8 * interval, 0.8 * interval);
+        if (step > 0) heading += yaw_rate * interval;
+        const Vector3 forward(std::sin(heading), std::cos(heading), 0);
+        const Vector3 right(std::cos(heading), -std::sin(heading), 0);
+        if (step > 0) chassis += forward * (speed * interval);
+        const double road_height = profile.potholes ? pothole_height(elapsed, profile.clipping) * smooth_step(speed / 2) : 0;
+        const double target_lean = profile.lean ? std::atan2(speed * yaw_rate, gravity) : 0;
+        lean_angle += std::clamp(target_lean - lean_angle, -1.2 * interval, 1.2 * interval);
+        const Matrix3 vehicle = attitude(heading, lean_angle + road_height * 2);
+        const double handling = profile.handling ? 1.7 * smooth_step((elapsed - warmup_seconds - 3) / 0.4) : 0;
+        const Matrix3 active_mount = Eigen::AngleAxisd(handling, Vector3::UnitZ()).toRotationMatrix() * mount;
+        const Matrix3 rotation = vehicle * active_mount.transpose();
+        position = chassis + Vector3(0, 0, road_height);
+        velocity = step == 0 ? Vector3::Zero().eval() : ((position - previous_position) / interval).eval();
+        const Vector3 acceleration = step == 0 ? Vector3::Zero().eval() : ((velocity - previous_velocity) / interval).eval();
+        if (step > warmup_seconds * rate) score.distance += (position - previous_position).head<2>().norm();
+
+        acceleration_bias += Vector3(normal(generator), normal(generator), normal(generator)) * (1.6e-3 * std::sqrt(interval));
+        gyro_bias += Vector3(normal(generator), normal(generator), normal(generator)) * (5e-5 * std::sqrt(interval));
+        Vector3 measured_acceleration = rotation.transpose() * (acceleration + Vector3(0, 0, gravity)) + acceleration_bias;
+        Vector3 measured_gyro = (step == 0 ? Vector3::Zero().eval() : angular_velocity(previous_rotation, rotation)) + gyro_bias;
+        for (int axis = 0; axis < 3; axis++) {
+            const double structural_noise = profile.rough && speed > 0.1 ?
+                0.45 * normal(generator) + 0.6 * std::sin(2 * pi * 23 * elapsed + axis) : 0;
+            measured_acceleration[axis] += structural_noise + normal(generator) * 0.05;
+            measured_gyro[axis] += normal(generator) * 0.004;
+        }
+        score.peak_acceleration = std::max(score.peak_acceleration, measured_acceleration.norm());
+        score.peak_rotation = std::max(score.peak_rotation, measured_gyro.norm());
+        bool clipped = false;
+        for (int axis = 0; axis < 3; axis++) {
+            clipped |= std::abs(measured_acceleration[axis]) > acceleration_range || std::abs(measured_gyro[axis]) > gyro_range;
+            measured_acceleration[axis] = std::clamp(measured_acceleration[axis], -acceleration_range, acceleration_range);
+            measured_gyro[axis] = std::clamp(measured_gyro[axis], -gyro_range, gyro_range);
+        }
+        score.clipped_samples += clipped;
+        const int64_t timestamp = 1000000000LL + static_cast<int64_t>(step) * 5000000LL;
+        if (!blackout && step % 20 == 0) {
+            const RowMatrix3 noisy = rotation * Eigen::AngleAxisd(normal(generator) * 0.02, Vector3::UnitZ()).toRotationMatrix();
+            if (engine) setu_engine_attitude(engine, timestamp, noisy.data(), 0.08);
+        }
+        const bool dropped = profile.gap && step >= (warmup_seconds + 4) * rate && step < (warmup_seconds + 4) * rate + 40;
+        score.dropped_samples += dropped;
+        if (engine && !dropped) setu_engine_imu(engine, timestamp, measured_acceleration.data(), measured_gyro.data());
+        if (!blackout && step % rate == 0) {
+            reference_position = position + Vector3(normal(generator) * 3, normal(generator) * 3, normal(generator) * 4);
+            const double observed_speed = std::max(0.0, speed + normal(generator) * 0.2);
+            const double observed_heading = heading + normal(generator) * 0.04;
+            reference_velocity = Vector3(std::sin(observed_heading), std::cos(observed_heading), 0) * observed_speed;
+            reference_ns = timestamp;
+            double latitude, longitude, altitude;
+            frame.Reverse(reference_position.x(), reference_position.y(), reference_position.z(), latitude, longitude, altitude);
+            const double observation[10] = {latitude, longitude, altitude, 4, 6, observed_speed,
+                std::fmod(observed_heading * 180 / pi + 720, 360.0), 0.3, 5, 0};
+            if (engine) setu_engine_gnss(engine, timestamp, observation);
+        }
+
+        if (blackout && step % 20 == 0) {
+            double error = missing, radius = missing, predicted_speed = missing;
+            Vector3 estimate_position = Vector3::Zero();
+            bool available = false;
+            if (algorithm == "cv" && reference_ns > 0) {
+                estimate_position = reference_position + reference_velocity * ((timestamp - reference_ns) / 1e9);
+                predicted_speed = reference_velocity.head<2>().norm();
+                available = true;
+            } else if (engine) {
+                double estimate[SETU_ESTIMATE_SIZE];
+                available = setu_engine_poll(engine, estimate) == 1 && std::isfinite(estimate[2]) &&
+                    timestamp / 1e9 - estimate[1] <= 0.3;
+                if (available) {
+                    frame.Forward(estimate[2], estimate[3], std::isfinite(estimate[4]) ? estimate[4] : 0,
+                                  estimate_position.x(), estimate_position.y(), estimate_position.z());
+                    radius = estimate[7];
+                    predicted_speed = estimate[5];
+                }
+            }
+            if (available) {
+                const Vector3 offset = estimate_position - position;
+                error = offset.head<2>().norm();
+                score.final_along = offset.dot(forward);
+                score.final_cross = offset.dot(right);
+                score.speed_errors.push_back(std::abs(predicted_speed - speed));
+            } else { score.final_along = missing; score.final_cross = missing; }
+            score.observe(error, radius);
+            if (trace) std::printf("{\"type\":\"sample\",\"profile\":\"%s\",\"algorithm\":\"%s\",\"seed\":%llu,\"durationSeconds\":%d,\"outageSeconds\":%.1f,\"errorMeters\":%s,\"radius95Meters\":%s}\n",
+                profile.name, algorithm.c_str(), static_cast<unsigned long long>(seed), duration,
+                elapsed - warmup_seconds, number(error).c_str(), number(radius).c_str());
+        }
+        previous_position = position;
+        previous_velocity = velocity;
+        previous_rotation = rotation;
+    }
+    if (engine) setu_engine_destroy(engine);
+    return score;
+}
+}
 
 int main(int argc, char** argv) {
-    const char* geophysics = argc > 1 ? argv[1] : "/data/local/tmp/setu-geophysics";
-    const int repeats = argc > 2 ? std::atoi(argv[2]) : 12;
-
-    // Straight cruise punctuated by gentle curves. The curves are what make speed observable
-    // without GNSS, through the coordinated-turn relation.
-    std::vector<Segment> tunnel{{40, 16.7, 0.0}};
-    for (int i = 0; i < 6; ++i) {
-        tunnel.push_back({8, 16.7, 0.0});
-        tunnel.push_back({4, 16.7, i % 2 ? 0.07 : -0.07});
-    }
-    tunnel.push_back({10, 16.7, 0.0});
-
-    std::vector<Segment> creep{{30, 4.0, 0.0}, {6, 0.0, 0.0}};
-    for (int i = 0; i < 5; ++i) {
-        creep.push_back({4, 3.0, 0.0});
-        creep.push_back({3, 2.5, i % 2 ? 0.35 : -0.35});
-        creep.push_back({3, 0.0, 0.0});
-    }
-
-    // The stop segments were 3 s, which is not a stop: braking from 8 m/s at 3.5 m/s^2 takes 2.3 s,
-    // so the vehicle stood still for about half a second and the profile never exercised a real
-    // halt - every urban run reported zero zero-velocity updates. A signal-controlled junction
-    // holds traffic for tens of seconds; 12 s is still conservative.
-    std::vector<Segment> urban{{40, 12.0, 0.0}};
-    for (int i = 0; i < 6; ++i) {
-        urban.push_back({10, 13.0, 0.0});
-        urban.push_back({4, 8.0, i % 2 ? 0.25 : -0.25});
-        urban.push_back({12, 0.0, 0.0});
-    }
-
-    const std::vector<Profile> profiles{
-        {"REQ-P3  tunnel, ~1 km at 60 km/h", "p90 final error < 100 m", 40, 100, 0.10, tunnel},
-        {"REQ-P2  parking creep, ~50 m",     "p90 final error < 5 m",   30,   5, 0.0,  creep},
-        {"REQ-P1  urban blackout",           "p90 drift < 10 % of distance", 40, 0, 0.10, urban},
-    };
-
-    const bool constraints = !getenv("SETU_NO_DR");
-    std::printf("dead-reckoning constraints: %s\n", constraints ? "ON" : "OFF (GNSS-only baseline)");
-
-    int failures = 0;
-    for (const Profile& profile : profiles) {
-        std::printf("\n%s\n  target: %s\n", profile.name, profile.requirement);
-        std::vector<double> errors, ratios;
-        Result last;
-        int withheld = 0;
-        for (int index = 0; index < repeats; ++index) {
-            last = run(profile, 0xBEEFu + index * 7919u, geophysics, constraints);
-            if (!last.held) {
-                ++withheld;
-                errors.push_back(1e9);
-                ratios.push_back(1e9);
-                continue;
+    try {
+        if (argc > 1 && std::string(argv[1]) == "--self-test") { self_test(); return 0; }
+        const char* directory = argc > 1 ? argv[1] : "/data/local/tmp/setu-geophysics";
+        const int repeats = argc > 2 ? std::stoi(argv[2]) : 5;
+        const std::string algorithm = argc > 3 ? argv[3] : (std::getenv("SETU_NO_DR") ? "imu" : "car");
+        const int requested_duration = argc > 4 ? std::stoi(argv[4]) : 0;
+        const int requested_profile = argc > 5 ? std::stoi(argv[5]) : -1;
+        const std::array<int, 5> durations{10, 30, 60, 120, 180};
+        require(repeats >= 1 && repeats <= 20, "Repeats must be in 1..20");
+        require(algorithm == "cv" || algorithm == "imu" || algorithm == "car", "Algorithm must be cv, imu or car");
+        require(requested_duration == 0 || std::find(durations.begin(), durations.end(), requested_duration) != durations.end(), "Duration must be 0, 10, 30, 60, 120 or 180");
+        require(requested_profile >= -1 && requested_profile < static_cast<int>(profiles.size()), "Unknown profile index");
+        std::puts("{\"type\":\"protocol\",\"schema\":\"setu.road-stress.v1\",\"synthetic\":true,\"warmupSeconds\":120,\"sensorHz\":200,\"scoreHz\":10,\"targetMeters\":10,\"jointTarget\":0.9,\"missingCountsAsFailure\":true,\"reference\":\"synthetic phone trajectory, not Indian-road field truth\",\"absoluteAttitudeDuringBlackout\":false,\"speedLockedAxleLine\":false}");
+        int failed_cases = 0;
+        for (size_t profile_index = 0; profile_index < profiles.size(); profile_index++) {
+            if (requested_profile >= 0 && profile_index != static_cast<size_t>(requested_profile)) continue;
+            const Profile& profile = profiles[profile_index];
+            for (int duration : durations) {
+                if (requested_duration != 0 && duration != requested_duration) continue;
+                std::vector<double> final_errors, drift_ratios;
+                int outputs = 0, successes = 0, available = 0, unavailable_ends = 0;
+                for (int repeat = 0; repeat < repeats; repeat++) {
+                    const uint64_t seed = 0xBEEFu + repeat * 7919u;
+                    const Score score = run(profile, duration, seed, directory, algorithm);
+                    require(score.outputs == duration * 10 + 1, "The scored timeline must include every expected output");
+                    outputs += score.outputs;
+                    available += score.available;
+                    successes += score.within_ten;
+                    unavailable_ends += !std::isfinite(score.final_error);
+                    final_errors.push_back(std::isfinite(score.final_error) ? score.final_error : std::numeric_limits<double>::infinity());
+                    if (score.distance >= 1) drift_ratios.push_back(final_errors.back() / score.distance);
+                    std::printf("{\"type\":\"run\",\"profile\":\"%s\",\"algorithm\":\"%s\",\"seed\":%llu,\"durationSeconds\":%d,\"pathMeters\":%.8f,\"outputs\":%d,\"available\":%d,\"within5Meters\":%d,\"within10Meters\":%d,\"jointSuccess\":%.8f,\"finalErrorMeters\":%s,\"alongErrorMeters\":%s,\"crossErrorMeters\":%s,\"conditionalErrorP90Meters\":%s,\"conditionalSpeedErrorP90Mps\":%s,\"radiusCovered\":%d,\"radiusCount\":%d,\"peakInputAcceleration\":%.8f,\"peakInputGyro\":%.8f,\"clippedSamples\":%d,\"droppedSamples\":%d,\"pointTargetMet\":%s,\"carProfileApplicable\":%s}\n",
+                        profile.name, algorithm.c_str(), static_cast<unsigned long long>(seed), duration, score.distance,
+                        score.outputs, score.available, score.within_five, score.within_ten, score.success_rate(),
+                        number(score.final_error).c_str(), number(score.final_along).c_str(), number(score.final_cross).c_str(),
+                        number(percentile(score.errors, 0.9)).c_str(), number(percentile(score.speed_errors, 0.9)).c_str(),
+                        score.covered, score.radii, score.peak_acceleration, score.peak_rotation, score.clipped_samples,
+                        score.dropped_samples, score.meets_point_target() ? "true" : "false", profile.lean ? "false" : "true");
+                    std::fflush(stdout);
+                }
+                const double joint = outputs ? static_cast<double>(successes) / outputs : 0;
+                const double final_p90 = percentile(final_errors, 0.9);
+                const double drift_p90 = percentile(drift_ratios, 0.9);
+                const bool passed = joint >= 0.9 && unavailable_ends == 0 && !(algorithm == "car" && profile.lean) &&
+                    (profile.stopped ? final_p90 < 5 : drift_p90 < 0.1);
+                failed_cases += !passed;
+                std::printf("{\"type\":\"summary\",\"profile\":\"%s\",\"algorithm\":\"%s\",\"durationSeconds\":%d,\"runs\":%d,\"outputs\":%d,\"available\":%d,\"jointSuccess\":%.8f,\"finalErrorP90Meters\":%s,\"driftP90\":%s,\"unavailableEnds\":%d,\"benchmarkTargetMet\":%s,\"releaseApproved\":false}\n",
+                    profile.name, algorithm.c_str(), duration, repeats, outputs, available, joint,
+                    number(final_p90).c_str(), number(drift_p90).c_str(), unavailable_ends, passed ? "true" : "false");
             }
-            errors.push_back(last.final_error);
-            ratios.push_back(last.distance > 1 ? last.final_error / last.distance : 0);
         }
-        const double p90_error = percentile(errors, 0.9);
-        const double p90_ratio = percentile(ratios, 0.9);
-        std::printf("  last run: mount error %.1f deg, along-track %.0f m, cross-track %.0f m, speed error %+.1f m/s\n",
-
-                    last.mount_error_degrees, last.along_track, last.cross_track, last.speed_error);
-        std::printf("  blackout %.0f s over %.0f m   constraints: %d ZUPT, %d NHC, %d CTS, %d SVO (scale %.2f m/Hz), mount %.1f\n",
-                    last.blackout_seconds, last.distance, last.zupts, last.nhcs, last.cts,
-                    last.svo, last.svo_scale, last.mount_weight);
-        std::printf("  median final error %.1f m   p90 %.1f m   p90 drift %.1f %%   reported 95%% radius %.0f m   withheld %d/%d\n",
-                    percentile(errors, 0.5), p90_error, p90_ratio * 100, last.reported_radius, withheld, repeats);
-        bool pass = withheld == 0;
-        if (profile.limit_metres > 0 && p90_error > profile.limit_metres) pass = false;
-        if (profile.ratio_limit > 0 && p90_ratio > profile.ratio_limit) pass = false;
-        std::printf("  %s\n", pass ? "PASS" : "FAIL");
-        if (!pass) ++failures;
+        return failed_cases == 0 ? 0 : 1;
+    } catch (const std::exception& failure) {
+        std::fprintf(stderr, "%s\n", failure.what());
+        return 2;
     }
-    std::printf("\n%d of %zu profiles failed\n", failures, profiles.size());
-    return failures == 0 ? 0 : 1;
 }

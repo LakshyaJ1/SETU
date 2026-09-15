@@ -1,0 +1,35 @@
+{
+  "androidJvm": {
+    "tests": 96,
+    "failures": 0,
+    "errors": 0
+  },
+  "pythonFocused": {
+    "tests": 17,
+    "passed": 17,
+    "command": "python -m pytest tests/test_collection.py tests/test_recording_analysis.py -q"
+  },
+  "pythonFull": {
+    "total": 230,
+    "passed": 227,
+    "skipped": 2,
+    "failed": 1,
+    "failure": "tests/test_eval_and_report.py::TestReport::test_renders_valid_standalone_html",
+    "preexistingReportAndTestUnchangedFrom": "8d0c613"
+  },
+  "ruff": {
+    "changedPythonFiles": "passed"
+  },
+  "androidLint": {
+    "Warning": 25
+  },
+  "androidPhone": {
+    "tests": 23,
+    "passed": 23,
+    "skipped": 0,
+    "seconds": 237.061,
+    "apkSha256": "dca73580e84cfd89efd7bdbd51cb169a4d3157d23f1946d2718b375cc0751539",
+    "physicalDevice": "OnePlus CPH2467",
+    "replayIdenticalToMeasuredCandidate": true
+  }
+}

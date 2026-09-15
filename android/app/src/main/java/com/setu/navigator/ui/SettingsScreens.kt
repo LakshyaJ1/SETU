@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -22,6 +23,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.setu.navigator.BuildConfig
@@ -35,6 +37,7 @@ fun SettingsScreen(model: SetuViewModel) {
     val maps by model.activeMap.collectAsStateWithLifecycle()
     var choice by remember { mutableStateOf<String?>(null) }
     var showBackgroundHelp by remember { mutableStateOf(false) }
+    var stepLength by remember(settings.walkingStepLengthMeters) { mutableStateOf("%.2f".format(java.util.Locale.US, settings.walkingStepLengthMeters)) }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
         PageHeader("Make it yours", "A few preferences. A lot of open road.")
         Column(Modifier.padding(horizontal = 24.dp)) {
@@ -54,8 +57,18 @@ fun SettingsScreen(model: SetuViewModel) {
             // integration" used to sit directly under the everyday preferences, which made the
             // whole screen read like a lab bench; they are still one tap away, under a heading that
             // says who they are for.
-            SectionTitle("Your drive")
-            PreferenceRow("Vehicle", settings.vehicle, Icons.Outlined.DirectionsCar) { choice = "Vehicle" }
+            SectionTitle("Your journey")
+            PreferenceRow("Activity", settings.vehicle, Icons.Outlined.DirectionsCar) { choice = "Activity" }
+            if (settings.vehicle == "Walking") {
+                val parsed = stepLength.replace(',', '.').toDoubleOrNull()?.takeIf { it.isFinite() && it in 0.3..1.2 }
+                OutlinedTextField(stepLength, { stepLength = it.take(8) }, label = { Text("Step length in metres") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), singleLine = true,
+                    isError = parsed == null, modifier = Modifier.fillMaxWidth().testTag("walking-step-length"))
+                Text("Walk a measured 10 m and count steps. Step length = 10 ÷ count. Use Walking only on foot, with the phone pointing along travel. This does not enable pedestrian routing.",
+                    style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(vertical = 8.dp))
+                TextButton(onClick = { parsed?.let { model.updateSettings(settings.copy(walkingStepLengthMeters = it)) } },
+                    enabled = parsed != null && parsed != settings.walkingStepLengthMeters) { Text("Save step length") }
+            }
             PreferenceRow("Speed units", settings.units, Icons.Outlined.Speed) { choice = "Speed units" }
             ListItem(headlineContent = { Text("Keep screen awake") }, supportingContent = { Text("During navigation and replay") },
                 leadingContent = { Icon(Icons.Outlined.WbSunny, null) },
@@ -92,7 +105,7 @@ fun SettingsScreen(model: SetuViewModel) {
         dismissButton = { TextButton(onClick = { showBackgroundHelp = false }) { Text("Not now") } }
     )
     if (choice != null) {
-        val options = when (choice) { "Appearance" -> listOf("System", "Light", "Dark"); "Speed units" -> listOf("km/h", "mph"); else -> listOf("Car", "Two-wheeler", "Heavy vehicle") }
+        val options = when (choice) { "Appearance" -> listOf("System", "Light", "Dark"); "Speed units" -> listOf("km/h", "mph"); else -> listOf("Walking", "Car", "Two-wheeler", "Heavy vehicle") }
         val current = when (choice) { "Appearance" -> settings.theme; "Speed units" -> settings.units; else -> settings.vehicle }
         AlertDialog(onDismissRequest = { choice = null }, title = { Text(choice!!) },
             text = {
@@ -142,9 +155,19 @@ fun ModelSettingsScreen(model: SetuViewModel) {
         confirmButton = { TextButton(onClick = { confirmSharing = false; model.updateSettings(settings.copy(modelSharingAllowed = true)) }) { Text("Enable sharing") } },
         dismissButton = { TextButton(onClick = { confirmSharing = false }) { Text("Keep on phone") } },
     )
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding()) {
+    Column(Modifier.fillMaxSize().navigationBarsPadding()) {
         PageHeader("Research model server", "Connect and inspect a learned-speed server. Navigation does not depend on it.", onBack = { model.overlay = null })
-        Column(Modifier.padding(horizontal = 24.dp)) {
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp)) {
+            SectionTitle("Evaluation source")
+            ListItem(
+                headlineContent = { Text("Run local speed model") },
+                supportingContent = { Text("Runs on this phone without internet. Evaluation only; no sensor uploads.") },
+                trailingContent = { Switch(settings.onDeviceSpeedModel, { enabled ->
+                    model.updateSettings(settings.copy(onDeviceSpeedModel = enabled, modelSharingAllowed = false))
+                }, modifier = Modifier.semantics { contentDescription = "Run local speed model" }.testTag("local-model")) },
+                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+            )
+            if (settings.onDeviceSpeedModel) InformationNote("Local evaluation is active. Turn it off to enable optional server sharing below.")
             Surface(shape = SetuShape.card, color = MaterialTheme.colorScheme.surfaceContainer) {
                 Column(Modifier.fillMaxWidth().padding(20.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -173,7 +196,7 @@ fun ModelSettingsScreen(model: SetuViewModel) {
                 supportingContent = { Text("Off by default. Sends live IMU windows, never GPS coordinates or saved trips.") },
                 trailingContent = { Switch(settings.modelSharingAllowed, { enabled ->
                     if (enabled) confirmSharing = true else model.updateSettings(settings.copy(modelSharingAllowed = false))
-                }, enabled = endpoint == settings.modelEndpoint && endpoint.isNotBlank(), modifier = Modifier
+                }, enabled = settings.vehicle != "Walking" && !settings.onDeviceSpeedModel && endpoint == settings.modelEndpoint && endpoint.isNotBlank(), modifier = Modifier
                     .semantics { contentDescription = "Share sensor windows during recording" }.testTag("model-sharing")) },
                 colors = ListItemDefaults.colors(containerColor = Color.Transparent),
             )
@@ -187,7 +210,7 @@ fun ModelSettingsScreen(model: SetuViewModel) {
                 ReadingRow("Reported sigma · unverified", "%.2f m/s".format(measurement.sigmaMps), Icons.Outlined.Science)
                 ReadingRow("Model validity", "%.2f".format(measurement.validity), Icons.Outlined.VerifiedUser)
             } else if (inference.measurement != null) {
-                Text("Last model result is stale; no current prediction.", Modifier.padding(top = 8.dp), style = MaterialTheme.typography.bodySmall)
+                Text("No usable speed: the result is expired or has zero validity. Research outputs are retained in recordings, not shown as measured motion.", Modifier.padding(top = 8.dp), style = MaterialTheme.typography.bodySmall)
             }
             inference.latencyMs?.let { ReadingRow("Last request latency", "$it ms", Icons.Outlined.Schedule) }
             inference.health?.reason?.let { InformationNote(it) }
@@ -195,7 +218,7 @@ fun ModelSettingsScreen(model: SetuViewModel) {
             ReadingRow("Protocol", "setu.model.v1", Icons.Outlined.DataObject)
             ReadingRow("Health endpoint", "GET /v1/health", Icons.Outlined.MonitorHeart)
             ReadingRow("Measurement endpoint", "POST /v1/measurements", Icons.Outlined.Sensors)
-            InformationNote("Connection checks send no sensor data. Live results are recorded for evaluation, not fused into navigation. The remote model needs internet; GPS, local maps and recording do not. No on-device model is bundled.")
+            InformationNote("Connection checks send no sensor data. Remote results are for evaluation, not navigation. The bundled car model runs locally but is not deployment-approved. Walking uses detected steps instead. GPS, local maps and recording work without internet.")
             if (BuildConfig.DEBUG) InformationNote("Emulator development: http://10.0.2.2:8765 reaches a server on your computer. Other servers require HTTPS.")
             Spacer(Modifier.height(24.dp))
         }

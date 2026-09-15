@@ -2,17 +2,11 @@ package com.setu.navigator.data
 
 import org.json.JSONObject
 import java.io.BufferedWriter
+import java.io.IOException
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
-/**
- * Hot-path sink for raw sensor samples.
- *
- * Implementations must not allocate, block, lock or touch disk: this is called from the sensor
- * HandlerThread at the full device rate (accelerometer, gyroscope, magnetometer and both rotation
- * vectors, so roughly a thousand callbacks a second on a 200 Hz phone).
- */
 interface SensorSink {
     fun sensor(type: String, tNs: Long, values: FloatArray, count: Int, accuracy: Int)
 }
@@ -24,20 +18,15 @@ interface SensorSink {
  * sensor callback and then serialised and wrote it inline, under a lock the UI thread also wanted.
  * At ~1000 callbacks a second that dominated the sensor thread and contended with settings writes.
  *
- * Here the producer side only copies primitives into a pooled record and offers it to a bounded
- * queue, so the sensor thread never allocates, never serialises and never blocks. Formatting,
- * buffering and flushing happen on the writer thread. The emitted text is byte-for-byte what the
- * previous `JSONObject.toString()` path produced, so existing recordings, replay, export and import
- * are unaffected.
- *
  * Overflow is counted, never silent: a full queue increments [dropped] rather than stalling
  * acquisition, matching the logging rule in `docs/04` that dropped samples must be accounted for.
  */
 class LogRecorder(
     private val writer: BufferedWriter,
-    private val derive: (String) -> JSONObject?,
     private val onProgress: (records: Long, dropped: Long) -> Unit,
     private val onError: (Exception) -> Unit,
+    private val clockNs: () -> Long = System::nanoTime,
+    private val closeTimeoutMs: Long = 4000L,
 ) : SensorSink, AutoCloseable {
 
     private class Sample {
@@ -71,8 +60,17 @@ class LogRecorder(
 
     // ------------------------------------------------------------------ producer side
 
+    @Synchronized
     override fun sensor(type: String, tNs: Long, values: FloatArray, count: Int, accuracy: Int) {
         if (!running) return
+        if (type !in SENSOR_TYPES || tNs <= 0 || count !in 1..minOf(MAX_VALUES, values.size)) {
+            dropCount.incrementAndGet()
+            return
+        }
+        for (index in 0 until count) if (!values[index].isFinite()) {
+            dropCount.incrementAndGet()
+            return
+        }
         val sample = pool.poll()
         if (sample == null) { dropCount.incrementAndGet(); return }
         sample.type = type
@@ -87,6 +85,7 @@ class LogRecorder(
     }
 
     /** Low-rate structured records: poses, GNSS epochs, native state, model measurements. */
+    @Synchronized
     fun document(record: JSONObject) {
         if (!running) return
         if (!queue.offer(record)) dropCount.incrementAndGet()
@@ -111,11 +110,15 @@ class LogRecorder(
                     onProgress(recordCount.get(), dropCount.get())
                 }
             }
+            writer.appendLine(JSONObject().put("type", "end").put("tNs", clockNs()).put("droppedRecords", dropCount.get()).toString())
+            recordCount.incrementAndGet()
             writer.flush()
         } catch (error: Exception) {
             failure = error
             running = false
             onError(error)
+        } finally {
+            try { writer.close() } catch (error: Exception) { failure = failure ?: error }
         }
     }
 
@@ -137,19 +140,12 @@ class LogRecorder(
         val record = entry as JSONObject
         writer.append(record.toString()).append('\n')
         recordCount.incrementAndGet()
-        val type = record.optString("type")
-        if (type == "pose" || type == "native_pose") {
-            derive(type)?.let {
-                writer.append(it.toString()).append('\n')
-                recordCount.incrementAndGet()
-            }
-        }
     }
 
     override fun close() {
-        if (!running) { runCatching { thread.join(CLOSE_TIMEOUT_MS) }; return }
-        running = false
-        runCatching { thread.join(CLOSE_TIMEOUT_MS) }
+        synchronized(this) { running = false }
+        thread.join(closeTimeoutMs)
+        if (thread.isAlive) throw IOException("Recording is still draining; its raw file is retained for recovery.")
         failure?.let { throw it }
     }
 
@@ -157,7 +153,7 @@ class LogRecorder(
         private const val CAPACITY = 4096
         private const val MAX_VALUES = 6
         private const val FLUSH_INTERVAL_NS = 1_000_000_000L
-        private const val CLOSE_TIMEOUT_MS = 4000L
+        private val SENSOR_TYPES = setOf("accelerometer", "gyroscope", "magnetometer", "rotation_vector", "game_rotation_vector", "barometer", "step_detector")
 
         /**
          * Reproduces `org.json.JSONObject.numberToString` for a float, so the recorder's output is

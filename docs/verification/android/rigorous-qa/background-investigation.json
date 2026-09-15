@@ -1,0 +1,38 @@
+{
+    "schema":  "setu.background-investigation.v1",
+    "date":  "2026-09-15",
+    "baselineApkSha256":  "aee9c5706879a44790b62d4347df75e6bbe3366e08c1d564e6d4fa437a208d5b",
+    "candidateApkSha256":  "bf4ec19ae8b6aff661e9dc5653373f093310e046de77d0399163cd1bf33f0475",
+    "candidateRetained":  false,
+    "foregroundWithAllRadiosOffPassed":  true,
+    "instrumentedBackgroundDelayMs":  412991,
+    "batterySaverOffBackgroundDelayMs":  155377,
+    "candidateBackgroundDelayMs":  159940,
+    "manualForegroundRecoveryUsed":  true,
+    "debuggerAttachedAfterFirstStall":  true,
+    "androidBatteryWhitelist":  true,
+    "oemAllowBackgroundActivity":  true,
+    "oemBatteryOptimisation":  "Do not optimise",
+    "normalApp":  {
+                      "backgroundSeconds":  45.710000000020955,
+                      "streams":  {
+                                      "accelerometer":  {
+                                                            "count":  5947,
+                                                            "hz":  130.10282213951595,
+                                                            "maximumGapMs":  15951.06404
+                                                        },
+                                      "gyroscope":  {
+                                                        "count":  5948,
+                                                        "hz":  130.12469919048945,
+                                                        "maximumGapMs":  15946.05904
+                                                    }
+                                  },
+                      "endRecordPresent":  true,
+                      "instrumented":  false,
+                      "batterySaverEnabled":  false,
+                      "locationEnabled":  false,
+                      "wifiEnabled":  false,
+                      "mobileDataEnabled":  false
+                  },
+    "conclusion":  "Background suspension remains unresolved. Foreground recording and background recording are separate claims. Battery Saver and service-type experiments did not resolve it; no speculative foreground-service permission change is retained."
+}

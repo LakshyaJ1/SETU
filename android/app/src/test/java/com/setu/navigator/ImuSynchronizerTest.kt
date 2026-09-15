@@ -59,6 +59,16 @@ class ImuSynchronizerTest {
         assertEquals(gps, navigationPose(gps, NativeEstimate(), true, 1_000_000_000))
     }
 
+    @Test fun scooterNavigationPrefersGoodGpsAndUsesSensorsOnlyWhenGpsIsStale() {
+        val gps = Pose(GeoPoint(12.9, 77.6), accuracyMeters = 5.0, timestampNs = 1_000_000_000)
+        val fused = gps.copy(source = "Native inertial", timestampNs = 3_100_000_000)
+        val estimate = NativeEstimate(pose = fused, vehicleConstraintsEnabled = false)
+        assertEquals(gps, navigationPose(gps, estimate.copy(pose = fused.copy(timestampNs = gps.timestampNs)), true, 1_000_000_000))
+        assertEquals(fused, navigationPose(gps, estimate, true, 3_200_000_000))
+        assertEquals(gps, navigationPose(gps, estimate, false, 3_200_000_000))
+        assertEquals(fused, navigationPose(gps.copy(timestampNs = 3_100_000_000, accuracyMeters = 300.0), estimate, true, 3_200_000_000))
+    }
+
     @Test
     fun missingHeadingAccuracyExplainsFallbackWithoutInventingAPose() {
         val gps = Pose(GeoPoint(12.9, 77.6), timestampNs = 1_000_000_000)

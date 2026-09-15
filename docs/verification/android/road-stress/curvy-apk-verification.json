@@ -1,0 +1,40 @@
+﻿{
+    "artifact":  "dist/android/SETU-curvy-demo.apk",
+    "sha256":  "aee9c5706879a44790b62d4347df75e6bbe3366e08c1d564e6d4fa437a208d5b",
+    "bytes":  212472310,
+    "signatureVerified":  true,
+    "zip16KiBAligned":  true,
+    "installedSha256Matches":  true,
+    "developmentBuild":  true,
+    "navigationAccuracyApproved":  false,
+    "jvmTestsPassed":  102,
+    "demoRenderedFeatureTestsPassed":  1,
+    "demoRenderedFeatureSeconds":  48.641,
+    "physicalRegressionTestsPassed":  25,
+    "physicalRegressionSeconds":  138.392,
+    "combined":  {
+                     "testsRun":  26,
+                     "passed":  25,
+                     "failures":  1,
+                     "seconds":  138.3,
+                     "failedTest":  "MapRenderingTest.ncrTilesRenderAcrossZoomsAndRepeatedMapDisposalWithoutHeapGrowth",
+                     "observedPssKiB":  864934,
+                     "ceilingPssKiB":  716800,
+                     "thresholdUnchanged":  true,
+                     "log":  "curvy-combined-tests.log"
+                 },
+    "intermediateCombinedFailure":  {
+                                        "observedPssKiB":  752599,
+                                        "log":  "curvy-intermediate-combined-tests.log",
+                                        "finalArtifact":  false
+                                    },
+    "focusedPythonTestsPassed":  49,
+    "lintErrors":  0,
+    "lintWarnings":  25,
+    "ruffPassed":  true,
+    "modelWeightsChanged":  false,
+    "modelManifestSha256":  "6cb17b57076e09028b9761e835dc6fc1fe7e3708a2d01b9785608a675d432972",
+    "researchModelInstalled":  false,
+    "productionNativeEngineChangedFromPooledBuild":  false,
+    "all37OriginalRecordingsUnchanged":  true
+}

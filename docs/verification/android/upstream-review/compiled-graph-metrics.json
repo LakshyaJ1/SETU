@@ -1,0 +1,18 @@
+{
+  "scenario": "Full NCR compiled graph cold\/warm\/corrupt-cache routes; no driving accuracy claim",
+  "device": "CPH2467",
+  "sdk": 35,
+  "coldPreparationMs": 16932,
+  "warmOpenMs": 6476,
+  "routeMs": 8510,
+  "repeatedRouteMs": 2098,
+  "startCandidateEdges": 727808,
+  "spatialIndexBytes": 906912,
+  "distanceMeters": 25796.291963023516,
+  "nodes": 3185592,
+  "edges": 7255057,
+  "sampledPssKiB": 2088545,
+  "javaHeapUsedBytes": 33114880,
+  "peakMemoryMeasured": false,
+  "mapRendererLoaded": false
+}

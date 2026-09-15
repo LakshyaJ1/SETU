@@ -1,5 +1,15 @@
 # DESIGN.md
 
+## Metrics PDF exception
+
+`metrics.pdf` extends the established daylight Android identity in
+`android/DESIGN.md`, not the dark HTML report below. Its surface strategy is
+`docs/metrics-design-brief.md`. Use forest `#195A40`, neutral paper `#F4F6F2`,
+surface `#FCFDF9`, ink `#202A23`, secondary ink `#5F6E62` and blue `#176C96` for
+measured-series distinction. Embed a legible sans font; keep all charts vector
+and all labels selectable. Failure and missing values need text, not color alone.
+This does not change the existing HTML report or Android interface.
+
 Durable visual decisions for SETU's surfaces. Derived from the shipped report
 generator in [`setu/report/`](setu/report/), not from intentions.
 

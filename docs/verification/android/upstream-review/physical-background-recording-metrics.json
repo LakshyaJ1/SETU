@@ -1,0 +1,32 @@
+{
+  "scenario": "Actual Android IMU callbacks during background recording; no driving accuracy claim",
+  "mode": "background",
+  "requestedDurationMs": 60000,
+  "device": "CPH2467",
+  "locationEnabled": false,
+  "batterySaverEnabled": true,
+  "backgroundMs": 60828,
+  "backgroundSensorEvents": 33443,
+  "backgroundLastSampleAgeNs": 34579614,
+  "nativePairedSamples": 12461,
+  "pairingDrops": 0,
+  "records": {
+    "accelerometer": 12375,
+    "gyroscope": 12375,
+    "magnetometer": 3097,
+    "rotation_vector": 3093,
+    "game_rotation_vector": 3093,
+    "native_state": 62,
+    "model_measurement": 58,
+    "end": 1
+  },
+  "maximumImuGapNs": {
+    "accelerometer": 5006146,
+    "gyroscope": 5006146
+  },
+  "modelSharingEnabled": false,
+  "recordingSaved": true,
+  "existingTripCount": 21,
+  "localInferredWindows": 58,
+  "vehicle": "Car"
+}

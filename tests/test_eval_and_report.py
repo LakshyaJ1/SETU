@@ -276,13 +276,17 @@ class TestReport:
 
     def test_renders_valid_standalone_html(self, result):
         from setu.report import render_report
+        from setu.report.page import SWEEP_SCRIPT
 
         html = render_report(result)
         assert html.startswith("<!doctype html>")
         assert html.count("<svg") >= 3  # hero, coverage, trajectory
         assert "</html>" in html
-        # Self-contained: no script tags, no external stylesheet beyond fonts.
-        assert "<script" not in html
+        assert SWEEP_SCRIPT in html
+        assert "<script" not in html.replace(SWEEP_SCRIPT, "")
+        injected = render_report(replace(result, route='<script src="https://invalid.test"></script>'))
+        assert "<script" not in injected.replace(SWEEP_SCRIPT, "")
+        assert "&lt;script" in injected
         assert html.count("<link") == 3  # two preconnects plus the font stylesheet
 
     def test_reports_the_conditions_with_the_numbers(self, result):

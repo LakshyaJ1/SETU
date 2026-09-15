@@ -9,7 +9,7 @@ typedef struct SetuEngine SetuEngine;
 /* 20..22 carry the dead-reckoning constraint counters (ZUPT, NHC, coordinated-turn
    speed) so callers can see the GNSS-denied path is actually engaging; 24..25 the
    spectral-odometer update count and its learned metres-per-hertz scale. */
-enum { SETU_ESTIMATE_SIZE = 30 };
+enum { SETU_ESTIMATE_SIZE = 31 };
 SetuEngine* setu_engine_create(const char* magnetic_directory);
 void setu_engine_destroy(SetuEngine* engine);
 int setu_engine_attitude(SetuEngine* engine, int64_t timestamp_ns, const double rotation[9], double heading_sigma);

@@ -1,0 +1,13 @@
+{
+  "observedSteps": 84,
+  "positionedSteps": 84,
+  "rejectedSteps": 0,
+  "gpsOffOutputs": 710,
+  "gpsOffAvailable": 618,
+  "peakSpeedMps": 1.3987661721385813,
+  "finalSpeedMps": 0,
+  "initialHeadingSource": "Recorded initial native bearing; calibration predates this recording",
+  "initialHeadingSigmaRadians": 0.6,
+  "compassInitializationValidated": false,
+  "groundTruthAccuracyMeasured": false
+}

@@ -21,7 +21,7 @@ class ModelConsentTest {
             override fun getSharedPreferences(name: String, mode: Int) = base.getSharedPreferences("$namespace-$name", mode)
         }
         val preferences = isolated.getSharedPreferences("setu-settings", Context.MODE_PRIVATE)
-        preferences.edit().putBoolean("modelSharingAllowed", true).commit()
+        preferences.edit().putBoolean("modelSharingAllowed", true).putBoolean("onDeviceSpeedModel", false).commit()
         val repository = SetuRepository(isolated)
         assertFalse(repository.settings.value.modelSharingAllowed)
         assertNull(repository.hub.modelSession)

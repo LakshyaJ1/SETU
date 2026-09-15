@@ -1,0 +1,21 @@
+{
+    "artifact":  "dist/android/SETU-heading-bootstrap.apk",
+    "sha256":  "6908ea59f2efe142d8fd61eb786e465a87bbd5fcfce3b41f3181c1cb488a6b64",
+    "bytes":  212472310,
+    "signatureVerified":  true,
+    "zip16KiBAligned":  true,
+    "installedSha256Matches":  true,
+    "developmentBuild":  true,
+    "navigationAccuracyApproved":  false,
+    "jvmTestsPassed":  100,
+    "physicalRegressionTestsPassed":  25,
+    "physicalRegressionSeconds":  140.491,
+    "longWarmupReplayTestsPassed":  1,
+    "longWarmupReplayCombinations":  15,
+    "longWarmupReplaySeconds":  371.789,
+    "longWarmupReplayApkSha256":  "6908ea59f2efe142d8fd61eb786e465a87bbd5fcfce3b41f3181c1cb488a6b64",
+    "focusedPythonTestsPassed":  41,
+    "lintErrors":  0,
+    "lintWarnings":  25,
+    "modelWeightsChanged":  false
+}

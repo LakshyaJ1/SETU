@@ -1,0 +1,65 @@
+[
+  {
+    "recordingId": "673f47d7-f578-446d-84c7-d87b9c33470d",
+    "sourceSha256": "e4b6afa950a8bbbdae36c05c709609e8b7824ee82cdc74a4ae827307597602a3",
+    "durationSeconds": 1870,
+    "referenceSeconds": 1359,
+    "pairedSeconds": 1359,
+    "sessionIssues": [
+      "mount_unconfirmed",
+      "vehicle_outside_current_speed_model"
+    ],
+    "blackoutOutputs": 932,
+    "availableBlackoutOutputs": 9,
+    "blackoutStatuses": {
+      "Calibrating sensors": 610,
+      "Phone moved · realigning": 292,
+      "GPS + IMU estimate": 1,
+      "Inertial estimate": 8,
+      "Estimate withheld": 21
+    },
+    "referenceComparisons": 0,
+    "errorMetersP50P95Max": [],
+    "deploymentApproved": false
+  },
+  {
+    "recordingId": "605053b4-542f-4cbc-9c83-6b646fdaca07",
+    "sourceSha256": "4a840386dfae396612e77381eeca70a8edfbe24bb6129605f1074b1a8adee7f9",
+    "durationSeconds": 636,
+    "referenceSeconds": 466,
+    "pairedSeconds": 466,
+    "sessionIssues": [
+      "mount_unconfirmed",
+      "vehicle_outside_current_speed_model"
+    ],
+    "blackoutOutputs": 308,
+    "availableBlackoutOutputs": 0,
+    "blackoutStatuses": {
+      "Calibrating sensors": 308
+    },
+    "referenceComparisons": 0,
+    "errorMetersP50P95Max": [],
+    "deploymentApproved": false
+  },
+  {
+    "recordingId": "3c2fc68f-15c8-4e69-8839-1252724c1a22",
+    "sourceSha256": "071d2590117086f1a0929161a18a5878d4f361e3dd34dac75a63135bd751fa40",
+    "durationSeconds": 1071,
+    "referenceSeconds": 707,
+    "pairedSeconds": 707,
+    "sessionIssues": [
+      "mount_unconfirmed",
+      "vehicle_outside_current_speed_model"
+    ],
+    "blackoutOutputs": 533,
+    "availableBlackoutOutputs": 0,
+    "blackoutStatuses": {
+      "Calibrating sensors": 238,
+      "Phone moved · realigning": 282,
+      "Estimate withheld": 13
+    },
+    "referenceComparisons": 0,
+    "errorMetersP50P95Max": [],
+    "deploymentApproved": false
+  }
+]

@@ -1,0 +1,97 @@
+{
+    "schema":  "setu.phone-speed-cpu-result.v1",
+    "deploymentApproved":  false,
+    "status":  "completed",
+    "diagnosticOnly":  true,
+    "hardware":  "Intel CPU, 4 training threads, 16 GB host RAM",
+    "elapsedSeconds":  407.89100000000326,
+    "epochsPerFit":  40,
+    "initialization":  "Random weights; this is training, not fine-tuning a pretrained model",
+    "totalWindows":  2125,
+    "labelReference":  "Quality-filtered phone GNSS speed, not independent ground truth",
+    "split":  "Leave one entire ride out; same phone/day cohort, not independent validation",
+    "folds":  [
+                  {
+                      "ride":  "9.007 km",
+                      "completedEpochs":  40,
+                      "trainWindows":  1001,
+                      "model":  {
+                                    "windows":  1124,
+                                    "maeMps":  2.3830020427703857,
+                                    "rmseMps":  3.3980038166046143,
+                                    "absoluteErrorP90Mps":  6.258844375610352,
+                                    "within1Mps":  0.3763345195729537,
+                                    "stationaryWindows":  105,
+                                    "stationaryPredictedSpeedP90Mps":  1.734375
+                                },
+                      "trainMedianBaseline":  {
+                                                  "windows":  1124,
+                                                  "maeMps":  2.0186805725097656,
+                                                  "rmseMps":  2.6465537548065186,
+                                                  "absoluteErrorP90Mps":  4.473688125610352,
+                                                  "within1Mps":  0.3407473309608541,
+                                                  "stationaryWindows":  105,
+                                                  "stationaryPredictedSpeedP90Mps":  2.773503303527832
+                                              },
+                      "checkpointSha256":  "088301a043eee0fffc04bb75ef394457c3fd7b8ed59054531bdac9fdec1bc3c2"
+                  },
+                  {
+                      "ride":  "2.387 km",
+                      "completedEpochs":  40,
+                      "trainWindows":  1695,
+                      "model":  {
+                                    "windows":  430,
+                                    "maeMps":  1.7238374948501587,
+                                    "rmseMps":  2.7484495639801025,
+                                    "absoluteErrorP90Mps":  4.8924150466918945,
+                                    "within1Mps":  0.5302325581395348,
+                                    "stationaryWindows":  167,
+                                    "stationaryPredictedSpeedP90Mps":  0.3034060001373291
+                                },
+                      "trainMedianBaseline":  {
+                                                  "windows":  430,
+                                                  "maeMps":  2.7008631229400635,
+                                                  "rmseMps":  3.3130974769592285,
+                                                  "absoluteErrorP90Mps":  5.124700546264648,
+                                                  "within1Mps":  0.24186046511627907,
+                                                  "stationaryWindows":  167,
+                                                  "stationaryPredictedSpeedP90Mps":  3.456453800201416
+                                              },
+                      "checkpointSha256":  "8fdb286dd2c0c73761fb8533f227279d923d2bb511f5f8ac4fb370016f8bd866"
+                  },
+                  {
+                      "ride":  "3.423 km",
+                      "completedEpochs":  40,
+                      "trainWindows":  1554,
+                      "model":  {
+                                    "windows":  571,
+                                    "maeMps":  0.8438842296600342,
+                                    "rmseMps":  1.1490494012832642,
+                                    "absoluteErrorP90Mps":  1.8886862993240356,
+                                    "within1Mps":  0.6742556917688266,
+                                    "stationaryWindows":  101,
+                                    "stationaryPredictedSpeedP90Mps":  2.910773277282715
+                                },
+                      "trainMedianBaseline":  {
+                                                  "windows":  571,
+                                                  "maeMps":  1.3605763912200928,
+                                                  "rmseMps":  1.8033528327941895,
+                                                  "absoluteErrorP90Mps":  3.527967691421509,
+                                                  "within1Mps":  0.521891418563923,
+                                                  "stationaryWindows":  101,
+                                                  "stationaryPredictedSpeedP90Mps":  3.527967691421509
+                                              },
+                      "checkpointSha256":  "a1f13f6f9c3b3a2596598807e3fcf6460b25e030b9eb17e9e2e34f4a4b8218d8"
+                  }
+              ],
+    "allRidesCheckpointSha256":  "2d03d418acbdb17d3cb6599141881142b87a9646379c386896f955b6d1bcaf44",
+    "independentValidation":  false,
+    "androidModelChanged":  false,
+    "modelArchitectureSha256":  "5828856e6aee0458110ccc76d30648f76d014b916027c79930251efdd4877ad6",
+    "limitations":  [
+                        "Only the three selected rides above 1 km; 28 m excluded",
+                        "Same phone and day; unknown mounts and late orientation change retained",
+                        "Speed metrics are not GPS-free positioning accuracy",
+                        "Standstill false-speed errors remain; no model promotion or TFLite deployment"
+                    ]
+}

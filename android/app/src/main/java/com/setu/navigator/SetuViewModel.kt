@@ -217,14 +217,15 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
         tab = "Trips"
     }
 
-    fun startRecording(name: String = "My drive") {
+    fun startRecording(name: String = "My drive", fixedMount: Boolean = false) {
+        if (busy) { notify("Wait for the current file operation to finish."); return }
         if (mapBusy) { notify("Finish or cancel the map operation before recording."); return }
         if (recording.value) return
         if (!repository.hub.hasLocationPermission()) { notify("Allow precise location to record GPS alongside sensors."); return }
         if (replayTrip != null) closeReplay()
         val context = getApplication<Application>()
         try {
-            context.startForegroundService(Intent(context, RecordingService::class.java).putExtra("name", name))
+            context.startForegroundService(Intent(context, RecordingService::class.java).putExtra("name", name).putExtra("fixedMount", fixedMount))
         } catch (error: Exception) { navigating = false; notify("Recording could not start: ${error.message}") }
     }
 
@@ -408,6 +409,44 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    var trainingExportSummary by mutableStateOf<String?>(null)
+        private set
+
+    fun exportTrainingTrip(trip: Trip, uri: Uri) {
+        if (busy || recording.value) { notify("Stop recording and finish other file operations before exporting training data."); return }
+        busy = true
+        trainingExportSummary = "Preparing synchronized data and GPS-withheld replay. Keep SETU open."
+        viewModelScope.launch {
+            val context = getApplication<Application>()
+            try {
+                val summary = withContext(Dispatchers.IO) {
+                    val operation = currentCoroutineContext()
+                    val temporary = java.io.File.createTempFile("setu-training-", ".zip", context.cacheDir)
+                    try {
+                        val report = GnssShadowReplay(context).use { replay ->
+                            temporary.outputStream().use { output ->
+                                TrainingArchive.export(repository.tripStore.logFile(trip.id), output, replay) { operation.ensureActive() }
+                            }
+                        }
+                        operation.ensureActive()
+                        context.contentResolver.openOutputStream(uri, "wt")?.use { output ->
+                            temporary.inputStream().use { it.copyTo(output) }
+                        } ?: error("The selected location cannot be written.")
+                        report
+                    } finally { temporary.delete() }
+                }
+                trainingExportSummary = "Training bundle saved: ${summary.getInt("pairedSeconds")} quality-paired seconds of ${summary.getLong("durationSeconds")}. Session issues: ${summary.getJSONArray("issues")}. Review manifest.json before training."
+                messages.emit("Training bundle exported. No model was changed.")
+            } catch (cancelled: CancellationException) {
+                trainingExportSummary = "Export cancelled. Retry from this recording."
+                throw cancelled
+            } catch (error: Exception) {
+                trainingExportSummary = "Training export failed: ${error.message}. Free storage and retry. The original is unchanged."
+                messages.emit("Training export failed. Your original recording is safe.")
+            } finally { busy = false }
+        }
+    }
+
     fun exportTrip(trip: Trip, uri: Uri) {
         viewModelScope.launch {
             try {
@@ -436,6 +475,7 @@ class SetuViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
     fun deleteTrip(trip: Trip) {
+        if (busy) { notify("Wait for the current file operation to finish."); return }
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.IO) { repository.tripStore.delete(trip); repository.refreshTrips() }

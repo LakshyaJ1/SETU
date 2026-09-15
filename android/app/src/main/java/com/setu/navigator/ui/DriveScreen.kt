@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.setu.navigator.SetuViewModel
@@ -49,7 +50,9 @@ fun DriveScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Un
     var following by rememberSaveable(recording, model.replayTrip?.id) { mutableStateOf(recording) }
     var now by remember { mutableLongStateOf(SystemClock.elapsedRealtimeNanos()) }
     var sheetHeight by remember { mutableIntStateOf(0) }
+    var attributionHeight by remember { mutableIntStateOf(0) }
     var map by remember { mutableStateOf<MapLibreMap?>(null) }
+    var mapRendered by remember { mutableStateOf(false) }
     val windowSize = LocalWindowInfo.current.containerSize
     val landscape = with(LocalDensity.current) { windowSize.width.toDp() >= 560.dp && windowSize.width > windowSize.height }
     LaunchedEffect(Unit) { while (true) { now = SystemClock.elapsedRealtimeNanos(); delay(1000) } }
@@ -76,7 +79,7 @@ fun DriveScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Un
         bridging -> "Bridging"
         fresh && usingNative -> "Tracking"
         fresh && fix?.mock == true -> "Mock location"
-        fresh && settings.nativePositioning -> "Calibrating"
+        fresh && settings.nativePositioning && native.currentPose(currentNs) == null -> "GPS tracking"
         fresh -> "Tracking"
         fix?.mock == true -> "Last mock fix"
         fix != null -> "Last known place"
@@ -91,8 +94,10 @@ fun DriveScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Un
             NavigationMap(model.route, pose, if (landscape) 0 else sheetHeight, dark,
                 Modifier.fillMaxSize(), maps = maps, reserveControls = true, originLabel = model.routeOriginLabel, onReady = { map = it },
                 trail = trail, comparisonPose = demoFrame?.lastGps,
+                referenceRoute = demoFrame != null,
                 recordedPath = model.replayTrip?.takeUnless { it.synthetic }?.points,
-                followPosition = following, onFollowInterrupted = { following = false })
+                followPosition = following, onFollowInterrupted = { following = false },
+                onRendered = { mapRendered = it })
             Row(Modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 20.dp, vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
                 // The wordmark is where someone looks to ask "what is this app?", so it answers.
@@ -124,11 +129,21 @@ fun DriveScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Un
                 }
             }
             val controls: @Composable () -> Unit = {
+                val zoomIn: @Composable () -> Unit = {
+                    IconButton(onClick = { map?.animateCamera(CameraUpdateFactory.zoomIn()) }, modifier = Modifier.size(52.dp)) { Icon(Icons.Outlined.Add, "Zoom in") }
+                }
+                val zoomOut: @Composable () -> Unit = {
+                    IconButton(onClick = { map?.animateCamera(CameraUpdateFactory.zoomOut()) }, modifier = Modifier.size(52.dp)) { Icon(Icons.Outlined.Remove, "Zoom out") }
+                }
                 Surface(shape = SetuShape.card, color = MaterialTheme.colorScheme.surface) {
-                    Column(Modifier.width(52.dp)) {
-                        IconButton(onClick = { map?.animateCamera(CameraUpdateFactory.zoomIn()) }) { Icon(Icons.Outlined.Add, "Zoom in") }
+                    if (compactControls) Row(verticalAlignment = Alignment.CenterVertically) {
+                        zoomIn()
+                        VerticalDivider(Modifier.height(28.dp))
+                        zoomOut()
+                    } else Column(Modifier.width(52.dp)) {
+                        zoomIn()
                         HorizontalDivider(Modifier.padding(horizontal = 12.dp))
-                        IconButton(onClick = { map?.animateCamera(CameraUpdateFactory.zoomOut()) }) { Icon(Icons.Outlined.Remove, "Zoom out") }
+                        zoomOut()
                     }
                 }
                 FilledTonalIconButton(onClick = {
@@ -152,13 +167,15 @@ fun DriveScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Un
             }
             val controlPosition = Modifier.align(Alignment.TopEnd).padding(end = 16.dp,
                 top = if (compactControls) 116.dp else ((visibleMapHeight - 160.dp) / 2).coerceAtLeast(116.dp))
-            if (compactControls) Row(controlPosition, horizontalArrangement = Arrangement.spacedBy(10.dp),
+            if (mapRendered && compactControls) Row(controlPosition, horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically) { controls() }
-            else Column(controlPosition, verticalArrangement = Arrangement.spacedBy(10.dp)) { controls() }
+            else if (mapRendered) Column(controlPosition, verticalArrangement = Arrangement.spacedBy(10.dp)) { controls() }
             if (!landscape) {
+                val panelHeight = (maxHeight - 180.dp - with(LocalDensity.current) { attributionHeight.toDp() })
+                    .coerceIn(120.dp, 460.dp)
                 Column(Modifier.align(Alignment.BottomCenter).fillMaxWidth().onSizeChanged { sheetHeight = it.height }) {
-                    MapAttribution(model)
-                    DriveTaskPanel(model, withLocationPermission, fix, fresh, outsideArea, onFinish)
+                    MapAttribution(model, Modifier.onSizeChanged { attributionHeight = it.height })
+                    DriveTaskPanel(model, withLocationPermission, fix, fresh, outsideArea, onFinish, panelHeight)
                 }
             } else MapAttribution(model, Modifier.align(Alignment.BottomStart))
         }
@@ -171,7 +188,7 @@ fun DriveScreen(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Un
 @Composable
 private fun MapAttribution(model: SetuViewModel, modifier: Modifier = Modifier) {
     val maps by model.activeMap.collectAsStateWithLifecycle()
-    Row(modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 8.dp),
+    Row(modifier.fillMaxWidth().testTag("map-attribution").padding(horizontal = 18.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         Surface(shape = SetuShape.control, color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
             modifier = Modifier.clickable { model.overlay = "about" }) {
@@ -190,11 +207,11 @@ private fun MapAttribution(model: SetuViewModel, modifier: Modifier = Modifier) 
 }
 
 @Composable
-private fun DriveTaskPanel(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Unit, fix: Pose?, fresh: Boolean, outsideArea: Boolean, onFinish: () -> Unit) {
+private fun DriveTaskPanel(model: SetuViewModel, withLocationPermission: (() -> Unit) -> Unit, fix: Pose?, fresh: Boolean, outsideArea: Boolean, onFinish: () -> Unit, maximumHeight: Dp = 460.dp) {
     val maps by model.activeMap.collectAsStateWithLifecycle()
     val recording by model.recording.collectAsStateWithLifecycle()
     Surface(shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp), color = MaterialTheme.colorScheme.surface) {
-        Column(Modifier.fillMaxWidth().heightIn(max = 460.dp).verticalScroll(rememberScrollState()).padding(24.dp)) {
+        Column(Modifier.fillMaxWidth().heightIn(max = maximumHeight).verticalScroll(rememberScrollState()).padding(24.dp)) {
             when {
                 model.routeLoading -> Row(Modifier.padding(vertical = 32.dp), verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -260,10 +277,10 @@ private fun DriveTaskPanel(model: SetuViewModel, withLocationPermission: (() -> 
                 }
                 else -> {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Navigation that keeps going.", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
+                        Text("Every drive, in view.", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
                         Icon(Icons.Outlined.NorthEast, null, Modifier.size(26.dp), tint = MaterialTheme.colorScheme.primary)
                     }
-                    Text("Offline maps, and a position that holds through tunnels and car parks.",
+                    Text("Offline maps, GPS tracking and synchronized sensor recordings.",
                         Modifier.padding(top = 6.dp, bottom = 18.dp),
                         style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Button(onClick = { withLocationPermission(model::startTracking) },
@@ -285,8 +302,8 @@ private fun DriveTaskPanel(model: SetuViewModel, withLocationPermission: (() -> 
                             Text("See it in action", Modifier.padding(start = 18.dp, top = 10.dp, bottom = 2.dp),
                                 style = MaterialTheme.typography.titleMedium)
                             ListItem(
-                                headlineContent = { Text("Watch a tunnel blackout") },
-                                supportingContent = { Text("GPS drops out and SETU bridges the gap") },
+                                headlineContent = { Text("Preview a GPS outage") },
+                                supportingContent = { Text("Simulated loss and recovery, not a live accuracy test") },
                                 leadingContent = { Icon(Icons.Outlined.PlayCircle, null) },
                                 colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                                 modifier = Modifier.clickable(onClick = model::openPositioningDemo).testTag("positioning-demo"),
@@ -327,8 +344,11 @@ private fun SensorFallbackReadiness(model: SetuViewModel) {
             }, style = MaterialTheme.typography.titleSmall, modifier = Modifier.testTag("fallback-readiness"))
             Text(when {
                 !settings.nativePositioning -> "Enable to use phone motion when calibrated."
-                ready -> "Keep recording when testing GPS loss. Ten seconds is a ceiling, not a guaranteed duration."
-                estimate != null -> "Prediction stops at the uncertainty or sampling limit, never beyond 10 seconds without GPS."
+                ready || estimate != null -> when {
+                    settings.vehicle == "Walking" -> "Walking: steps + relative heading, at most 120 s or a 75 m model radius. Keep the phone pointed along travel. Batched sensors can delay stop speed by up to 4.5 s."
+                    native.vehicleCalibrated -> "Vehicle calibration active. Prediction stops at a sampling, uncertainty or outage limit; duration and accuracy are not guaranteed."
+                    else -> "Vehicle not calibrated: at most 10 s or a 150 m filter radius. Keep recording while testing GPS loss."
+                }
                 !locationEnabled -> "Re-enable Location to align or recover. Internet is not needed."
                 else -> native.calibrationHint ?: native.detail
             }, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -360,7 +380,7 @@ private fun LiveTrackingPanel(model: SetuViewModel, fix: Pose?, fresh: Boolean, 
         "%.1f %s".format(it * if (settings.units == "mph") 2.236936 else 3.6, settings.units)
     } ?: "Not provided" else "Unavailable", Icons.Outlined.Speed)
     val radius = fix?.filterRadius95Meters ?: fix?.accuracyMeters
-    ReadingRow(if (fix?.filterRadius95Meters != null) "95% filter radius" else "GPS accuracy",
+    ReadingRow(when { fix?.source == "Walking step estimate" -> "Model radius · unvalidated"; fix?.filterRadius95Meters != null -> "95% filter radius"; else -> "GPS accuracy" },
         if (fresh && radius != null) "%.1f m".format(radius) else "Unavailable", Icons.Outlined.GpsFixed)
     SensorFallbackReadiness(model)
     if (outsideArea) InformationNote("Position tracking continues here. Street detail is only available inside your downloaded offline area.")
@@ -368,7 +388,7 @@ private fun LiveTrackingPanel(model: SetuViewModel, fix: Pose?, fresh: Boolean, 
         !fresh && !locationEnabled -> "Turn Location on for a starting fix or to realign. Internet is not required. Keep this recording running when testing GPS loss."
         !fresh -> native.detail
         fix?.filterRadius95Meters == null -> native.detail
-        native.gpsAgeSeconds?.let { it > 2 } == true || !locationEnabled -> "Sensors are predicting this path. Prediction stops after 10 seconds without GPS or excessive uncertainty; turn Location on to recover."
+        native.gpsAgeSeconds?.let { it > 2 } == true || !locationEnabled -> "Sensors are estimating this path, not measuring GPS. Prediction stops at the activity's outage, uncertainty or sampling limit; turn Location on to recover."
         else -> "Sensor fallback is initialized. Keep recording while testing GPS loss. The uncertainty ring is a model estimate, not verified road accuracy."
     },
         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

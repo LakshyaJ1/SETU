@@ -31,6 +31,84 @@ class NativeEngineTest {
     }
 
     @Test
+    fun stationaryUncalibratedVehicleDoesNotRunIndefinitely() {
+        NativeEngine(directory).use { engine ->
+            engine.attitude(start, rotation, .15)
+            engine.imu(start, acceleration, gyro)
+            engine.gnss(fix(start).copy(speedMps = 0.0, bearing = null, speedAccuracyMps = .2))
+            repeat(1000) { index ->
+                engine.imu(start + (index + 1) * 10_000_000L, acceleration, gyro)
+                val state = engine.snapshot()
+                assertTrue("Stationary speed ${state[5]}", state[5] < .3)
+                assertEquals(0.0, state[30], 0.0)
+            }
+            engine.imu(start + 10_010_000_000L, acceleration, gyro)
+            assertEquals(5.0, engine.snapshot()[0], 0.0)
+            assertTrue(engine.snapshot()[5].isNaN())
+        }
+    }
+
+    @Test
+    fun rapidPhoneRotationClearsVehicleMountAndRequiresFreshAlignment() {
+        NativeEngine(directory).use { engine ->
+            seed(engine)
+            repeat(400) { index ->
+                val timestamp = start + (index + 1) * 10_000_000L
+                engine.imu(timestamp, acceleration, gyro)
+                if ((index + 1) % 50 == 0) engine.gnss(fix(timestamp, (index + 1) * .04))
+            }
+            assertEquals(1.0, engine.snapshot()[30], 0.0)
+            assertEquals(-1, engine.imu(start + 4_010_000_000L, acceleration, doubleArrayOf(0.0, 0.0, 7.0)))
+            val moved = engine.snapshot()
+            assertEquals(6.0, moved[0], 0.0)
+            assertEquals(0.0, moved[30], 0.0)
+            assertTrue(moved[5].isNaN())
+            engine.imu(start + 4_020_000_000L, acceleration, gyro)
+            engine.gnss(fix(start + 4_020_000_000L, 16.08))
+            assertTrue(engine.snapshot()[5].isNaN())
+        }
+    }
+
+    @Test fun nonCarProfileKeepsRawRotationButNeverBorrowsCarConstraintsOrOutageBudget() {
+        NativeEngine(directory, vehicleConstraints = false).use { engine ->
+            seed(engine)
+            repeat(500) { index ->
+                val timestamp = start + (index + 1) * 10_000_000L
+                engine.imu(timestamp, acceleration, gyro)
+                if ((index + 1) % 50 == 0) engine.gnss(fix(timestamp, (index + 1) * .04))
+            }
+            assertEquals(0.0, engine.snapshot()[30], 0.0)
+            assertEquals(0, engine.speed(start + 5_000_000_000L, 30.0, 1.0))
+            assertEquals(1, engine.imu(start + 5_010_000_000L, acceleration, doubleArrayOf(0.0, 0.0, 7.0)))
+            assertEquals(0.0, engine.snapshot()[14], 0.0)
+            for (index in 2..1001) engine.imu(start + 5_000_000_000L + index * 10_000_000L, acceleration, gyro)
+            val final = engine.snapshot()
+            assertEquals(5.0, final[0], 0.0)
+            assertTrue(final[5].isNaN())
+            for (index in listOf(20, 21, 22, 24, 30)) assertEquals(0.0, final[index], 0.0)
+        }
+    }
+
+    @Test
+    fun learnedSpeedRejectsFutureDuplicateAndStaleMeasurements() {
+        NativeEngine(directory).use { engine ->
+            seed(engine)
+            repeat(400) { index ->
+                val timestamp = start + (index + 1) * 10_000_000L
+                engine.imu(timestamp, acceleration, gyro)
+                if ((index + 1) % 50 == 0) engine.gnss(fix(timestamp, (index + 1) * 0.04))
+            }
+            val timestamp = start + 4_000_000_000L
+            assertEquals(0, engine.speed(timestamp + 1, 4.0, 2.0))
+            assertEquals(0, engine.speed(timestamp - 500_000_001L, 4.0, 2.0))
+            assertEquals(1, engine.speed(timestamp, 4.0, 2.0))
+            val after = engine.snapshot()
+            assertEquals(0, engine.speed(timestamp, 4.0, 2.0))
+            assertArrayEquals(after, engine.snapshot(), 0.0)
+        }
+    }
+
+    @Test
     fun measuredStopWithoutCourseUsesItsSpeedUncertainty() {
         fun radiusAfterGap(course: Double?): Double = NativeEngine(directory).use { engine ->
             engine.attitude(start, rotation, 0.15)
@@ -141,12 +219,13 @@ class NativeEngineTest {
             assertEquals(2.0, engine.snapshot()[10], 0.0)
             var sawInertial = false
             var sawWithheld = false
-            for (step in 6..1100) {
+            for (step in 6..60010) {
                 engine.imu(start + step * 10_000_000L, acceleration, gyro)
                 if (step % 10 == 0) {
                     val state = engine.snapshot()
                     sawInertial = sawInertial || state[0] == 3.0
                     sawWithheld = sawWithheld || state[0] == 5.0
+                    if (sawWithheld) break
                 }
             }
             assertTrue(sawInertial)

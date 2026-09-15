@@ -23,22 +23,32 @@ Its physical checks do not replace the field and full-estimator release gates.
 
 ## Requirement audit
 
+Current Android changes and verification are summarized in `21-upstream-review.md`.
+The bundled local model and native constraint frontends now exist, but their
+presence does not close the physical/calibration release gates.
+
+The [scooter follow-up](24-scooter-data-review.md) removes inappropriate Car
+constraints from non-Car profiles, fixes activity switching and retrospective
+comparison timing, and permits an explicit Two-wheeler research dataset target.
+It does not close the two-wheeler field gate: the supplied recordings have
+unconfirmed mounts and poor heading availability, and no candidate is promoted.
+
 | Requirement | Current evidence and remaining completion work |
 | --- | --- |
-| REQ-F1: automatic phone-to-vehicle alignment | Experimental compass/GPS-motion initialization exists. Full dash/cradle vehicle-frame calibration, handling detection and multi-device validation remain open. |
-| REQ-F2: local learned speed/noise rejection | Remote research inference is connected for evaluation. Need deployable weights, exact input conditioning/axes, supported rates/vehicles, calibrated uncertainty, and offline runtime integration. |
-| REQ-F3: road-constrained trajectory | Offline route planning exists; it is not map-matched estimation. Road hypotheses, kinematic constraints, curvature registration and ambiguous-grid handling remain open in the Android/native path. |
-| REQ-F4: learned GNSS/INS fusion | Non-ML GNSS/IMU native fusion exists. Learned measurement ingestion with timestamp/innovation/validity gates, model calibration and end-to-end validation remain open. |
+| REQ-F1: automatic phone-to-vehicle alignment | Experimental compass/GPS-motion initialization and GNSS-aided native mount estimation exist. Full dash/cradle validation, handling detection and multi-device acceptance remain open. |
+| REQ-F2: local learned speed/noise rejection | TFLite runs locally on real IMU windows. The bundled model is not deployment-approved and fails uncertainty coverage; predictions remain evaluation-only. Supported-rate/device validation and deployable calibrated weights remain open. |
+| REQ-F3: road-constrained trajectory | Offline planning and native vehicle constraints exist; neither is road-hypothesis estimation. Road particles, curvature registration and ambiguous-grid handling remain open in the Android/native path. |
+| REQ-F4: learned GNSS/INS fusion | Native learned-speed ingestion now has timestamp, mount and innovation gates; the current model is withheld by provider approval/validity gates. Constraint observations survive delayed-GNSS replay. Calibration and end-to-end physical validation remain open. |
 | REQ-F5: seamless GNSS handover | Bounded experimental fallback exists. Full outage support, latency and visible-jump gates are unproven; current safety limits are retained. |
-| REQ-F6: continuous mobile navigation | Map/route/tracking/recording/replay flows exist. The connected CPH2467 freezes all-radios-off background capture despite its recording foreground service, including with Battery saver off; see `20-phone-reliability.md`. This and the remaining device/field acceptance gates are open. |
+| REQ-F6: continuous mobile navigation | Map/route/tracking/recording/replay flows exist. Earlier CPH2467 tests froze background capture (`20-phone-reliability.md`); the reviewed update passes short all-radios-off foreground/background capture. See `21-upstream-review.md` for exact durations and evidence. Long-duration screen-off and field acceptance remain open. |
 | REQ-F7: external IMU / edge engine | Portable native core exists. External-stream HAL, edge daemon, deployment, sustained 200 Hz and shared-model parity remain open. |
 | REQ-F8: offline map database | Compiled NCR graphs, coarse segment indexing and inventory-verified persistent tiles exist; `19-compiled-road-graphs.md` and `20-phone-reliability.md` record the boundaries. Production routing hierarchy, turn restrictions/access rules, catalogue/publication and format/glyph coverage remain open. |
-| REQ-F9: offline training / on-device inference | Python reference and training design exist. A remote URL is not an offline model bundle; export, quantization, manifests, rollback and Android runtime parity remain open. |
+| REQ-F9: offline training / on-device inference | Exported dynamic-range quantized weights, manifest and Android TFLite inference exist. Runtime validates hashes and the input contract. Deployment approval, quantization/cross-rate parity, rollback and physical validation remain open. |
 | REQ-F10: screening models / IO-VNBD plots | Requires reproducible dataset splits, model artifacts and evaluated predictions with no unavailable-GNSS leakage. Synthetic runs and endpoint availability do not satisfy this requirement. |
 | REQ-P1/P2/P3: blackout drift/short/long errors | Physical and dataset-backed acceptance remains unproven. Simulator evidence must retain tier, baseline, outage protocol and percentile. |
 | REQ-P4/P5: 10 Hz phone / 200 Hz edge | Measure output cadence, latency and dropped samples on release hardware; sensor acquisition rate alone is not output-rate proof. |
 | REQ-P6: switch below 100 ms | Requires timed end-to-end mode-transition tests and field traces, not a UI badge change. |
-| REQ-N1/N2: inference cost / model size | No bundled model yet. Remote request latency cannot satisfy the on-device 3 ms budget; test exported artifacts on reference hardware. |
+| REQ-N1/N2: inference cost / model size | The bundled model is 206,848 bytes and runs locally. Sustained/tail latency below the 3 ms reference-phone budget is not established by availability or one successful inference. |
 | REQ-N3: battery | Long-drive screen-off battery/thermal device matrix pending. |
 | REQ-N4: memory | Tiled maps address prior crashes, but do not prove the original 180 MB RSS target. Full routing-graph memory and device budgets require measurement; no emulator RAM limit is imposed by this work. |
 | REQ-N5: cold readiness | Initial map readiness is not calibrated DR readiness. Measure the complete cold start and driving calibration against 20 seconds. |

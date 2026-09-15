@@ -35,20 +35,34 @@ data class NativeEstimate(
     val turnSpeedUpdates: Int = 0,
     val spectralUpdates: Int = 0,
     val spectralScale: Double? = null,
+    val walkingSteps: Long = 0,
+    val rejectedSteps: Long = 0,
+    val vehicleCalibrated: Boolean = false,
+    val vehicleConstraintsEnabled: Boolean = true,
 ) {
     fun currentPose(nowNs: Long): Pose? = pose?.takeIf { nowNs >= it.timestampNs && nowNs - it.timestampNs <= 300_000_000L }
 }
 
-fun navigationPose(gps: Pose?, estimate: NativeEstimate, enabled: Boolean, nowNs: Long): Pose? =
-    if (enabled) estimate.currentPose(nowNs) ?: gps else gps
+fun navigationPose(gps: Pose?, estimate: NativeEstimate, enabled: Boolean, nowNs: Long): Pose? {
+    val current = estimate.currentPose(nowNs)
+    if ((current?.source == "Walking step estimate" || !estimate.vehicleConstraintsEnabled) && gps != null &&
+        nowNs - gps.timestampNs in 0..2_000_000_000L && gps.accuracyMeters?.let { it <= 35.0 } == true) return gps
+    return if (enabled) current ?: gps else gps
+}
 
 class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> Unit,
-                    private val record: (JSONObject) -> Unit) : AutoCloseable {
-    private val engine = NativeEngine(NativeEngine.magneticData(context))
+                    private val record: (JSONObject) -> Unit,
+                    private val clockNs: () -> Long = SystemClock::elapsedRealtimeNanos,
+                    walkingStepMeters: Double? = null,
+                    private val stepSensorAvailable: () -> Boolean = { true },
+                    private val vehicle: String = "Car") : AutoCloseable {
+    private val vehicleConstraints = vehicle == "Car" && walkingStepMeters == null
+    private val engine = NativeEngine(NativeEngine.magneticData(context), vehicleConstraints)
+    private val walking = walkingStepMeters?.let(::WalkingTracker)
     private var declination = Double.NaN
     private var headingAccuracyAvailable: Boolean? = null
-    private val compass = CompassAlignment()
-    private val motion = MotionAlignment()
+    private var compass = CompassAlignment()
+    private var motion = MotionAlignment()
     private var headingSource: String? = null
     private var pendingHeadingSource: String? = null
     private var hadPose = false
@@ -56,22 +70,38 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
     private var pairedSamples = 0L
     private var lastPublish = 0L
     private val synchronizer: ImuSynchronizer = ImuSynchronizer { timestamp, acceleration, gyro ->
-        motion.imu(timestamp, acceleration, gyro)
-        applyMotionAlignment(timestamp)
-        engine.imu(timestamp, acceleration, gyro)
+        if (walking != null) walking.imu(timestamp, gyro) else {
+            motion.imu(timestamp, acceleration, gyro)
+            applyMotionAlignment(timestamp)
+            if (engine.imu(timestamp, acceleration, gyro) < 0) {
+                compass = CompassAlignment()
+                motion = MotionAlignment()
+                pendingHeadingSource = null
+                headingSource = null
+            }
+        }
         pairedSamples++
         if (timestamp - lastPublish >= 100_000_000L) {
             lastPublish = timestamp
             val snapshot = engine.snapshot()
-            var estimate = decodeNativeEstimate(snapshot, pairedSamples, synchronizerDrops(), headingAccuracyAvailable)
+            var estimate = walking?.estimate(timestamp, pairedSamples, synchronizerDrops())
+                ?: decodeNativeEstimate(snapshot, pairedSamples, synchronizerDrops(), headingAccuracyAvailable)
+            if (walking != null && !stepSensorAvailable()) estimate = NativeEstimate("Walking sensor unavailable",
+                "Allow Physical activity permission and use a phone with a step detector. GPS and recording still work.")
+            if (walking != null && estimate.status == "Walking needs heading alignment")
+                estimate = estimate.copy(detail = "${compass.detail} ${estimate.detail}", calibrationHint = compass.detail)
             if (estimate.pose != null && !hadPose) headingSource = pendingHeadingSource
             hadPose = estimate.pose != null
-            estimate = estimate.copy(headingSource = if (hadPose) headingSource else pendingHeadingSource)
-            if (snapshot[0].toInt() in 0..1) {
+            if (walking == null) estimate = estimate.copy(headingSource = if (hadPose) headingSource else pendingHeadingSource)
+            if (walking == null && snapshot[0].toInt() in 0..1) {
                 estimate = estimate.copy(status = "Calibrating sensors", detail = "${compass.detail} ${motion.detail}", calibrationHint = compass.detail)
             }
-            if (estimate.pose != null && headingSource == "Checked compass · estimated uncertainty") {
+            if (walking == null && !estimate.vehicleCalibrated && estimate.pose != null && headingSource == "Checked compass · estimated uncertainty") {
                 estimate = estimate.copy(detail = "Compass-aligned sensor prediction with estimated uncertainty. No road matching or field-accuracy guarantee. GPS outages are bounded to 10 seconds or a 150 m filter radius.")
+            }
+            estimate = estimate.copy(vehicleConstraintsEnabled = vehicleConstraints)
+            if (walking == null && !vehicleConstraints && estimate.pose != null) {
+                estimate = estimate.copy(detail = "$vehicle GPS + IMU research estimate. Car mount, turn-speed and vibration constraints are not applied. Sensor-only output is bounded to 10 seconds or a 150 m filter radius, not a field-accuracy guarantee.")
             }
             publish(estimate)
             if (timestamp - lastStateRecord >= 1_000_000_000L) {
@@ -80,6 +110,9 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
                     .put("status", estimate.status).put("detail", estimate.detail)
                     .put("pairedSamples", pairedSamples).put("acceptedGps", estimate.accepted)
                     .put("pairingDrops", estimate.pairingDrops)
+                    .put("walkingSteps", estimate.walkingSteps).put("rejectedSteps", estimate.rejectedSteps)
+                    .put("vehicleCalibrated", estimate.vehicleCalibrated)
+                    .put("vehicle", vehicle).put("vehicleConstraintsEnabled", vehicleConstraints)
                     .put("headingSource", estimate.headingSource ?: JSONObject.NULL)
                     .put("hasEstimate", estimate.pose != null))
             }
@@ -87,7 +120,7 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
                 record(TripStore.encodePose(pose).put("type", "native_pose")
                     .put("radius95Meters", estimate.radius95Meters)
                     .put("gpsAgeSeconds", estimate.gpsAgeSeconds).put("status", estimate.status)
-                    .put("headingSource", headingSource ?: JSONObject.NULL).put("experimental", true))
+                    .put("headingSource", estimate.headingSource ?: JSONObject.NULL).put("experimental", true))
             }
         }
     }
@@ -123,7 +156,7 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
     }
 
     fun sensor(type: Int, timestamp: Long, values: FloatArray, accuracy: Int) {
-        if (timestamp <= 0 || timestamp > SystemClock.elapsedRealtimeNanos() || values.any { !it.isFinite() }) return
+        if (timestamp <= 0 || timestamp > clockNs() || values.any { !it.isFinite() }) return
         when (type) {
             Sensor.TYPE_ACCELEROMETER -> {
                 if (values.size < 3) return
@@ -143,8 +176,10 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
             }
             Sensor.TYPE_GAME_ROTATION_VECTOR -> {
                 if (values.size < 3) return
-                motion.rotation(timestamp, rotationMatrix(values))
-                applyMotionAlignment(timestamp)
+                if (walking != null) walking.rotation(timestamp, rotationMatrix(values)) else {
+                    motion.rotation(timestamp, rotationMatrix(values))
+                    applyMotionAlignment(timestamp)
+                }
             }
             Sensor.TYPE_ROTATION_VECTOR -> {
                 headingAccuracyAvailable = values.size >= 5 && values[4] >= 0
@@ -152,8 +187,10 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
                 val trueRotation = trueNorthRotation(rotationMatrix(values), declination, trueRotationScratch)
                 val reportedSigma = if (values.size >= 5) values[4].toDouble() else null
                 val alignment = compass.evaluate(timestamp, trueRotation, reportedSigma, accuracy) ?: return
-                if (!applyMotionAlignment(timestamp) && engine.attitude(timestamp, trueRotation, alignment.sigmaRadians) == 1) pendingHeadingSource = alignment.source
+                if (walking != null) walking.align(timestamp, trueRotation, alignment.sigmaRadians)
+                else if (!applyMotionAlignment(timestamp) && engine.attitude(timestamp, trueRotation, alignment.sigmaRadians) == 1) pendingHeadingSource = alignment.source
             }
+            Sensor.TYPE_STEP_DETECTOR -> if (values.firstOrNull() == 1f) walking?.step(timestamp)
         }
     }
 
@@ -162,9 +199,11 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
         val year = calendar.get(Calendar.YEAR) + (calendar.get(Calendar.DAY_OF_YEAR) - 1).toDouble() / calendar.getActualMaximum(Calendar.DAY_OF_YEAR)
         declination = engine.declination(year, pose.point, pose.altitudeMeters ?: 0.0)
         engine.magneticField(year, pose.point, pose.altitudeMeters ?: 0.0)?.let(compass::reference)
-        motion.gnss(pose)
-        applyMotionAlignment(pose.timestampNs)
-        engine.gnss(pose)
+        if (walking != null) walking.gnss(pose) else {
+            motion.gnss(pose)
+            applyMotionAlignment(pose.timestampNs)
+            engine.gnss(pose)
+        }
     }
 
     /**
@@ -176,7 +215,7 @@ class LiveEstimator(context: Context, private val publish: (NativeEstimate) -> U
      * would describe a moment the filter has already left.
      */
     fun speed(timestampNs: Long, speedMps: Double, sigmaMps: Double): Int =
-        engine.speed(timestampNs, speedMps, sigmaMps)
+        if (walking == null) engine.speed(timestampNs, speedMps, sigmaMps) else 0
 
     override fun close() = engine.close()
 }
@@ -215,6 +254,7 @@ internal fun decodeNativeEstimate(values: DoubleArray, paired: Long = 0, dropped
         3 -> "Inertial estimate"
         4 -> "Sensor gap · realigning"
         5 -> "Estimate withheld"
+        6 -> "Phone moved · realigning"
         else -> "Waiting for GPS + IMU"
     }
     val source = if (mode == 3) "Native inertial" else "Native GPS + IMU"
@@ -227,7 +267,8 @@ internal fun decodeNativeEstimate(values: DoubleArray, paired: Long = 0, dropped
     } else when (mode) {
         1 -> "Needs a recent rotation-vector heading with reported accuracy. No vehicle-forward constraint is assumed."
         4 -> "An IMU gap exceeded 100 ms. Waiting for fresh GPS and heading rather than integrating across it."
-        5 -> "The 95% radius passed 400 m, or there has been no fix for a very long time. GPS remains the fallback."
+        5 -> "The outage or uncertainty budget expired. Uncalibrated vehicle estimates stop after 10 seconds or a 150 m filter radius. Re-enable GPS to recover."
+        6 -> "Rapid phone rotation invalidated the vehicle calibration. Secure the phone and restore GPS to realign."
         3 -> "Dead reckoning: vehicle axes estimated from motion, with non-holonomic, zero-velocity, turn-rate and axle-vibration speed constraints. Along-track distance is held by the vibration line; heading drifts over a long blackout. No road matching."
         2 -> "Phone-frame RI-EKF fusing GPS with IMU. WGS84 / WMM2025. Vehicle axes and axle-vibration scale are calibrated while GPS is available."
         else -> "Needs synchronized accelerometer/gyro and GPS with a reported accuracy."
@@ -235,5 +276,6 @@ internal fun decodeNativeEstimate(values: DoubleArray, paired: Long = 0, dropped
         values[10].toInt(), values[11].toInt(), values[12].toInt(), values[13].toInt(), values[14].toInt(), paired, dropped,
         zupts = counter(20), nhcs = counter(21), turnSpeedUpdates = counter(22),
         spectralUpdates = counter(24),
-        spectralScale = if (values.size > 25) values[25].takeIf { it.isFinite() && it > 0 } else null)
+        spectralScale = if (values.size > 25) values[25].takeIf { it.isFinite() && it > 0 } else null,
+        vehicleCalibrated = values.getOrNull(30) == 1.0)
 }

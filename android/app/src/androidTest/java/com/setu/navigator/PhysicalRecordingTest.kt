@@ -44,18 +44,21 @@ class PhysicalRecordingTest {
         val existing = repository.tripStore.all().map { it.id }.toSet()
         val mode = if (background) "background" else "foreground"
         val recordingName = "USB hardware $mode verification"
-        val durationMs = if (background) 15000L else 30000L
+        val durationMs = InstrumentationRegistry.getArguments().getString("recordingDurationMs")?.toLong()
+            ?.also { require(it in 15000L..120000L) } ?: if (background) 15000L else 30000L
         var ownsRecording = false
         var ownedTrip: Trip? = null
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             try {
                 scenario.onActivity { activity ->
-                    activity.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                    repository.updateSettings(settings.copy(modelSharingAllowed = false))
+                    repository.updateSettings(settings.copy(modelSharingAllowed = false, onDeviceSpeedModel = true, vehicle = "Car"))
                     activity.startForegroundService(Intent(activity, RecordingService::class.java).putExtra("name", recordingName))
                     ownsRecording = true
                 }
                 waitUntil { repository.recording.value && repository.recordCount.value > 100 }
+                scenario.onActivity { activity ->
+                    assertTrue(activity.window.attributes.flags and android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON != 0)
+                }
                 assertTrue(repository.hub.sensors.value.hasAccelerometer && repository.hub.sensors.value.hasGyroscope)
                 val before = repository.hub.sensors.value.sampleCount
                 val backgroundStarted = SystemClock.elapsedRealtime()
@@ -77,14 +80,22 @@ class PhysicalRecordingTest {
                 assertTrue(repository.recording.value)
                 val native = repository.hub.nativeEstimate.value
                 assertTrue(native.pairedSamples > 100)
-                assertNull(repository.hub.modelSession)
+                assertNotNull(repository.hub.modelSession)
                 context.startService(Intent(context, RecordingService::class.java).setAction("STOP"))
                 waitUntil { !repository.recording.value }
+                if (!background) waitUntil {
+                    var screenReleased = false
+                    scenario.onActivity { activity ->
+                        screenReleased = activity.window.attributes.flags and android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON == 0
+                    }
+                    screenReleased
+                }
                 ownedTrip = repository.tripStore.all().single { it.id !in existing && it.name == recordingName }
                 val counts = mutableMapOf<String, Int>()
                 val lastTimestamp = mutableMapOf<String, Long>()
                 val maximumGap = mutableMapOf<String, Long>()
                 var hasEnd = false
+                var inferredWindows = 0
                 repository.tripStore.logFile(checkNotNull(ownedTrip).id).useLines { lines ->
                     lines.drop(1).forEach { line ->
                         val record = JSONObject(line)
@@ -99,12 +110,20 @@ class PhysicalRecordingTest {
                             }
                         }
                         if (type == "end") hasEnd = true
+                        if (type == "model_measurement") {
+                            assertFalse(record.getBoolean("navigationApplied"))
+                            if (!record.isNull("validity")) {
+                                assertEquals(0.0, record.getDouble("validity"), 0.0)
+                                inferredWindows++
+                            }
+                        }
                     }
                 }
                 assertTrue(hasEnd)
                 assertTrue((counts["accelerometer"] ?: 0) > 200 && (counts["gyroscope"] ?: 0) > 200)
                 assertTrue("An IMU stream has a gap above 100 ms", maximumGap.values.all { it <= 100_000_000L })
-                assertEquals(0, counts["model_measurement"] ?: 0)
+                assertTrue("Local model did not process sensor windows", (counts["model_measurement"] ?: 0) > 0)
+                assertTrue("Local model never returned an inference", inferredWindows > 0)
                 val evidence = JSONObject().put("scenario", "Actual Android IMU callbacks during $mode recording; no driving accuracy claim")
                     .put("mode", mode).put("requestedDurationMs", durationMs)
                     .put("device", android.os.Build.MODEL).put("locationEnabled", repository.hub.isLocationEnabled())
@@ -114,6 +133,8 @@ class PhysicalRecordingTest {
                     .put("nativePairedSamples", native.pairedSamples).put("pairingDrops", native.pairingDrops)
                     .put("records", JSONObject(counts as Map<*, *>)).put("maximumImuGapNs", JSONObject(maximumGap as Map<*, *>))
                     .put("modelSharingEnabled", false).put("recordingSaved", true).put("existingTripCount", existing.size)
+                    .put("localInferredWindows", inferredWindows)
+                    .put("vehicle", "Car")
                 File(context.getExternalFilesDir(null), "verification").apply { mkdirs() }.resolve("physical-$mode-recording-metrics.json").writeText(evidence.toString(2))
             } finally {
                 if (ownsRecording && repository.recording.value) {

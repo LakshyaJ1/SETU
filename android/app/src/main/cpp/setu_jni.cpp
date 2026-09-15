@@ -65,11 +65,12 @@ Java_com_setu_navigator_estimation_NativeFilter_nativeSnapshot(JNIEnv* environme
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_com_setu_navigator_estimation_NativeEngine_nativeCreate(JNIEnv* environment, jobject, jstring directory) {
+Java_com_setu_navigator_estimation_NativeEngine_nativeCreate(JNIEnv* environment, jobject, jstring directory, jboolean vehicle_constraints) {
     if (!directory) return 0;
     const char* path = environment->GetStringUTFChars(directory, nullptr);
     if (!path) return 0;
     SetuEngine* engine = setu_engine_create(path);
+    setu_engine_constraints(engine, vehicle_constraints ? 1 : 0);
     environment->ReleaseStringUTFChars(directory, path);
     return reinterpret_cast<jlong>(engine);
 }

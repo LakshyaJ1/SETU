@@ -1,5 +1,26 @@
 # SETU — Project Checkpoint
 
+> **Navigation acceptance:** the confirmed target is 90% of GPS-free 10 Hz updates
+> within 10 m, including missing estimates as failures, across 10–180 s outages.
+> `docs/verification/android/road-stress/README.md` and `metrics.pdf` supersede old
+> benchmark claims. All 675 corrected synthetic trials completed; no algorithm
+> passes the full matrix. Normal training exports now allow 120 s GPS warmup.
+> The final application, independent field validation and website remain open.
+
+> **Current review:** see `docs/21-upstream-review.md` and the walking/stationary
+> fixes in `docs/23-walking-fallback-investigation.md`. Sections below are a
+> chronological working log, not a consistent current-status snapshot. In
+> particular, the initial statements that there are no native constraints or
+> bundled models are superseded. NHC, ZUPT, SVO, CTS and local TFLite inference
+> are implemented; road-hypothesis estimation and physical acceptance remain
+> open. The bundled model has `deployment_approved=false` and failed G4: the
+> Android runtime now enforces evaluation-only output rather than fusing it.
+
+> **Scooter follow-up:** `docs/24-scooter-data-review.md` records the three selected
+> rides, corrected activity handling and research dataset target. Car constraints
+> and the bundled Car-only model do not apply to scooters. Heading availability
+> and GPS-free field accuracy remain open; the supplied rides are diagnostic-only.
+
 > Generated 2026-09-12 from a full read of `docs/01`–`docs/20`, `core/`, `android/`, `setu/`,
 > `tools/`, plus a live probe of the model endpoint.
 >

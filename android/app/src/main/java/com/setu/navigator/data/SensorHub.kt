@@ -13,6 +13,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Handler
+import android.os.CancellationSignal
 import android.os.HandlerThread
 import android.os.Looper
 import android.os.SystemClock
@@ -35,6 +36,10 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     private val magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
     private val rotationVector = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
     private val gameRotationVector = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR)
+    private val stepDetector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+    @Volatile private var walkingStepMeters: Double? = null
+    @Volatile private var activity = "Car"
+    @Volatile private var stepRegistered = false
     private val mutableNative = MutableStateFlow(NativeEstimate())
     val nativeEstimate = mutableNative.asStateFlow()
     @Volatile private var liveEstimator: LiveEstimator? = null
@@ -42,6 +47,7 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     private val mutableSensors = MutableStateFlow(SensorState(
         hasAccelerometer = accelerometer != null, hasGyroscope = gyroscope != null,
         hasBarometer = pressure != null, hasMagnetometer = magnetometer != null,
+        hasStepDetector = stepDetector != null,
     ))
     private val mutablePose = MutableStateFlow<Pose?>(null)
     val sensors = mutableSensors.asStateFlow()
@@ -66,11 +72,16 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
      * down is dropped rather than queued: by the time a queue drained, it would be describing a
      * moment the filter has already left.
      */
-    fun applyModelSpeed(timestampNs: Long, speedMps: Double, sigmaMps: Double) {
-        val worker = thread ?: return
-        Handler(worker.looper).post {
-            if (thread === worker) liveEstimator?.speed(timestampNs, speedMps, sigmaMps)
+    fun applyModelSpeed(timestampNs: Long, speedMps: Double, sigmaMps: Double, applied: (Boolean) -> Unit) {
+        val worker = thread
+        val generation = nativeGeneration
+        val session = modelSession
+        if (worker == null || session == null) { applied(false); return }
+        val posted = Handler(worker.looper).post {
+            val current = thread === worker && nativeGeneration == generation && modelSession === session
+            applied(current && liveEstimator?.speed(timestampNs, speedMps, sigmaMps) == 1)
         }
+        if (!posted) applied(false)
     }
     @Volatile private var thread: HandlerThread? = null
     private var lastPublishNs = 0L
@@ -85,6 +96,7 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     private val sampleScratch = DoubleArray(3)
     private var pressureValue: Float? = null
     private var locationStarted = false
+    private val locationRequests = mutableListOf<CancellationSignal>()
 
     private val satellites = object : GnssStatus.Callback() {
         override fun onSatelliteStatusChanged(status: GnssStatus) {
@@ -112,7 +124,44 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     }
 
     fun hasLocationPermission() = context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    fun hasStepPermission() = android.os.Build.VERSION.SDK_INT < 29 ||
+        context.checkSelfPermission(Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED
     fun isLocationEnabled() = anyProviderEnabled()
+
+    @Synchronized
+    fun configureActivity(settings: AppSettings) {
+        val length = settings.walkingStepLengthMeters.takeIf { settings.vehicle == "Walking" }
+        if (walkingStepMeters == length && activity == settings.vehicle) return
+        walkingStepMeters = length
+        activity = settings.vehicle
+        mutableNative.value = NativeEstimate("Activity changed", "Waiting for fresh GPS and heading for ${settings.vehicle}.")
+        thread?.let { initializeEstimator(Handler(it.looper)) }
+    }
+
+    private fun initializeEstimator(handler: Handler) {
+        val generation = ++nativeGeneration
+        val length = walkingStepMeters
+        val vehicle = activity
+        val previous = liveEstimator
+        liveEstimator = null
+        handler.post {
+            previous?.close()
+            if (nativeGeneration != generation) return@post
+            try {
+                val created = LiveEstimator(context, { estimate ->
+                    if (nativeGeneration == generation) mutableNative.value = estimate
+                }, { document -> if (nativeGeneration == generation) record?.invoke(document) }, walkingStepMeters = length,
+                    stepSensorAvailable = { stepRegistered && hasStepPermission() }, vehicle = vehicle)
+                synchronized(this@SensorHub) {
+                    if (nativeGeneration == generation) liveEstimator = created else created.close()
+                }
+            } catch (_: LinkageError) {
+                mutableNative.value = NativeEstimate("Native library unavailable", "GPS and raw recording remain available.")
+            } catch (_: Exception) {
+                mutableNative.value = NativeEstimate("Native initialization failed", "Could not load the packaged geophysics data. GPS remains available.")
+            }
+        }
+    }
 
     // "Location is on" means any provider can answer, not specifically the satellite one. Keying
     // this to GPS_PROVIDER alone reported the service as off whenever the user had chosen
@@ -132,21 +181,7 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
             rateStartNs = 0
             rateSamples = 0
             val handler = Handler(worker.looper)
-            val generation = ++nativeGeneration
-            handler.post {
-                try {
-                    val created = LiveEstimator(context, { estimate ->
-                        if (nativeGeneration == generation) mutableNative.value = estimate
-                    }, { document -> if (nativeGeneration == generation) record?.invoke(document) })
-                    synchronized(this@SensorHub) {
-                        if (nativeGeneration == generation) liveEstimator = created else created.close()
-                    }
-                } catch (_: LinkageError) {
-                    mutableNative.value = NativeEstimate("Native library unavailable", "GPS and raw recording remain available.")
-                } catch (_: Exception) {
-                    mutableNative.value = NativeEstimate("Native initialization failed", "Could not load the packaged geophysics data. GPS remains available.")
-                }
-            }
+            initializeEstimator(handler)
             // Only the inertial pair needs the full rate. Requesting 200 Hz from the magnetometer
             // and both fused rotation vectors doubled the callback volume and made Android run its
             // orientation fusion 400 times a second, for channels that seed attitude and check
@@ -160,6 +195,16 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
             }
             pressure?.let { sensorManager.registerListener(this, it, BAROMETER_PERIOD_US, handler) }
         }
+        if (!hasStepPermission() && stepRegistered) {
+            stepDetector?.let { sensorManager.unregisterListener(this, it) }
+            stepRegistered = false
+        }
+        if (!stepRegistered && stepDetector != null && hasStepPermission()) {
+            stepRegistered = runCatching {
+                sensorManager.registerListener(this, stepDetector, SensorManager.SENSOR_DELAY_NORMAL, Handler(checkNotNull(thread).looper))
+            }.getOrDefault(false)
+        }
+        mutableSensors.update { it.copy(stepDetectorActive = stepRegistered) }
         startLocation()
     }
 
@@ -177,7 +222,7 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
         if (android.os.Build.VERSION.SDK_INT >= 31) add(LocationManager.FUSED_PROVIDER)
         add(LocationManager.GPS_PROVIDER)
         add(LocationManager.NETWORK_PROVIDER)
-    }.filter { provider -> runCatching { locationManager.isProviderEnabled(provider) }.getOrDefault(false) }
+    }.filter { provider -> provider in locationManager.allProviders }
 
     @Suppress("MissingPermission")
     private fun startLocation() {
@@ -186,15 +231,16 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
         val providers = locationProviders()
         if (providers.isEmpty()) return
         try {
-            providers.forEach { provider ->
-                runCatching { locationManager.requestLocationUpdates(provider, 1000L, 0f, this, main) }
+            val subscribed = providers.map { provider ->
+                runCatching { locationManager.requestLocationUpdates(provider, 1000L, 0f, this, main) }.isSuccess
             }
+            locationStarted = subscribed.any { it }
+            if (!locationStarted) return
             // Raw GNSS and satellite status only exist on the satellite provider, and only matter
             // for the recorded log and the health readout, so a failure here must not stop the
             // position updates above.
             runCatching { locationManager.registerGnssStatusCallback(satellites, Handler(main)) }
             runCatching { locationManager.registerGnssMeasurementsCallback(rawGnss, Handler(main)) }
-            locationStarted = true
 
             // Show something immediately. The old code looked only at the satellite provider and
             // discarded anything over 30 s old, so on a normal cold start it almost always found
@@ -207,17 +253,20 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
                     val age = SystemClock.elapsedRealtimeNanos() - location.elapsedRealtimeNanos
                     age in 0 until 600_000_000_000L
                 }
-                .minByOrNull { location -> location.accuracy.takeIf { location.hasAccuracy() } ?: Float.MAX_VALUE }
+                .maxByOrNull { location -> location.elapsedRealtimeNanos }
                 ?.let(::onLocationChanged)
 
             // Actively drive one fresh fix rather than waiting for the periodic stream to produce
             // its first sample, which is what makes the difference between a few seconds and a few
             // minutes on a cold start.
             if (android.os.Build.VERSION.SDK_INT >= 30) {
+                val generation = nativeGeneration
                 providers.forEach { provider ->
                     runCatching {
-                        locationManager.getCurrentLocation(provider, null, context.mainExecutor) { location ->
-                            if (location != null) onLocationChanged(location)
+                        val cancellation = CancellationSignal()
+                        locationRequests.add(cancellation)
+                        locationManager.getCurrentLocation(provider, cancellation, context.mainExecutor) { location ->
+                            if (nativeGeneration == generation && location != null) onLocationChanged(location)
                         }
                     }
                 }
@@ -232,9 +281,13 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     @Synchronized
     fun stop() {
         sensorManager.unregisterListener(this)
+        stepRegistered = false
+        mutableSensors.update { it.copy(stepDetectorActive = false) }
         locationManager.unregisterGnssMeasurementsCallback(rawGnss)
         locationManager.unregisterGnssStatusCallback(satellites)
         locationManager.removeUpdates(this)
+        locationRequests.forEach(CancellationSignal::cancel)
+        locationRequests.clear()
         locationStarted = false
         val worker = thread
         val estimator = liveEstimator
@@ -285,6 +338,7 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
             Sensor.TYPE_MAGNETIC_FIELD -> "magnetometer"
             Sensor.TYPE_ROTATION_VECTOR -> "rotation_vector"
             Sensor.TYPE_GAME_ROTATION_VECTOR -> "game_rotation_vector"
+            Sensor.TYPE_STEP_DETECTOR -> "step_detector"
             else -> return
         }
         val sink = sensorSink
@@ -303,7 +357,15 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
     }
 
     override fun onLocationChanged(location: Location) {
+        if (thread == null) return
+        updateLocation(location)
+    }
+
+    internal fun updateLocation(location: Location) {
         val current = locationPose(location, SystemClock.elapsedRealtimeNanos()) ?: return
+        record?.invoke(TripStore.encodePose(current).put("type", "gnss_reference")
+            .put("provider", location.provider ?: JSONObject.NULL).put("wallTimeMs", location.time)
+            .put("receivedAtNs", SystemClock.elapsedRealtimeNanos()))
         if (current.timestampNs <= (mutablePose.value?.timestampNs ?: 0L)) return
         mutablePose.value = current
         // A Wi-Fi or cell fix is worth showing - it answers "roughly where am I" in a second - but
@@ -314,7 +376,8 @@ class SensorHub(private val context: Context) : SensorEventListener, LocationLis
         if (usable) {
             thread?.let { worker -> Handler(worker.looper).post { if (thread == worker) liveEstimator?.gnss(current, location.time) } }
         }
-        record?.invoke(TripStore.encodePose(current))
+        record?.invoke(TripStore.encodePose(current).put("provider", location.provider ?: JSONObject.NULL)
+            .put("wallTimeMs", location.time).put("receivedAtNs", SystemClock.elapsedRealtimeNanos()))
     }
 
     override fun onProviderDisabled(provider: String) {

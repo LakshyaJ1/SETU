@@ -23,7 +23,7 @@ data class ModelInferenceState(
     val latencyMs: Long? = null,
 ) {
     fun recentMeasurement(nowNs: Long): ModelMeasurement? = measurement?.takeIf {
-        nowNs >= it.timestampNs && nowNs - it.timestampNs <= 2_000_000_000L
+        it.validity > 0.0 && nowNs >= it.timestampNs && nowNs - it.timestampNs <= 2_000_000_000L
     }
 }
 
@@ -93,7 +93,7 @@ class LiveModelSession(
                     delay(retryDelayMs * failures)
                 }
             }
-        }
+        }.invokeOnCompletion { runCatching { (provider as? AutoCloseable)?.close() } }
     }
 
     private fun emit(value: ModelInferenceState) {

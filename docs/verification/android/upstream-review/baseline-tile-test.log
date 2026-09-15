@@ -1,0 +1,71 @@
+INSTRUMENTATION_STATUS: class=com.setu.navigator.OfflineTilesTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+com.setu.navigator.OfflineTilesTest:
+INSTRUMENTATION_STATUS: test=missingTruncatedAndSameSizeCorruptTilesAreRepairedDespiteACompleteMarker
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.setu.navigator.OfflineTilesTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stack=java.io.FileNotFoundException: /data/user/0/com.setu.navigator/cache/tile-integrity-f735e52b-e7c9-4b0c-a706-a9c1e6cceb7d/files/offline-vector-maps/055f5c927afaf70dc96c65f874e3f6d8c38bdc51053d9af43280018dd3e88231/13/5852/3415.pbf: open failed: ENOENT (No such file or directory)
+	at libcore.io.IoBridge.open(IoBridge.java:574)
+	at java.io.FileInputStream.<init>(FileInputStream.java:179)
+	at kotlin.io.FilesKt__FileReadWriteKt.readBytes(FileReadWrite.kt:73)
+	at com.setu.navigator.OfflineTilesTest.missingTruncatedAndSameSizeCorruptTilesAreRepairedDespiteACompleteMarker(OfflineTilesTest.kt:45)
+	... 33 trimmed
+Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+	at libcore.io.Linux.open(Native Method)
+	at libcore.io.ForwardingOs.open(ForwardingOs.java:579)
+	at libcore.io.BlockGuardOs.open(BlockGuardOs.java:274)
+	at libcore.io.ForwardingOs.open(ForwardingOs.java:579)
+	at android.app.ActivityThread$AndroidOs.open(ActivityThread.java:9367)
+	at libcore.io.IoBridge.open(IoBridge.java:560)
+	... 37 more
+
+INSTRUMENTATION_STATUS: stream=
+Error in missingTruncatedAndSameSizeCorruptTilesAreRepairedDespiteACompleteMarker(com.setu.navigator.OfflineTilesTest):
+java.io.FileNotFoundException: /data/user/0/com.setu.navigator/cache/tile-integrity-f735e52b-e7c9-4b0c-a706-a9c1e6cceb7d/files/offline-vector-maps/055f5c927afaf70dc96c65f874e3f6d8c38bdc51053d9af43280018dd3e88231/13/5852/3415.pbf: open failed: ENOENT (No such file or directory)
+	at libcore.io.IoBridge.open(IoBridge.java:574)
+	at java.io.FileInputStream.<init>(FileInputStream.java:179)
+	at kotlin.io.FilesKt__FileReadWriteKt.readBytes(FileReadWrite.kt:73)
+	at com.setu.navigator.OfflineTilesTest.missingTruncatedAndSameSizeCorruptTilesAreRepairedDespiteACompleteMarker(OfflineTilesTest.kt:45)
+	... 33 trimmed
+Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+	at libcore.io.Linux.open(Native Method)
+	at libcore.io.ForwardingOs.open(ForwardingOs.java:579)
+	at libcore.io.BlockGuardOs.open(BlockGuardOs.java:274)
+	at libcore.io.ForwardingOs.open(ForwardingOs.java:579)
+	at android.app.ActivityThread$AndroidOs.open(ActivityThread.java:9367)
+	at libcore.io.IoBridge.open(IoBridge.java:560)
+	... 37 more
+
+INSTRUMENTATION_STATUS: test=missingTruncatedAndSameSizeCorruptTilesAreRepairedDespiteACompleteMarker
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 11.065
+There was 1 failure:
+1) missingTruncatedAndSameSizeCorruptTilesAreRepairedDespiteACompleteMarker(com.setu.navigator.OfflineTilesTest)
+java.io.FileNotFoundException: /data/user/0/com.setu.navigator/cache/tile-integrity-f735e52b-e7c9-4b0c-a706-a9c1e6cceb7d/files/offline-vector-maps/055f5c927afaf70dc96c65f874e3f6d8c38bdc51053d9af43280018dd3e88231/13/5852/3415.pbf: open failed: ENOENT (No such file or directory)
+	at libcore.io.IoBridge.open(IoBridge.java:574)
+	at java.io.FileInputStream.<init>(FileInputStream.java:179)
+	at kotlin.io.FilesKt__FileReadWriteKt.readBytes(FileReadWrite.kt:73)
+	at com.setu.navigator.OfflineTilesTest.missingTruncatedAndSameSizeCorruptTilesAreRepairedDespiteACompleteMarker(OfflineTilesTest.kt:45)
+	... 33 trimmed
+Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+	at libcore.io.Linux.open(Native Method)
+	at libcore.io.ForwardingOs.open(ForwardingOs.java:579)
+	at libcore.io.BlockGuardOs.open(BlockGuardOs.java:274)
+	at libcore.io.ForwardingOs.open(ForwardingOs.java:579)
+	at android.app.ActivityThread$AndroidOs.open(ActivityThread.java:9367)
+	at libcore.io.IoBridge.open(IoBridge.java:560)
+	... 37 more
+
+FAILURES!!!
+Tests run: 1,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1
